@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 1.1 — La derivada de sigmoid</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* Pipeline del forward pass: entrada → z → y_pred */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .flow .step {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .flow .step .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .flow .step p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+  .flow .arrow {
+    align-self: center;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 0 8px;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+  .chart .curve { fill: none; stroke: var(--accent-redes); stroke-width: 3; }
+  .chart .lbl { fill: var(--text-dim); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .pt1 { fill: var(--accent-agentes); }
+  .chart .pt0 { fill: var(--warn); }
+  .caption { font-size: 0.82rem; color: var(--text-dim); margin: 0 0 16px; }
+
+  .chart .antes { fill: var(--text-dim); }
+  .chart .despues { fill: var(--accent-agentes); }
+  .chart .peak { fill: var(--accent-redes); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="back" href="index.html">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 1.1 · FUNDAMENTO</span>
+      <span class="module-tag">Entrenamiento</span>
+    </div>
+    <h1>La derivada de sigmoid</h1>
+    <p class="subtitle">Qué calcula <code>derivada = y_pred * (1 - y_pred)</code> en la línea 105 de <code>01_perceptron_simple.py</code> y por qué decide cuánto aprende la neurona de cada punto.</p>
+  </header>
+
+  <h2>1. La línea</h2>
+  <div class="file-ref">01_perceptron_simple.py · líneas 103–105</div>
+<pre><code>y_pred = forward(X, w, b)
+error = y - y_pred                       <span class="cm"># qué tan lejos estamos de la respuesta correcta</span>
+derivada = y_pred * (1 - y_pred)          <span class="cm"># derivada de sigmoid en el punto actual</span></code></pre>
+  <p>Igual que <code>error</code>, <code>derivada</code> es un array de shape <code>(100,)</code>: un número por cada punto. NumPy hace <code>1 - y_pred</code> y la multiplicación elemento a elemento, sin <code>for</code>.</p>
+
+  <h2>2. Qué mide</h2>
+  <div class="callout key">
+    <strong>La derivada responde:</strong> si muevo <code>z</code> un poquito, ¿cuánto cambia la salida <code>y_pred</code>? Es la <strong>sensibilidad</strong> de la neurona en ese punto, lo que dice el comentario de la línea 93: <em>“qué tan sensible es la salida a cambios en z”</em>.
+  </div>
+  <p>Recuerda la forma de S de la sigmoid (ver <a href="01_fundamento_forward_pass.html" style="color: var(--accent-redes);">forward pass</a>):</p>
+  <div class="card-grid">
+    <div class="card">
+      <span class="num">CERCA DE LA FRONTERA</span>
+      <h3>z ≈ 0, y_pred ≈ 0.5</h3>
+      <p>La curva está empinada: un cambio chico en <code>z</code> mueve mucho la salida. Derivada <strong>alta</strong>.</p>
+    </div>
+    <div class="card">
+      <span class="num">LEJOS DE LA FRONTERA</span>
+      <h3>y_pred ≈ 0 o ≈ 1</h3>
+      <p>La curva está plana: aunque <code>z</code> cambie, la salida casi no se mueve. Derivada <strong>casi 0</strong>.</p>
+    </div>
+  </div>
+
+  <h2>3. Por qué la fórmula es <code>y_pred * (1 - y_pred)</code></h2>
+  <p>La sigmoid tiene una propiedad matemática muy práctica: su derivada se puede escribir usando <strong>su propio resultado</strong>. Es lo que anota el comentario de la línea 92:</p>
+<pre><code>derivada_sigmoid(z) = sigmoid(z) * (1 - sigmoid(z))</code></pre>
+  <p>Como <code>sigmoid(z)</code> ya es <code>y_pred</code> (lo calculó <code>forward</code> en la línea 103), el script lo reutiliza y no necesita volver a calcular <code>z</code> ni la exponencial.</p>
+  <p>Con los valores de <code>y_pred</code>, la derivada queda así:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>y_pred</th><th>y_pred × (1 − y_pred)</th><th>Situación</th></tr></thead>
+      <tbody>
+        <tr><td>0.50</td><td><strong>0.250</strong> (el máximo posible)</td><td>justo sobre la frontera</td></tr>
+        <tr><td>0.73</td><td>0.197</td><td>algo seguro</td></tr>
+        <tr><td>0.88</td><td>0.106</td><td>bastante seguro</td></tr>
+        <tr><td>0.95</td><td>0.048</td><td>muy seguro</td></tr>
+        <tr><td>0.99</td><td>0.010</td><td>casi total seguridad</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>La tabla es simétrica: <code>y_pred = 0.12</code> da lo mismo que <code>0.88</code>, porque <code>0.12 × 0.88 = 0.88 × 0.12</code>.</p>
+
+  <div class="chart">
+    <svg viewBox="0 0 560 220" role="img" aria-label="Parábola de la derivada en función de y_pred: vale 0 en los extremos y 0.25 en y_pred igual a 0.5. Se marcan X[0] y X[1] antes y después de entrenar.">
+      <line class="axis" x1="40" y1="180" x2="520" y2="180"/>
+      <line class="axis" x1="40" y1="15" x2="40" y2="180"/>
+      <line class="guide" x1="40" y1="20" x2="520" y2="20"/>
+      <text class="lbl" x="4" y="24">0.25</text>
+      <text class="lbl" x="4" y="184">0</text>
+      <text class="lbl" x="36" y="200">0</text>
+      <text class="lbl" x="270" y="200">0.5</text>
+      <text class="lbl" x="514" y="200">1</text>
+      <text class="lbl" x="470" y="214">y_pred</text>
+      <polyline class="curve" points="40.0,180.0 52.0,164.4 64.0,149.6 76.0,135.6 88.0,122.4 100.0,110.0 112.0,98.4 124.0,87.6 136.0,77.6 148.0,68.4 160.0,60.0 172.0,52.4 184.0,45.6 196.0,39.6 208.0,34.4 220.0,30.0 232.0,26.4 244.0,23.6 256.0,21.6 268.0,20.4 280.0,20.0 292.0,20.4 304.0,21.6 316.0,23.6 328.0,26.4 340.0,30.0 352.0,34.4 364.0,39.6 376.0,45.6 388.0,52.4 400.0,60.0 412.0,68.4 424.0,77.6 436.0,87.6 448.0,98.4 460.0,110.0 472.0,122.4 484.0,135.6 496.0,149.6 508.0,164.4 520.0,180.0"/>
+      <circle class="antes" cx="306.4" cy="21.9" r="5"/>
+      <circle class="antes" cx="354.4" cy="35.4" r="5"/>
+      <text class="lbl" x="362" y="36">antes</text>
+      <circle class="despues" cx="138.4" cy="75.7" r="6"/>
+      <text class="lbl" x="150" y="92">X[1] después: 0.163</text>
+      <circle class="despues" cx="452.3" cy="102.5" r="6"/>
+      <text class="lbl" x="296" y="118">X[0] después: 0.121</text>
+    </svg>
+  </div>
+  <p class="caption">La derivada en función de <code>y_pred</code>. Gris: <code>X[0]</code> y <code>X[1]</code> en la época 0, cerca del máximo. Verde: los mismos puntos después de entrenar, ya más abajo.</p>
+
+  <h2>4. Con los números reales de tu script</h2>
+  <p>Valores de una corrida real con <code>seed(42)</code>, verificados comparando la fórmula con una derivada calculada numéricamente:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th></th><th><code>X[0]</code> (real: 1)</th><th><code>X[1]</code> (real: 0)</th></tr></thead>
+      <tbody>
+        <tr><td>Época 0</td><td>y_pred 0.655 → derivada <strong>0.226</strong></td><td>y_pred 0.555 → derivada <strong>0.247</strong></td></tr>
+        <tr><td>Después de 200 épocas</td><td>y_pred 0.859 → derivada <strong>0.121</strong></td><td>y_pred 0.205 → derivada <strong>0.163</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Al principio los dos puntos están cerca de 0.5 (la neurona duda), así que la derivada es casi máxima. A medida que la neurona se vuelve más segura, la derivada baja.</p>
+
+  <h2>5. Para qué se usa: frena o acelera el aprendizaje</h2>
+  <p>La derivada multiplica al error justo cuando se calcula el gradiente:</p>
+  <div class="file-ref">01_perceptron_simple.py · líneas 108–109</div>
+<pre><code>grad_w = X.T @ (error * derivada) / len(X)
+grad_b = np.mean(error * derivada)</code></pre>
+  <p>Lo que importa aquí es <code>error * derivada</code>: es <strong>cuánto empuja cada punto</strong> a los pesos. La derivada actúa como un regulador de volumen sobre el error:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Caso (real: 1)</th><th>y_pred</th><th>error</th><th>derivada</th><th>error × derivada</th></tr></thead>
+      <tbody>
+        <tr><td>Duda, cerca de la frontera</td><td>0.45</td><td>0.55</td><td>0.248</td><td><strong>0.136</strong> → empuja fuerte</td></tr>
+        <tr><td>Acierta con seguridad</td><td>0.97</td><td>0.03</td><td>0.029</td><td><strong>0.001</strong> → casi no empuja</td></tr>
+        <tr><td>Se equivoca con seguridad</td><td>0.02</td><td>0.98</td><td>0.020</td><td><strong>0.019</strong> → empuja poco ⚠</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Los dos primeros casos tienen sentido: los puntos dudosos son los que más corrigen la recta, y los que ya están bien casi no la tocan.</p>
+
+  <div class="callout warn">
+    <strong>El tercer caso es una debilidad conocida.</strong> Un punto muy mal clasificado tiene el error más grande (0.98), pero como la sigmoid está plana en ese extremo, la derivada lo achica y empuja menos que un punto que solo duda. A esto se le llama <em>saturación</em> de la sigmoid. En tu dataset no molesta porque los pesos arrancan chicos: en la época 0 todas las predicciones están entre 0.51 y 0.72, así que la derivada nunca baja de 0.20, pero en redes más grandes frena el aprendizaje. Más adelante en el curso se ve cómo se evita (otra función de error, u otras activaciones).
+  </div>
+
+  <div class="callout">
+    <strong>En resumen:</strong> <code>derivada</code> mide qué tan sensible es la neurona en cada punto. Vale 0.25 en la frontera y cae a casi 0 en los extremos. Multiplicada por el error, decide cuánto aporta cada punto a la corrección de los pesos en esa época. Relacionado: <a href="01_fundamento_epocas.html" style="color: var(--accent-redes);">¿Qué es una época?</a>, donde se ven los cuatro pasos del loop.
+  </div>
+
+  <footer>
+    Fundamento de la <a href="index.html">Lección 1.1 — Perceptrón Simple</a>.
+  </footer>
+
+</div>
+</body>
+</html>

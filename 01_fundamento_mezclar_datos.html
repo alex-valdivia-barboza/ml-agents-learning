@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 1.1 — ¿Por qué mezclar los datos?</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* Tiras de puntos: orden en que el modelo ve los ejemplos */
+  .strip-row { margin: 0 0 12px; }
+  .strip-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+  .strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+  .strip span {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+  }
+  .c0 { background: var(--accent-redes); }
+  .c1 { background: var(--accent-agentes); }
+  .legend {
+    display: flex;
+    gap: 16px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  .legend i {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="back" href="index.html">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 1.1 · FUNDAMENTO</span>
+      <span class="module-tag">Estadística</span>
+    </div>
+    <h1>¿Por qué mezclar los datos antes de entrenar?</h1>
+    <p class="subtitle">Qué hace <code>np.random.permutation</code> en el perceptrón, cuándo el orden de los datos importa y qué teoría estadística lo respalda.</p>
+  </header>
+
+  <h2>1. El código</h2>
+  <div class="file-ref">01_perceptron_simple.py · líneas 46–49</div>
+<pre><code><span class="cm"># Mezclamos el orden para que el entrenamiento no vea siempre
+# primero una clase y despues la otra</span>
+indices = np.random.permutation(len(X))
+return X[indices], y[indices]</code></pre>
+
+  <p><code>len(X)</code> cuenta las filas de <code>X</code>: 100. <code>np.random.permutation(100)</code> devuelve los números del 0 al 99 en orden aleatorio, sin repetir ni omitir ninguno. Después, <code>X[indices]</code> y <code>y[indices]</code> reordenan las filas siguiendo esa lista.</p>
+  <p>Se usa <strong>la misma</strong> lista de índices para <code>X</code> y para <code>y</code>. Así cada punto conserva su etiqueta: lo único que cambia es el orden.</p>
+
+  <div class="legend">
+    <span><i class="c0"></i>clase 0</span>
+    <span><i class="c1"></i>clase 1</span>
+  </div>
+  <div class="strip-row">
+    <div class="strip-label">Antes de mezclar (salida de <code>vstack</code>/<code>hstack</code>)</div>
+    <div class="strip" id="strip-ordenado"></div>
+  </div>
+  <div class="strip-row">
+    <div class="strip-label">Después de <code>X[indices]</code>, <code>y[indices]</code></div>
+    <div class="strip" id="strip-mezclado"></div>
+  </div>
+
+  <h2>2. En este script, mezclar no cambia el resultado</h2>
+  <div class="callout warn">
+    <strong>Importante:</strong> el comentario del código da a entender que el orden afecta el entrenamiento. En este script no lo afecta, y se puede comprobar.
+  </div>
+
+  <p>La función <code>entrenar_perceptron</code> no actualiza los pesos punto por punto. En cada época predice los 100 puntos juntos, promedia el gradiente y actualiza los pesos <strong>una sola vez</strong>:</p>
+  <div class="file-ref">01_perceptron_simple.py · líneas 103 y 108</div>
+<pre><code>y_pred = forward(X, w, b)                    <span class="cm"># predice los 100 puntos a la vez</span>
+grad_w = X.T @ (error * derivada) / len(X)   <span class="cm"># promedio sobre TODOS los ejemplos</span></code></pre>
+
+  <p>Esto se llama <strong>descenso de gradiente por lotes completos</strong> (<em>full-batch gradient descent</em>). Un promedio da lo mismo en cualquier orden (1+2+3 = 3+1+2), así que el orden de los puntos no influye.</p>
+
+  <p>Prueba: se entrenó el modelo dos veces con los mismos pesos iniciales, una con los datos ordenados y otra mezclados.</p>
+<pre><code>sin mezclar: w=[0.57263031 0.49618934]  b=-2.592445541510958
+mezclado:    w=[0.57263031 0.49618934]  b=-2.5924455415109584</code></pre>
+  <p>Los pesos salen iguales. La diferencia en el último decimal de <code>b</code> viene del redondeo de la computadora al sumar en otro orden, no del aprendizaje.</p>
+
+  <h2>3. Dónde sí importa el orden</h2>
+  <p>El orden importa cuando los pesos se actualizan con <strong>uno o unos pocos ejemplos por vez</strong>. Eso es lo habitual con datasets grandes, como MNIST en la lección 1.4.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Método</th><th>Ejemplos por actualización</th><th>¿Importa el orden?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Full-batch (este script)</td><td>Todos (100)</td><td>No</td></tr>
+        <tr><td>Mini-batch</td><td>Unos pocos (ej. 32)</td><td>Sí</td></tr>
+        <tr><td>SGD (estocástico)</td><td>1</td><td>Sí</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Con datos ordenados y SGD, el modelo vería 50 ejemplos seguidos de la clase 0 y se inclinaría hacia ella. Después vería 50 de la clase 1 y se iría hacia el otro lado. Con los datos mezclados, cada tramo del entrenamiento representa bien a las dos clases.</p>
+
+  <h2>4. La teoría estadística detrás</h2>
+  <p>Mezclar no es solo intuición. Hay tres ideas que lo justifican:</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <span class="num">01</span>
+      <h3>Supuesto i.i.d.</h3>
+      <p>La teoría asume que los ejemplos son <em>independientes e idénticamente distribuidos</em>: cada uno es una muestra al azar de la misma distribución. Con datos ordenados por clase, los ejemplos seguidos no son independientes, porque después de un 0 casi seguro viene otro 0.</p>
+    </div>
+    <div class="card">
+      <span class="num">02</span>
+      <h3>Estimador insesgado</h3>
+      <p>El gradiente de un solo ejemplo estima el gradiente del dataset completo. Esa estimación acierta en promedio solo si el ejemplo se eligió al azar. Con datos ordenados, durante 50 pasos seguidos está <strong>sesgada</strong> hacia una clase.</p>
+    </div>
+    <div class="card">
+      <span class="num">03</span>
+      <h3>Convergencia</h3>
+      <p>Las pruebas matemáticas de que SGD llega a una buena solución parten del muestreo aleatorio. Los estudios sobre <em>random reshuffling</em> (volver a mezclar en cada época) muestran que suele converger más rápido que elegir ejemplos al azar con reemplazo.</p>
+    </div>
+  </div>
+
+  <div class="callout key">
+    <strong>El perceptrón clásico.</strong> El perceptrón original de Rosenblatt sí actualiza punto por punto. Aun así, el <em>teorema de convergencia de Novikoff (1962)</em> garantiza que, si los datos son linealmente separables, encuentra una frontera en cualquier orden. Mezclar no hace falta para llegar, pero en la práctica suele hacerlo más rápido y más estable.
+  </div>
+
+  <h2>5. Conclusión</h2>
+  <p>En <code>01_perceptron_simple.py</code>, mezclar es un <strong>buen hábito</strong> que no cambia el resultado, porque el entrenamiento usa lotes completos. Conviene dejarlo igual: si más adelante el entrenamiento pasa a actualizar punto por punto o con mini-batches, el código ya está listo y ahí el orden sí importa.</p>
+
+  <footer>
+    Fundamento de la <a href="index.html">Lección 1.1 — Perceptrón Simple</a> · resultados verificados ejecutando el código con NumPy.
+  </footer>
+
+</div>
+
+<script>
+  // Dibuja las tiras: 50 de clase 0 seguidos de 50 de clase 1, y una versión mezclada.
+  (function () {
+    var n = 50;
+    var etiquetas = [];
+    for (var i = 0; i < n; i++) etiquetas.push(0);
+    for (var j = 0; j < n; j++) etiquetas.push(1);
+
+    // Mezcla con semilla fija para que la tira no cambie en cada recarga
+    var semilla = 7;
+    function azar() {
+      semilla = (semilla * 16807) % 2147483647;
+      return semilla / 2147483647;
+    }
+    var mezcladas = etiquetas.slice();
+    for (var k = mezcladas.length - 1; k > 0; k--) {
+      var r = Math.floor(azar() * (k + 1));
+      var t = mezcladas[k]; mezcladas[k] = mezcladas[r]; mezcladas[r] = t;
+    }
+
+    function dibujar(id, lista) {
+      var el = document.getElementById(id);
+      lista.forEach(function (c) {
+        var s = document.createElement('span');
+        s.className = c === 0 ? 'c0' : 'c1';
+        el.appendChild(s);
+      });
+    }
+    dibujar('strip-ordenado', etiquetas);
+    dibujar('strip-mezclado', mezcladas);
+  })();
+</script>
+</body>
+</html>

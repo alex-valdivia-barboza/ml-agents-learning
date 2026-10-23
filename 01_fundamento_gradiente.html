@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 1.1 — El gradiente</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* Pipeline del forward pass: entrada → z → y_pred */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .flow .step {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .flow .step .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .flow .step p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+  .flow .arrow {
+    align-self: center;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 0 8px;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+  .chart .curve { fill: none; stroke: var(--accent-redes); stroke-width: 3; }
+  .chart .lbl { fill: var(--text-dim); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .pt1 { fill: var(--accent-agentes); }
+  .chart .pt0 { fill: var(--warn); }
+  .caption { font-size: 0.82rem; color: var(--text-dim); margin: 0 0 16px; }
+
+  .shape-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85rem;
+  }
+  .shape-row .box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+  }
+  .shape-row .box small { display: block; color: var(--text-dim); font-size: 0.72rem; }
+  .shape-row .op { color: var(--text-dim); }
+  .matrices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+  .matrices pre { margin: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="back" href="index.html">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 1.1 · FUNDAMENTO</span>
+      <span class="module-tag">Entrenamiento</span>
+    </div>
+    <h1>El gradiente: <code>X.T @ (error * derivada)</code></h1>
+    <p class="subtitle">Qué calcula la línea 108 de <code>01_perceptron_simple.py</code>, qué es la transpuesta <code>.T</code> y cómo 100 puntos se ponen de acuerdo en hacia dónde mover los pesos.</p>
+  </header>
+
+  <h2>1. Las líneas</h2>
+  <div class="file-ref">01_perceptron_simple.py · líneas 107–109</div>
+<pre><code><span class="cm"># Gradientes: promedio sobre todos los ejemplos del dataset</span>
+grad_w = X.T @ (error * derivada) / len(X)
+grad_b = np.mean(error * derivada)</code></pre>
+  <p><code>error * derivada</code> ya lo viste en <a href="01_fundamento_derivada_sigmoid.html" style="color: var(--accent-redes);">la derivada de sigmoid</a>: es <strong>cuánto empuja cada punto</strong>, un número por punto. Para no repetirlo, en esta página lo llamamos <code>s</code>:</p>
+<pre><code>s = error * derivada        <span class="cm"># shape (100,): el “empuje” de cada punto</span></code></pre>
+  <p>La pregunta de la línea 108 es: <strong>con esos 100 empujes, ¿hacia dónde muevo <code>w[0]</code> y <code>w[1]</code>?</strong></p>
+
+  <h2>2. Seguir los shapes</h2>
+  <div class="shape-row">
+    <div class="box">X.T<small>(2, 100)</small></div>
+    <span class="op">@</span>
+    <div class="box">s<small>(100,)</small></div>
+    <span class="op">→</span>
+    <div class="box">(2,)<small>un número por peso</small></div>
+    <span class="op">÷ 100 →</span>
+    <div class="box">grad_w<small>(2,) promedio</small></div>
+  </div>
+  <p>El resultado tiene shape <code>(2,)</code>, igual que <code>w</code>: un valor para <code>w[0]</code> y otro para <code>w[1]</code>. Por eso en la línea 112 se pueden sumar directamente. <code>/ len(X)</code> divide por 100 para que sea un <strong>promedio</strong> y no una suma.</p>
+
+  <h2>3. Qué es <code>.T</code> (la transpuesta)</h2>
+  <p><code>.T</code> da vuelta la matriz: <strong>las filas pasan a ser columnas</strong>. Con las primeras filas reales de tu <code>X</code>:</p>
+  <div class="matrices">
+<pre><code><span class="cm"># X: (100, 2), una fila por punto</span>
+      x1      x2
+[[ 4.284,  3.956],   <span class="cm">← X[0]</span>
+ [ 0.996,  1.314],   <span class="cm">← X[1]</span>
+ ...                 <span class="cm">(100 filas)</span></code></pre>
+<pre><code><span class="cm"># X.T: (2, 100), una fila por coordenada</span>
+[[ 4.284,  0.996, ...],   <span class="cm">← todos los x1</span>
+ [ 3.956,  1.314, ...]]   <span class="cm">← todos los x2</span></code></pre>
+  </div>
+  <p>No cambia ningún número, solo la orientación. Ahora la fila 0 de <code>X.T</code> tiene <strong>los 100 valores de x1</strong> y la fila 1 tiene <strong>los 100 valores de x2</strong>.</p>
+
+  <h2>4. Por qué hace falta la transpuesta</h2>
+  <p>Sin <code>.T</code>, NumPy no puede hacer la cuenta. Esto es lo que pasa si corres <code>X @ s</code>:</p>
+<pre><code>ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0,
+with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100 is different from 2)</code></pre>
+  <p>El error dice que la <strong>dimensión interna</strong> no coincide. En <code>@</code>, el último número del shape de la izquierda tiene que ser igual al primero de la derecha:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Operación</th><th>Shapes</th><th>¿Coinciden?</th></tr></thead>
+      <tbody>
+        <tr><td><code>X @ w</code> (forward, línea 74)</td><td>(100, <strong>2</strong>) @ (<strong>2</strong>,)</td><td>✓ → (100,): un z por punto</td></tr>
+        <tr><td><code>X @ s</code></td><td>(100, <strong>2</strong>) @ (<strong>100</strong>,)</td><td>✗ error</td></tr>
+        <tr><td><code>X.T @ s</code> (línea 108)</td><td>(2, <strong>100</strong>) @ (<strong>100</strong>,)</td><td>✓ → (2,): un valor por peso</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Fíjate en la simetría: en el forward pass se combinan <strong>2 pesos</strong> para obtener <strong>100 predicciones</strong>. Aquí se hace el camino inverso: se combinan <strong>100 empujes</strong> para obtener <strong>2 correcciones</strong>. Por eso a esta parte se le llama <em>backward pass</em>.</p>
+
+  <h2>5. La misma cuenta, escrita con un <code>for</code></h2>
+  <p>Cada fila de <code>X.T</code> se multiplica elemento a elemento con <code>s</code> y se suma. Es equivalente a este loop:</p>
+<pre><code>suma = np.zeros(2)
+for i in range(100):
+    suma += X[i] * s[i]      <span class="cm"># cada punto aporta su coordenada × su empuje</span>
+grad_w = suma / 100</code></pre>
+  <p>Lo verifiqué corriendo ambas versiones con los datos del script: dan exactamente el mismo resultado. <code>X.T @ s</code> es lo mismo, pero hecho por NumPy de una sola vez y mucho más rápido.</p>
+  <p>O sea, para cada peso:</p>
+<pre><code>grad_w[0] = promedio de (x1 de cada punto × su empuje)
+grad_w[1] = promedio de (x2 de cada punto × su empuje)</code></pre>
+
+  <h2>6. Con los números reales (época 0)</h2>
+  <p>En la primera época, con los pesos aleatorios, dos puntos aportan esto:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Punto</th><th>y real / y_pred</th><th>s (empuje)</th><th>X[i] × s[i]</th></tr></thead>
+      <tbody>
+        <tr><td><code>X[0] = [4.284, 3.956]</code></td><td>1 / 0.655</td><td><strong>+0.078</strong></td><td><code>[+0.335, +0.309]</code></td></tr>
+        <tr><td><code>X[1] = [0.996, 1.314]</code></td><td>0 / 0.555</td><td><strong>−0.137</strong></td><td><code>[−0.137, −0.180]</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-grid">
+    <div class="card">
+      <span class="num">EMPUJE POSITIVO</span>
+      <h3>X[0] pide “más”</h3>
+      <p>Es clase 1 y la neurona dijo 0.655: le falta. Su aporte mueve los pesos para que su <code>z</code> suba.</p>
+    </div>
+    <div class="card">
+      <span class="num">EMPUJE NEGATIVO</span>
+      <h3>X[1] pide “menos”</h3>
+      <p>Es clase 0 y la neurona dijo 0.555: le sobra. Su aporte mueve los pesos para que su <code>z</code> baje.</p>
+    </div>
+  </div>
+  <p>Los 100 puntos “votan” así, cada uno con su dirección y su fuerza. En la época 0 hay 50 empujes positivos y 50 negativos. El promedio de todos los votos da:</p>
+<pre><code>grad_w = [0.0524, 0.0510]
+grad_b = -0.0307</code></pre>
+
+  <h3>¿Y <code>grad_b</code>?</h3>
+  <p>El sesgo <code>b</code> se suma igual para todos los puntos, como si fuera un peso cuya entrada vale siempre 1. Entonces su gradiente es el promedio de <code>1 × s</code>, que es simplemente <code>np.mean(s)</code> (línea 109). No hace falta ningún <code>@</code>.</p>
+
+  <h2>7. Qué se hace con el gradiente</h2>
+  <div class="file-ref">01_perceptron_simple.py · líneas 112–113</div>
+<pre><code>w += tasa_aprendizaje * grad_w
+b += tasa_aprendizaje * grad_b</code></pre>
+  <p>Con <code>tasa_aprendizaje = 0.5</code>, después de la época 0:</p>
+<pre><code>w: [-0.0237, 0.1872]  →  [0.0025, 0.2127]
+b:  0.0               →  -0.0154</code></pre>
+  <p>Un paso chico en la dirección que acordaron los 100 puntos. Cuánto de largo es ese paso lo decide la <a href="01_fundamento_tasa_aprendizaje.html" style="color: var(--accent-redes);">tasa de aprendizaje</a>.</p>
+
+  <div class="callout warn">
+    <strong>Sobre el nombre “gradiente”.</strong> En sentido matemático estricto, el gradiente del error apunta hacia donde el error <em>sube</em>. Como el script define <code>error = y - y_pred</code> (y no <code>y_pred - y</code>), el signo ya viene invertido: <code>grad_w</code> apunta hacia donde el error <em>baja</em>. Por eso las líneas 112–113 <strong>suman</strong> (<code>+=</code>) en vez de restar. Es lo mismo que el “descenso de gradiente” clásico, escrito al revés.
+  </div>
+
+  <div class="callout">
+    <strong>En resumen:</strong> <code>.T</code> da vuelta <code>X</code> para que queden todos los x1 en una fila y todos los x2 en otra. <code>X.T @ s</code> multiplica cada coordenada por el empuje de su punto y suma. Dividido por 100, es el promedio de los votos de todos los puntos: la dirección en la que conviene mover cada peso.
+  </div>
+
+  <footer>
+    Fundamento de la <a href="index.html">Lección 1.1 — Perceptrón Simple</a>.
+  </footer>
+
+</div>
+</body>
+</html>

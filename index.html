@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redes Neuronales + Agentes — Plan de Aprendizaje</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --text-faint: #5b6padding;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --text-faint: #4a5170;
+    --done: #5fd4a8;
+    --pending: #8b93ab;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --text-faint: #b3b9cc;
+      --done: #1f9d6f;
+      --pending: #9aa2b8;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 980px; margin: 0 auto; }
+
+  header {
+    padding: 48px 0 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 1rem;
+    margin: 0 0 18px;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    text-decoration: none;
+  }
+  .pill:hover { border-color: var(--accent-docs); color: var(--text); }
+
+  .progress-bar-outer {
+    margin-top: 20px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-redes), var(--accent-agentes));
+    border-radius: 999px;
+  }
+  .progress-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  section.module {
+    margin-bottom: 44px;
+  }
+
+  .module-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .module-header h2 {
+    font-size: 1.3rem;
+    margin: 0;
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .tag-redes { background: var(--accent-redes-bg); color: var(--accent-redes); }
+  .tag-agentes { background: var(--accent-agentes-bg); color: var(--accent-agentes); }
+
+  .module-desc {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    margin: 0 0 20px;
+  }
+
+  .lesson-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  .lesson-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: background 0.15s, border-color 0.15s, transform 0.15s;
+  }
+  .lesson-card.done { border-color: color-mix(in srgb, var(--done) 40%, var(--border)); }
+  .lesson-card.has-link:hover {
+    background: var(--bg-card-hover);
+    transform: translateY(-1px);
+  }
+
+  .lesson-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .status-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .status-done { background: rgba(95, 212, 168, 0.15); color: var(--done); }
+  .status-pending { background: rgba(139, 147, 171, 0.15); color: var(--pending); }
+
+  .lesson-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .lesson-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  .lesson-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+    font-size: 0.8rem;
+  }
+
+  .lesson-duration {
+    color: var(--text-dim);
+  }
+
+  .lesson-link {
+    color: var(--accent-redes);
+    text-decoration: none;
+    font-weight: 600;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.78rem;
+  }
+  section.agentes .lesson-link { color: var(--accent-agentes); }
+  .lesson-link:hover { text-decoration: underline; }
+
+  .lesson-link.pending-link {
+    color: var(--text-dim);
+  }
+  .lesson-link.pending-link:hover { color: var(--text); }
+
+  .extra-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin-top: 2px;
+  }
+  .extra-links a {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--text-dim);
+  }
+  .extra-links a:hover { color: var(--text); }
+
+  section.docs {
+    margin-bottom: 40px;
+  }
+
+  .docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+
+  .doc-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .doc-card:hover { background: var(--bg-card-hover); transform: translateY(-1px); }
+
+  .doc-icon {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+  }
+
+  .doc-title { font-weight: 600; font-size: 0.95rem; }
+  .doc-desc { font-size: 0.82rem; color: var(--text-dim); }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  h2 small {
+    font-weight: 400;
+    color: var(--text-dim);
+    font-size: 0.7em;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Redes Neuronales + Agentes</h1>
+    <p class="subtitle">Plan de aprendizaje práctico — NumPy puro para redes, Python puro para agentes. 4-6 semanas, ~2h diarias por módulo.</p>
+    <div class="meta-row">
+      <a class="pill" href="00_INDEX_MASTER.md">📑 Índice maestro</a>
+      <a class="pill" href="TEORIA_MINIMA.md">∑ Teoría mínima</a>
+      <a class="pill" href="QUICK_START.md">▶ Quick start</a>
+      <a class="pill" href="PROGRESO.md">☑ Progreso</a>
+      <a class="pill" href="data/">🗂 data/</a>
+    </div>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" style="width: 16.6%;"></div>
+    </div>
+    <p class="progress-label">2 de 12 lecciones completadas · los scripts abren directo en VS Code (requiere tenerlo instalado)</p>
+  </header>
+
+  <section class="module redes">
+    <div class="module-header">
+      <h2>Módulo 1 — Redes Neuronales</h2>
+      <span class="module-tag tag-redes">NumPy</span>
+    </div>
+    <p class="module-desc">De la neurona individual al caso real: perceptrón → capas ocultas → backpropagation completa → MNIST → activaciones → regularización.</p>
+
+    <div class="lesson-grid">
+
+      <div class="lesson-card done has-link">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 1.1</span>
+          <span class="status-badge status-done">Completa</span>
+        </div>
+        <h3 class="lesson-title">Perceptrón Simple</h3>
+        <p class="lesson-desc">Neurona como unidad básica. Forward pass, regla del perceptrón, datos 2D linealmente separables, frontera de decisión.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/01_perceptron_simple.py:1">01_perceptron_simple.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="01_perceptron_simple.png">Ver gráfico generado (.png)</a>
+          <a href="01_fundamento_mezclar_datos.html">Fundamento: ¿por qué mezclar los datos?</a>
+          <a href="01_fundamento_epocas.html">Fundamento: ¿qué es una época?</a>
+          <a href="01_fundamento_funcion_entrenamiento.html">Fundamento: la función de entrenamiento</a>
+          <a href="01_fundamento_forward_pass.html">Fundamento: ¿qué es el forward pass?</a>
+          <a href="01_fundamento_objetivo_neurona.html">Fundamento: ¿cuál es el objetivo de la neurona?</a>
+          <a href="01_fundamento_derivada_sigmoid.html">Fundamento: la derivada de sigmoid</a>
+          <a href="01_fundamento_gradiente.html">Fundamento: el gradiente (X.T @ …)</a>
+          <a href="01_fundamento_tasa_aprendizaje.html">Fundamento: la tasa de aprendizaje</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 1.2</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Red de 2 Capas</h3>
+        <p class="lesson-desc">Capa oculta, activaciones Sigmoid/ReLU, entrenamiento en datos no-lineales (XOR, circles).</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/03_neural_network_2layer.py:1">03_neural_network_2layer.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 1.3</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Backpropagation Completa</h3>
+        <p class="lesson-desc">Derivadas y regla de la cadena. Forward y backward pass detallados, gradientes por peso.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/04_backpropagation_detailed.py:1">04_backpropagation_detailed.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 1.4</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Caso Real — MNIST</h3>
+        <p class="lesson-desc">Dataset de 60k dígitos. Normalización, red multicapa, accuracy vs. épocas.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/05_mnist_classifier.py:1">05_mnist_classifier.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 1.5</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Funciones de Activación</h3>
+        <p class="lesson-desc">Step, Sigmoid, ReLU, Tanh — gráficos, derivadas, saturación y gradientes que desaparecen.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">1h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/06_activation_functions.py:1">06_activation_functions.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 1.6</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Regularización</h3>
+        <p class="lesson-desc">Overfitting, L1, L2 (Ridge), Dropout. Curvas de train vs. validation loss.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">1.5h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/07_regularization.py:1">07_regularization.py</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="module agentes">
+    <div class="module-header">
+      <h2>Módulo 2 — Agentes Fundamentales</h2>
+      <span class="module-tag tag-agentes">Python puro</span>
+    </div>
+    <p class="module-desc">Del ciclo básico percibir-decidir-actuar hasta agentes con LLM: búsqueda, planificación y aprendizaje por refuerzo.</p>
+
+    <div class="lesson-grid">
+
+      <div class="lesson-card done has-link">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.1</span>
+          <span class="status-badge status-done">Completa</span>
+        </div>
+        <h3 class="lesson-title">Agente Reactivo vs. Deliberativo</h3>
+        <p class="lesson-desc">Cuadrícula 3x3 con celdas sucias. Ciclo percibir-decidir-actuar, comparación de eficiencia con y sin memoria.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/02_agent_hello_world.py:1">02_agent_hello_world.py →</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.2</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Búsqueda BFS</h3>
+        <p class="lesson-desc">Espacio de estados, cola FIFO, exploración por capas. Garantiza solución óptima.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/08_agent_search_bfs.py:1">08_agent_search_bfs.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.3</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Búsqueda A*</h3>
+        <p class="lesson-desc">Heurísticas, f(s) = g(s) + h(s). Comparación de nodos explorados vs. BFS.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/09_agent_search_astar.py:1">09_agent_search_astar.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.4</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Planificación</h3>
+        <p class="lesson-desc">Precondiciones y efectos, forward/backward chaining, razonamiento simbólico tipo STRIPS.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/10_agent_planning.py:1">10_agent_planning.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.5</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Q-Learning Básico</h3>
+        <p class="lesson-desc">Tabla Q, recompensas, exploración ε-greedy vs. explotación, convergencia.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/11_agent_learning.py:1">11_agent_learning.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.6</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Agentes con LLM (Claude API)</h3>
+        <p class="lesson-desc">Integración con la API de Claude, prompt engineering, agente tradicional vs. basado en LLM.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/12_agent_with_llm.py:1">12_agent_with_llm.py</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="docs">
+    <div class="module-header">
+      <h2>Documentos de referencia</h2>
+      <span class="module-tag" style="background: var(--accent-docs-bg); color: var(--accent-docs);">Markdown</span>
+    </div>
+    <div class="docs-grid">
+      <a class="doc-card" href="00_INDEX_MASTER.md">
+        <span class="doc-icon">MD</span>
+        <span class="doc-title">00_INDEX_MASTER.md</span>
+        <span class="doc-desc">Hoja de ruta completa, tabla de lecciones, cronograma y preguntas frecuentes.</span>
+      </a>
+      <a class="doc-card" href="TEORIA_MINIMA.md">
+        <span class="doc-icon">MD</span>
+        <span class="doc-title">TEORIA_MINIMA.md</span>
+        <span class="doc-desc">Matemática esencial: redes (neurona, gradientes, backprop) y agentes (búsqueda, planificación).</span>
+      </a>
+      <a class="doc-card" href="QUICK_START.md">
+        <span class="doc-icon">MD</span>
+        <span class="doc-title">QUICK_START.md</span>
+        <span class="doc-desc">Instalación, primeros pasos y solución de problemas comunes.</span>
+      </a>
+      <a class="doc-card" href="PROGRESO.md">
+        <span class="doc-icon">MD</span>
+        <span class="doc-title">PROGRESO.md</span>
+        <span class="doc-desc">Checklist por lección, autoevaluación y espacio de notas.</span>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    Página local generada para navegar el proyecto — no publicada, solo abre <code>index.html</code> en el navegador desde esta carpeta. Actualizar los <code>status-badge</code> a <code>status-done</code> a medida que se completan lecciones.
+  </footer>
+
+</div>
+</body>
+</html>

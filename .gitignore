@@ -1,0 +1,19 @@
+# Secretos (API key de la lección 2.6)
+.env
+.env.*
+
+# Datasets pesados (MNIST, etc.)
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editor / extensiones
+.codeviz/
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini

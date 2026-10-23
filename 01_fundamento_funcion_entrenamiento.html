@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 1.1 — La función de entrenamiento</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* Pipeline del forward pass: entrada → z → y_pred */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .flow .step {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .flow .step .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .flow .step p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+  .flow .arrow {
+    align-self: center;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 0 8px;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+  .chart .curve { fill: none; stroke: var(--accent-redes); stroke-width: 3; }
+  .chart .lbl { fill: var(--text-dim); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .pt1 { fill: var(--accent-agentes); }
+  .chart .pt0 { fill: var(--warn); }
+  .caption { font-size: 0.82rem; color: var(--text-dim); margin: 0 0 16px; }
+
+  /* Tabla de seguimiento de una época */
+  td.num-cell, th.num-cell { font-family: "SF Mono", Consolas, monospace; font-size: 0.82rem; }
+  .step-link { color: var(--accent-redes); font-size: 0.8rem; }
+  .chart .curve { stroke: var(--accent-agentes); }
+  .chart .mark { fill: var(--accent-redes); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="back" href="index.html">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 1.1 · FUNDAMENTO</span>
+      <span class="module-tag">Entrenamiento</span>
+    </div>
+    <h1>La función de entrenamiento</h1>
+    <p class="subtitle">Qué hace <code>entrenar_perceptron</code> de principio a fin: qué recibe, cómo prepara los pesos, qué pasa en cada época y qué devuelve. Todo con los números reales de tu script (<code>seed(42)</code>).</p>
+  </header>
+
+  <h2>1. Qué recibe y qué devuelve</h2>
+  <div class="file-ref">01_perceptron_simple.py · líneas 95 y 123</div>
+<pre><code>def entrenar_perceptron(X, y, tasa_aprendizaje=0.5, epocas=200):
+    ...
+    return w, b, historial_error</code></pre>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th></th><th>Nombre</th><th>Forma / valor</th><th>Qué es</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Entra</td><td><code>X</code></td><td class="num-cell">(100, 2)</td><td>Las coordenadas <code>x1, x2</code> de los 100 puntos.</td></tr>
+        <tr><td>Entra</td><td><code>y</code></td><td class="num-cell">(100,)</td><td>La etiqueta correcta de cada punto: 0 o 1.</td></tr>
+        <tr><td>Entra</td><td><code>tasa_aprendizaje</code></td><td class="num-cell">0.5</td><td>Qué tan grande es cada paso de corrección.</td></tr>
+        <tr><td>Entra</td><td><code>epocas</code></td><td class="num-cell">200</td><td>Cuántas pasadas completas se hacen por los datos.</td></tr>
+        <tr><td>Sale</td><td><code>w</code></td><td class="num-cell">(2,)</td><td>Los pesos aprendidos, uno por feature.</td></tr>
+        <tr><td>Sale</td><td><code>b</code></td><td class="num-cell">escalar</td><td>El sesgo aprendido.</td></tr>
+        <tr><td>Sale</td><td><code>historial_error</code></td><td class="num-cell">lista de 200</td><td>El error de cada época, para graficar la curva de aprendizaje.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><code>tasa_aprendizaje</code> y <code>epocas</code> tienen valores por defecto. Por eso en la línea 127 se llama solo con <code>entrenar_perceptron(X, y)</code>.</p>
+
+  <h2>2. Preparación: antes del loop</h2>
+  <div class="file-ref">01_perceptron_simple.py · líneas 96–100</div>
+<pre><code>n_features = X.shape[1]                   <span class="cm"># X.shape es (100, 2) → [1] toma el 2</span>
+w = np.random.randn(n_features) * 0.1     <span class="cm"># 2 pesos aleatorios chicos</span>
+b = 0.0
+historial_error = []                      <span class="cm"># lista vacía, se llena en cada época</span></code></pre>
+  <div class="card-grid">
+    <div class="card">
+      <span class="num">LÍNEA 96</span>
+      <h3>¿Cuántos pesos?</h3>
+      <p>Uno por columna de <code>X</code>. <code>X.shape[1]</code> vale 2 porque cada punto tiene <code>x1</code> y <code>x2</code>. Así la función sirve para cualquier cantidad de features.</p>
+    </div>
+    <div class="card">
+      <span class="num">LÍNEA 97</span>
+      <h3>Pesos iniciales</h3>
+      <p>Con tu semilla quedan en <code>w = [-0.0237, 0.1872]</code>. Son valores chicos para que la neurona arranque sin saturarse. El <code>* 0.1</code> achica la campana de <code>randn</code>.</p>
+    </div>
+    <div class="card">
+      <span class="num">LÍNEA 98</span>
+      <h3>Sesgo en cero</h3>
+      <p>El sesgo puede arrancar en 0 sin problema. Solo mueve la frontera y el gradiente se encarga de ajustarlo.</p>
+    </div>
+  </div>
+  <p>En este punto la neurona todavía no sabe nada: sus pesos son azar. Todo lo que aprende ocurre en el loop.</p>
+
+  <h2>3. El loop: una época por vuelta</h2>
+  <div class="file-ref">01_perceptron_simple.py · líneas 102–113</div>
+<pre><code>for epoca in range(epocas):
+    y_pred = forward(X, w, b)                        <span class="cm"># 1. predecir</span>
+    error = y - y_pred                               <span class="cm"># 2. medir el error</span>
+    derivada = y_pred * (1 - y_pred)                 <span class="cm"># 3. sensibilidad</span>
+
+    grad_w = X.T @ (error * derivada) / len(X)       <span class="cm"># 4. gradiente</span>
+    grad_b = np.mean(error * derivada)
+
+    w += tasa_aprendizaje * grad_w                   <span class="cm"># 5. actualizar</span>
+    b += tasa_aprendizaje * grad_b</code></pre>
+
+  <p>Cada paso ya tiene su propio fundamento. Esta es la cadena completa:</p>
+  <div class="flow">
+    <div class="step">
+      <span class="num">LÍNEA 103</span>
+      <h3>Predecir</h3>
+      <p>Probabilidad de clase 1 para los 100 puntos. <a class="step-link" href="01_fundamento_forward_pass.html">Forward pass →</a></p>
+    </div>
+    <span class="arrow">→</span>
+    <div class="step">
+      <span class="num">LÍNEA 104</span>
+      <h3>Error</h3>
+      <p><code>y - y_pred</code>: positivo si predijo de menos, negativo si predijo de más.</p>
+    </div>
+    <span class="arrow">→</span>
+    <div class="step">
+      <span class="num">LÍNEA 105</span>
+      <h3>Derivada</h3>
+      <p>Qué tan sensible es cada punto. <a class="step-link" href="01_fundamento_derivada_sigmoid.html">Derivada →</a></p>
+    </div>
+    <span class="arrow">→</span>
+    <div class="step">
+      <span class="num">LÍNEAS 108–109</span>
+      <h3>Gradiente</h3>
+      <p>Promedio de los empujes de los 100 puntos. <a class="step-link" href="01_fundamento_gradiente.html">Gradiente →</a></p>
+    </div>
+    <span class="arrow">→</span>
+    <div class="step">
+      <span class="num">LÍNEAS 112–113</span>
+      <h3>Actualizar</h3>
+      <p>Un paso del tamaño de la tasa. <a class="step-link" href="01_fundamento_tasa_aprendizaje.html">Tasa →</a></p>
+    </div>
+  </div>
+  <p>Los <code>w</code> y <code>b</code> nuevos se usan en la vuelta siguiente. Así cada época parte de lo que dejó la anterior. Ver <a href="01_fundamento_epocas.html" style="color: var(--accent-redes);">¿Qué es una época?</a></p>
+
+  <h2>4. La época 0 con números reales</h2>
+  <p>Así se ve la primera vuelta del loop con tus datos:</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Paso</th><th class="num-cell">Valor</th><th>Qué significa</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Pesos al entrar</td><td class="num-cell">w = [-0.0237, 0.1872]<br>b = 0.0</td><td>Los valores al azar de la línea 97.</td></tr>
+        <tr><td><code>y_pred</code></td><td class="num-cell">entre 0.505 y 0.724</td><td>Los 100 puntos dan ≥ 0.5, así que todos se clasifican como clase 1.</td></tr>
+        <tr><td>Accuracy</td><td class="num-cell">50 %</td><td>Acierta solo los 50 puntos de clase 1. Es como adivinar siempre la misma respuesta.</td></tr>
+        <tr><td>Error cuadrático medio</td><td class="num-cell">0.2145</td><td>Promedio de <code>error ** 2</code>.</td></tr>
+        <tr><td><code>grad_w</code></td><td class="num-cell">[0.0524, 0.0510]</td><td>Los dos pesos deben subir.</td></tr>
+        <tr><td><code>grad_b</code></td><td class="num-cell">-0.0307</td><td>El sesgo debe bajar. Hay que dejar de decir "clase 1" en todas partes.</td></tr>
+        <tr><td>Pesos al salir</td><td class="num-cell">w = [0.0025, 0.2127]<br>b = -0.0154</td><td><code>w + 0.5 * grad_w</code> y <code>b + 0.5 * grad_b</code>. Estos entran a la época 1.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>El cambio es chico: <code>w[0]</code> subió 0.026. Por eso hacen falta muchas épocas. En la época 1 el error ya baja a 0.2096, y en la época 2 a 0.2072.</p>
+
+  <h2>5. Registro y reporte</h2>
+  <div class="file-ref">01_perceptron_simple.py · líneas 115–121</div>
+<pre><code>error_cuadratico_medio = np.mean(error ** 2)
+historial_error.append(error_cuadratico_medio)     <span class="cm"># se guarda en todas las épocas</span>
+
+if epoca % 40 == 0 or epoca == epocas - 1:         <span class="cm"># se imprime solo en algunas</span>
+    predicciones_correctas = np.sum((y_pred >= 0.5).astype(int) == y)
+    accuracy = predicciones_correctas / len(y)
+    print(...)</code></pre>
+  <p>Estas líneas <strong>no cambian los pesos</strong>. Solo miden y anotan. Hay dos detalles:</p>
+  <ul>
+    <li><code>historial_error</code> recibe un valor por época, así que al final tiene 200. Es lo que grafica <code>ax2.plot(historial)</code> en la línea 165.</li>
+    <li>El error y el accuracy se calculan con el <code>y_pred</code> de la línea 103, o sea <strong>antes</strong> de la actualización de esa época. Lo impreso en "Epoca 0" es el estado de los pesos aleatorios.</li>
+  </ul>
+
+  <div class="chart">
+    <svg viewBox="0 0 600 220" role="img" aria-label="Curva de aprendizaje: error cuadrático medio por época">
+      <line class="axis" x1="50" y1="190" x2="580" y2="190"/>
+      <line class="axis" x1="50" y1="20" x2="50" y2="190"/>
+      <line class="guide" x1="50" y1="54" x2="580" y2="54"/>
+      <line class="guide" x1="50" y1="122" x2="580" y2="122"/>
+      <text class="lbl" x="44" y="58" text-anchor="end">0.20</text>
+      <text class="lbl" x="44" y="126" text-anchor="end">0.10</text>
+      <text class="lbl" x="44" y="194" text-anchor="end">0</text>
+      <text class="lbl" x="50" y="208" text-anchor="middle">0</text>
+      <text class="lbl" x="315" y="208" text-anchor="middle">época</text>
+      <text class="lbl" x="580" y="208" text-anchor="middle">199</text>
+      <polyline class="curve" points="50.0,44.2 52.7,47.5 55.3,49.1 58.0,50.4 60.7,51.7 63.3,53.0 66.0,54.3 68.6,55.6 71.3,56.8 74.0,58.1 76.6,59.3 79.3,60.6 82.0,61.8 84.6,63.0 87.3,64.2 89.9,65.3 92.6,66.5 95.3,67.7 97.9,68.8 100.6,69.9 103.3,71.1 105.9,72.2 108.6,73.3 111.3,74.4 113.9,75.4 116.6,76.5 119.2,77.5 121.9,78.6 124.6,79.6 127.2,80.6 129.9,81.6 132.6,82.6 135.2,83.6 137.9,84.6 140.6,85.5 143.2,86.5 145.9,87.4 148.5,88.3 151.2,89.2 153.9,90.1 156.5,91.0 159.2,91.9 161.9,92.8 164.5,93.6 167.2,94.5 169.8,95.3 172.5,96.1 175.2,96.9 177.8,97.7 180.5,98.5 183.2,99.3 185.8,100.1 188.5,100.9 191.2,101.6 193.8,102.4 196.5,103.1 199.1,103.8 201.8,104.5 204.5,105.3 207.1,105.9 209.8,106.6 212.5,107.3 215.1,108.0 217.8,108.7 220.5,109.3 223.1,110.0 225.8,110.6 228.4,111.2 231.1,111.8 233.8,112.5 236.4,113.1 239.1,113.7 241.8,114.3 244.4,114.8 247.1,115.4 249.7,116.0 252.4,116.5 255.1,117.1 257.7,117.7 260.4,118.2 263.1,118.7 265.7,119.3 268.4,119.8 271.1,120.3 273.7,120.8 276.4,121.3 279.0,121.8 281.7,122.3 284.4,122.8 287.0,123.2 289.7,123.7 292.4,124.2 295.0,124.6 297.7,125.1 300.4,125.5 303.0,126.0 305.7,126.4 308.3,126.9 311.0,127.3 313.7,127.7 316.3,128.1 319.0,128.5 321.7,129.0 324.3,129.4 327.0,129.8 329.6,130.2 332.3,130.5 335.0,130.9 337.6,131.3 340.3,131.7 343.0,132.1 345.6,132.4 348.3,132.8 351.0,133.1 353.6,133.5 356.3,133.8 358.9,134.2 361.6,134.5 364.3,134.9 366.9,135.2 369.6,135.5 372.3,135.9 374.9,136.2 377.6,136.5 380.3,136.8 382.9,137.1 385.6,137.5 388.2,137.8 390.9,138.1 393.6,138.4 396.2,138.7 398.9,139.0 401.6,139.2 404.2,139.5 406.9,139.8 409.5,140.1 412.2,140.4 414.9,140.7 417.5,140.9 420.2,141.2 422.9,141.5 425.5,141.7 428.2,142.0 430.9,142.2 433.5,142.5 436.2,142.8 438.8,143.0 441.5,143.3 444.2,143.5 446.8,143.7 449.5,144.0 452.2,144.2 454.8,144.5 457.5,144.7 460.2,144.9 462.8,145.2 465.5,145.4 468.1,145.6 470.8,145.8 473.5,146.0 476.1,146.3 478.8,146.5 481.5,146.7 484.1,146.9 486.8,147.1 489.4,147.3 492.1,147.5 494.8,147.7 497.4,147.9 500.1,148.1 502.8,148.3 505.4,148.5 508.1,148.7 510.8,148.9 513.4,149.1 516.1,149.3 518.7,149.5 521.4,149.7 524.1,149.9 526.7,150.0 529.4,150.2 532.1,150.4 534.7,150.6 537.4,150.8 540.1,150.9 542.7,151.1 545.4,151.3 548.0,151.5 550.7,151.6 553.4,151.8 556.0,152.0 558.7,152.1 561.4,152.3 564.0,152.4 566.7,152.6 569.3,152.8 572.0,152.9 574.7,153.1 577.3,153.2 580.0,153.4"/>
+      <line class="guide" x1="302.9" y1="20" x2="302.9" y2="190"/>
+      <text class="lbl" x="308" y="34">época 95: 100 %</text>
+    </svg>
+  </div>
+  <p class="caption">El contenido de <code>historial_error</code>: el error de cada una de las 200 épocas. Baja rápido al principio y cada vez más lento. Desde la época 95 los 100 puntos quedan bien clasificados, pero el error sigue bajando porque las probabilidades se alejan de 0.5.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Época</th><th class="num-cell">Error</th><th class="num-cell">Accuracy</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="num-cell">0</td><td class="num-cell">0.2145</td><td class="num-cell">50 %</td></tr>
+        <tr><td class="num-cell">40</td><td class="num-cell">0.1456</td><td class="num-cell">86 %</td></tr>
+        <tr><td class="num-cell">80</td><td class="num-cell">0.1048</td><td class="num-cell">96 %</td></tr>
+        <tr><td class="num-cell">120</td><td class="num-cell">0.0801</td><td class="num-cell">100 %</td></tr>
+        <tr><td class="num-cell">160</td><td class="num-cell">0.0643</td><td class="num-cell">100 %</td></tr>
+        <tr><td class="num-cell">199</td><td class="num-cell">0.0538</td><td class="num-cell">100 %</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size: 0.82rem; color: var(--text-dim);">Es lo mismo que imprime tu script al correrlo.</p>
+
+  <h2>6. Qué se hace con lo que devuelve</h2>
+  <div class="file-ref">01_perceptron_simple.py · líneas 127, 135 y 156</div>
+<pre><code>w_final, b_final, historial = entrenar_perceptron(X, y)
+<span class="cm"># w_final = [0.5357, 0.5299]   b_final = -2.5870</span>
+
+y_pred_final = forward(X, w_final, b_final)                     <span class="cm"># evaluación</span>
+x2_vals = -(w_final[0] * x1_vals + b_final) / w_final[1]        <span class="cm"># frontera</span></code></pre>
+  <p>La función devuelve una tupla de tres valores y la línea 127 la desarma en tres variables. Con <code>w_final</code> y <code>b_final</code> se evalúa el modelo y se dibuja la recta <code>0.5357·x1 + 0.5299·x2 − 2.5870 = 0</code>. Con <code>historial</code> se dibuja la curva de aprendizaje.</p>
+
+  <div class="callout key">
+    <strong>En resumen:</strong> <code>entrenar_perceptron</code> arranca con pesos al azar y repite 200 veces el mismo ciclo: predecir, medir el error, calcular el gradiente y corregir un poco. Al final devuelve los pesos aprendidos y el historial del error. El aprendizaje ocurre solo en las líneas 112–113. Todo lo demás prepara esa corrección o la registra.
+  </div>
+
+  <footer>
+    Fundamento de la <a href="index.html">Lección 1.1 — Perceptrón Simple</a>.
+  </footer>
+
+</div>
+</body>
+</html>

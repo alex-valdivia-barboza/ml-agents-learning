@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 1.1 — La tasa de aprendizaje</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* Pipeline del forward pass: entrada → z → y_pred */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .flow .step {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .flow .step .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .flow .step p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+  .flow .arrow {
+    align-self: center;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 0 8px;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+  .chart .curve { fill: none; stroke: var(--accent-redes); stroke-width: 3; }
+  .chart .lbl { fill: var(--text-dim); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .pt1 { fill: var(--accent-agentes); }
+  .chart .pt0 { fill: var(--warn); }
+  .caption { font-size: 0.82rem; color: var(--text-dim); margin: 0 0 16px; }
+
+  .chart .lr001 { fill: none; stroke: var(--text-dim); stroke-width: 2.5; }
+  .chart .lr05  { fill: none; stroke: var(--accent-redes); stroke-width: 2.5; }
+  .chart .lr10  { fill: none; stroke: var(--accent-agentes); stroke-width: 2; }
+  .chart .lr50  { fill: none; stroke: var(--warn); stroke-width: 2.5; }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 0 0 6px;
+  }
+  .legend i {
+    display: inline-block;
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .step-demo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="back" href="index.html">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 1.1 · FUNDAMENTO</span>
+      <span class="module-tag">Entrenamiento</span>
+    </div>
+    <h1>La tasa de aprendizaje</h1>
+    <p class="subtitle">Qué controla <code>tasa_aprendizaje=0.5</code> en <code>01_perceptron_simple.py</code> y qué pasa si la achicas o la agrandas, con el experimento real corrido sobre tu script.</p>
+  </header>
+
+  <h2>1. En el código</h2>
+  <div class="file-ref">01_perceptron_simple.py · líneas 95 y 112–113</div>
+<pre><code>def entrenar_perceptron(X, y, tasa_aprendizaje=0.5, epocas=200):
+    ...
+        w += tasa_aprendizaje * grad_w
+        b += tasa_aprendizaje * grad_b</code></pre>
+  <div class="callout key">
+    <strong>Tasa de aprendizaje:</strong> el <strong>tamaño del paso</strong>. El <a href="01_fundamento_gradiente.html" style="color: var(--accent-redes);">gradiente</a> dice <em>hacia dónde</em> mover los pesos; la tasa de aprendizaje dice <em>cuánto</em> moverlos en esa dirección.
+  </div>
+  <p>Es un número que eliges tú antes de entrenar; la neurona no lo aprende. A este tipo de valores (como también <code>epocas</code>) se les llama <strong>hiperparámetros</strong>.</p>
+
+  <h2>2. En la época 0</h2>
+  <p>El gradiente de la primera época es <code>grad_w = [0.0524, 0.0510]</code>. Según la tasa, el paso que se le suma a <code>w</code> cambia:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>tasa_aprendizaje</th><th>Paso = tasa × grad_w</th></tr></thead>
+      <tbody>
+        <tr><td>0.01</td><td><code>[0.0005, 0.0005]</code> → casi nada</td></tr>
+        <tr><td>0.5 (el del script)</td><td><code>[0.026, 0.026]</code></td></tr>
+        <tr><td>50</td><td><code>[2.62, 2.55]</code> → un salto enorme</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>La dirección es la misma en los tres casos; solo cambia la distancia.</p>
+
+  <h2>3. El experimento: 6 tasas, 200 épocas</h2>
+  <p>Corrí el entrenamiento de tu script con los mismos datos (<code>seed(42)</code>) y los mismos pesos iniciales, cambiando solo <code>tasa_aprendizaje</code>. Es el primer experimento que sugiere el propio script (línea 191):</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>tasa</th><th>Error final</th><th>Accuracy final</th><th>Llega a 100 % en la época…</th><th>Qué pasó</th></tr></thead>
+      <tbody>
+        <tr><td>0.01</td><td>0.203</td><td>50 %</td><td>nunca</td><td>demasiado lenta: casi no se movió</td></tr>
+        <tr><td>0.1</td><td>0.146</td><td>85 %</td><td>nunca</td><td>lenta: iba bien pero no le alcanzó</td></tr>
+        <tr><td><strong>0.5</strong></td><td>0.054</td><td>100 %</td><td>95</td><td>bien (el valor del script)</td></tr>
+        <tr><td>2.0</td><td>0.016</td><td>100 %</td><td>12</td><td>bien y más rápida</td></tr>
+        <tr><td>10</td><td>0.004</td><td>100 %</td><td>5</td><td>llega, pero el error sube y baja 14 veces</td></tr>
+        <tr><td>50</td><td>0.500</td><td>50 %</td><td>nunca</td><td>diverge y se traba</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="legend">
+    <span><i style="background: var(--text-dim)"></i>0.01</span>
+    <span><i style="background: var(--accent-redes)"></i>0.5</span>
+    <span><i style="background: var(--accent-agentes)"></i>10</span>
+    <span><i style="background: var(--warn)"></i>50</span>
+  </div>
+  <div class="chart">
+    <svg viewBox="0 0 560 215" role="img" aria-label="Curvas de aprendizaje: con tasa 0.01 el error casi no baja; con 0.5 baja suave; con 10 oscila fuerte al principio y luego llega casi a cero; con 50 sube a 0.5 y se queda ahí.">
+      <line class="axis" x1="50" y1="180" x2="520" y2="180"/>
+      <line class="axis" x1="50" y1="15" x2="50" y2="180"/>
+      <text class="lbl" x="14" y="24">0.5</text>
+      <text class="lbl" x="14" y="104">0.25</text>
+      <text class="lbl" x="30" y="184">0</text>
+      <text class="lbl" x="46" y="198">0</text>
+      <text class="lbl" x="276" y="198">100</text>
+      <text class="lbl" x="506" y="198">200</text>
+      <text class="lbl" x="430" y="212">época</text>
+      <polyline class="lr001" points="50.0,111.4 57.0,111.5 64.1,111.6 71.2,111.7 78.2,111.8 85.2,111.9 92.3,112.0 99.3,112.1 106.4,112.2 113.5,112.2 120.5,112.3 127.5,112.4 134.6,112.5 141.7,112.5 148.7,112.6 155.8,112.7 162.8,112.7 169.9,112.8 176.9,112.9 184.0,112.9 191.0,113.0 198.1,113.0 205.1,113.1 212.2,113.1 219.2,113.2 226.2,113.2 233.3,113.3 240.3,113.3 247.4,113.4 254.5,113.4 261.5,113.5 268.6,113.5 275.6,113.6 282.6,113.6 289.7,113.6 296.8,113.7 303.8,113.7 310.9,113.8 317.9,113.8 324.9,113.9 332.0,113.9 339.1,113.9 346.1,114.0 353.2,114.0 360.2,114.1 367.2,114.1 374.3,114.1 381.4,114.2 388.4,114.2 395.4,114.3 402.5,114.3 409.6,114.3 416.6,114.4 423.7,114.4 430.7,114.4 437.8,114.5 444.8,114.5 451.9,114.6 458.9,114.6 465.9,114.6 473.0,114.7 480.1,114.7 487.1,114.7 494.2,114.8 501.2,114.8 508.2,114.9 515.3,114.9 517.7,114.9"/>
+      <polyline class="lr05" points="50.0,111.4 57.0,114.3 64.1,116.1 71.2,117.9 78.2,119.7 85.2,121.3 92.3,123.0 99.3,124.6 106.4,126.1 113.5,127.6 120.5,129.0 127.5,130.4 134.6,131.7 141.7,133.0 148.7,134.2 155.8,135.4 162.8,136.6 169.9,137.7 176.9,138.8 184.0,139.8 191.0,140.8 198.1,141.7 205.1,142.6 212.2,143.5 219.2,144.4 226.2,145.2 233.3,146.0 240.3,146.7 247.4,147.4 254.5,148.1 261.5,148.8 268.6,149.5 275.6,150.1 282.6,150.7 289.7,151.3 296.8,151.8 303.8,152.4 310.9,152.9 317.9,153.4 324.9,153.9 332.0,154.4 339.1,154.8 346.1,155.3 353.2,155.7 360.2,156.1 367.2,156.5 374.3,156.9 381.4,157.3 388.4,157.6 395.4,158.0 402.5,158.3 409.6,158.7 416.6,159.0 423.7,159.3 430.7,159.6 437.8,159.9 444.8,160.2 451.9,160.5 458.9,160.8 465.9,161.0 473.0,161.3 480.1,161.5 487.1,161.8 494.2,162.0 501.2,162.3 508.2,162.5 515.3,162.7 517.7,162.8"/>
+      <polyline class="lr10" points="50.0,111.4 52.4,78.2 54.7,33.8 57.0,91.5 59.4,27.5 61.8,136.8 64.1,40.7 66.5,63.6 68.8,142.1 71.2,26.5 73.5,112.8 75.8,22.3 78.2,22.6 80.5,22.8 82.9,23.2 85.2,23.6 87.6,24.2 90.0,24.9 92.3,25.9 94.7,27.4 97.0,29.8 99.3,33.7 101.7,41.3 104.1,58.4 106.4,103.8 108.8,169.1 111.1,154.7 113.5,107.7 115.8,26.9 118.2,28.6 120.5,31.3 122.9,35.7 125.2,43.4 127.5,58.0 129.9,88.1 132.2,147.4 134.6,172.3 136.9,162.8 139.3,172.0 141.7,161.4 148.7,175.2 155.8,176.0 162.8,176.9 169.9,177.1 176.9,177.2 184.0,177.3 191.0,177.4 198.1,177.5 205.1,177.6 212.2,177.6 219.2,177.7 226.2,177.8 233.3,177.8 240.3,177.9 247.4,177.9 254.5,178.0 261.5,178.0 268.6,178.0 275.6,178.1 282.6,178.1 289.7,178.2 296.8,178.2 303.8,178.2 310.9,178.3 317.9,178.3 324.9,178.3 332.0,178.4 339.1,178.4 346.1,178.4 353.2,178.4 360.2,178.5 367.2,178.5 374.3,178.5 381.4,178.5 388.4,178.6 395.4,178.6 402.5,178.6 409.6,178.6 416.6,178.6 423.7,178.7 430.7,178.7 437.8,178.7 444.8,178.7 451.9,178.7 458.9,178.7 465.9,178.8 473.0,178.8 480.1,178.8 487.1,178.8 494.2,178.8 501.2,178.8 508.2,178.8 515.3,178.9 517.7,178.9"/>
+      <polyline class="lr50" points="50.0,111.4 52.4,23.2 57.0,38.3 64.1,20.0 71.2,20.0 78.2,20.0 85.2,20.0 92.3,20.0 99.3,20.0 106.4,20.0 113.5,20.0 120.5,20.0 127.5,20.0 134.6,20.0 141.7,20.0 148.7,20.0 155.8,20.0 162.8,20.0 169.9,20.0 176.9,20.0 184.0,20.0 191.0,20.0 198.1,20.0 205.1,20.0 212.2,20.0 219.2,20.0 226.2,20.0 233.3,20.0 240.3,20.0 247.4,20.0 254.5,20.0 261.5,20.0 268.6,20.0 275.6,20.0 282.6,20.0 289.7,20.0 296.8,20.0 303.8,20.0 310.9,20.0 317.9,20.0 324.9,20.0 332.0,20.0 339.1,20.0 346.1,20.0 353.2,20.0 360.2,20.0 367.2,20.0 374.3,20.0 381.4,20.0 388.4,20.0 395.4,20.0 402.5,20.0 409.6,20.0 416.6,20.0 423.7,20.0 430.7,20.0 437.8,20.0 444.8,20.0 451.9,20.0 458.9,20.0 465.9,20.0 473.0,20.0 480.1,20.0 487.1,20.0 494.2,20.0 501.2,20.0 508.2,20.0 515.3,20.0 517.7,20.0"/>
+    </svg>
+  </div>
+  <p class="caption">Error cuadrático medio por época (lo mismo que la curva de aprendizaje del <code>.png</code> del script), para cuatro tasas.</p>
+
+  <h2>4. Por qué falla si es muy chica</h2>
+  <p>Con 0.01 cada paso es 50 veces más chico que con 0.5. La dirección es correcta, pero en 200 épocas los pesos casi no se mueven: terminan en <code>w = [0.024, 0.230]</code>, muy cerca de donde empezaron. La recta nunca llega a separar las nubes y el accuracy queda en 50 % (lo mismo que adivinar). No está mal, solo necesitaría muchísimas más épocas.</p>
+
+  <h2>5. Por qué falla si es muy grande</h2>
+  <p>Con una tasa grande, el paso se pasa de largo: salta por encima del buen lugar y cae del otro lado. Con 10 se ve en la curva verde: el error sube y baja durante las primeras ~40 épocas hasta que se acomoda. Con 50 es peor:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Época</th><th>w</th><th>b</th><th>Predicciones</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td><code>[-0.02, 0.19]</code></td><td>0.00</td><td>entre 0.51 y 0.72: duda, como siempre al inicio</td></tr>
+        <tr><td>1</td><td><code>[2.60, 2.74]</code></td><td>−1.54</td><td>entre 0.94 y 1.00: <strong>todo clase 1</strong></td></tr>
+        <tr><td>200</td><td><code>[-1.27, -1.19]</code></td><td>−4.63</td><td>todas ≈ 0.001: <strong>todo clase 0</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>En un solo paso los pesos saltaron 100 veces más de lo normal, y la neurona pasó a predecir “clase 1” con casi total seguridad para los 100 puntos. Después siguió rebotando hasta quedar prediciendo “clase 0” para todos.</p>
+  <div class="callout warn">
+    <strong>Por qué se traba:</strong> al final todas las predicciones están en ≈ 0.001, en la parte plana de la sigmoid. Ahí la derivada vale ≈ 0.001, así que <code>error × derivada</code> es casi 0 aunque la mitad de los puntos estén mal. Es la <a href="01_fundamento_derivada_sigmoid.html" style="color: var(--accent-redes);">saturación</a> que viste con la derivada: la neurona queda atascada y no puede salir sola.
+  </div>
+
+  <h2>6. Entonces, ¿cuál es el valor correcto?</h2>
+  <p><strong>No hay un valor universal.</strong> Depende de los datos (por ejemplo, de qué tan grandes son los números de <code>X</code>) y del modelo. En la práctica se prueba con varios valores, como en este experimento, y se elige uno que baje el error rápido y sin oscilar.</p>
+  <div class="card-grid">
+    <div class="card">
+      <span class="num">MUY CHICA</span>
+      <h3>Lenta</h3>
+      <p>Dirección correcta, pero no llega en las épocas disponibles.</p>
+    </div>
+    <div class="card">
+      <span class="num">ADECUADA</span>
+      <h3>Baja suave</h3>
+      <p>Con tu dataset, entre 0.5 y 2.0 funciona bien.</p>
+    </div>
+    <div class="card">
+      <span class="num">MUY GRANDE</span>
+      <h3>Oscila o diverge</h3>
+      <p>Se pasa de largo, rebota, y puede terminar trabado en saturación.</p>
+    </div>
+  </div>
+  <p>Un detalle sobre la sugerencia de la línea 191: allí se propone probar 2.0 para ver si se vuelve inestable. Con este dataset, 2.0 todavía funciona bien (incluso más rápido que 0.5); la inestabilidad aparece recién alrededor de 10.</p>
+
+  <div class="callout">
+    <strong>En resumen:</strong> el gradiente da la dirección y la tasa de aprendizaje da el largo del paso. Muy chica: no llega. Muy grande: se pasa, oscila o se traba. Relacionado: <a href="01_fundamento_gradiente.html" style="color: var(--accent-redes);">El gradiente: X.T @ (error * derivada)</a>.
+  </div>
+
+  <footer>
+    Fundamento de la <a href="index.html">Lección 1.1 — Perceptrón Simple</a>.
+  </footer>
+
+</div>
+</body>
+</html>

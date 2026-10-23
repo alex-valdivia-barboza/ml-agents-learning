@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 1.1 — ¿Cuál es el objetivo de la neurona?</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* Pipeline del forward pass: entrada → z → y_pred */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .flow .step {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .flow .step .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .flow .step p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+  .flow .arrow {
+    align-self: center;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 0 8px;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+  .chart .curve { fill: none; stroke: var(--accent-redes); stroke-width: 3; }
+  .chart .lbl { fill: var(--text-dim); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .pt1 { fill: var(--accent-agentes); }
+  .chart .pt0 { fill: var(--warn); }
+  .caption { font-size: 0.82rem; color: var(--text-dim); margin: 0 0 16px; }
+
+  /* Colores de las clases, iguales a los del gráfico de matplotlib (azul / rojo) */
+  :root { --clase0: #5b9cf6; --clase1: #f07070; }
+  @media (prefers-color-scheme: light) {
+    :root { --clase0: #2f6fd6; --clase1: #d64545; }
+  }
+  .plane .zone0 { fill: var(--clase0); opacity: 0.10; }
+  .plane .zone1 { fill: var(--clase1); opacity: 0.10; }
+  .plane .frontier { stroke: var(--text); stroke-width: 2; stroke-dasharray: 6 5; }
+  .plane .p0 { fill: var(--clase0); }
+  .plane .p1 { fill: var(--clase1); }
+  .plane .pmid { fill: var(--text-dim); }
+  .plane .zone-lbl { font-size: 13px; font-weight: 700; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .plane .zl0 { fill: var(--clase0); }
+  .plane .zl1 { fill: var(--clase1); }
+  .chart.plane { max-width: 440px; margin-left: auto; margin-right: auto; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="back" href="index.html">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 1.1 · FUNDAMENTO</span>
+      <span class="module-tag">La neurona</span>
+    </div>
+    <h1>¿Cuál es el objetivo de la neurona?</h1>
+    <p class="subtitle">Qué aprende el perceptrón de <code>01_perceptron_simple.py</code>, para qué sirve una vez entrenado y cómo se relacionan la recta frontera y la probabilidad que devuelve.</p>
+  </header>
+
+  <div class="callout key">
+    <strong>La idea central:</strong> la recta no está dada de antemano; <strong>la recta es lo que la neurona aprende</strong>. Una vez aprendida, la neurona usa la distancia de cada punto a esa recta para decir con qué seguridad pertenece a una clase o a la otra.
+  </div>
+
+  <h2>1. El objetivo tiene dos momentos</h2>
+
+  <h3>Entrenando: encontrar la recta</h3>
+  <p>Al principio, <code>w</code> y <code>b</code> son aleatorios, así que la recta cae en cualquier lugar:</p>
+  <div class="file-ref">01_perceptron_simple.py · líneas 97–98</div>
+<pre><code>w = np.random.randn(n_features) * 0.1   <span class="cm"># pesos iniciales pequeños y aleatorios</span>
+b = 0.0</code></pre>
+  <p>Durante las 200 épocas, la neurona mueve <code>w</code> y <code>b</code> hasta que la recta separa bien los puntos azules de los rojos. Al terminar, la recta queda definida por estos valores (corrida real con <code>seed(42)</code>):</p>
+<pre><code>w = [0.536, 0.530]    b = -2.587</code></pre>
+
+  <h3>Ya entrenada: clasificar puntos nuevos</h3>
+  <p>Con la recta fija, le das un punto cualquiera, <strong>incluso uno que nunca vio</strong>, y te dice qué probabilidad tiene de ser clase 1. Ese es el objetivo real: la neurona aprende de ejemplos que ya tienen etiqueta para después poder etiquetar ejemplos que no la tienen.</p>
+
+  <h2>2. Cómo se relacionan la recta y la probabilidad</h2>
+  <p>Estos puntos <strong>no están en los datos de entrenamiento</strong>. Se calcularon con los pesos finales del script, usando el mismo <code>forward</code> de las líneas 72–76:</p>
+
+  <div class="chart plane">
+    <svg viewBox="0 0 360 360" role="img" aria-label="Plano x1-x2 con la recta frontera aprendida. Debajo de la recta, zona de clase 0; arriba, zona de clase 1. Cinco puntos sobre la diagonal con sus probabilidades.">
+      <polygon class="zone0" points="40,75.9 281.5,320 40,320"/>
+      <polygon class="zone1" points="40,20 340,20 340,320 281.5,320 40,75.9"/>
+      <line class="axis" x1="40" y1="320" x2="340" y2="320"/>
+      <line class="axis" x1="40" y1="20" x2="40" y2="320"/>
+      <text class="lbl" x="36" y="338">0</text>
+      <text class="lbl" x="136" y="338">2</text>
+      <text class="lbl" x="236" y="338">4</text>
+      <text class="lbl" x="336" y="338">6</text>
+      <text class="lbl" x="22" y="224">2</text>
+      <text class="lbl" x="22" y="124">4</text>
+      <text class="lbl" x="22" y="24">6</text>
+      <text class="lbl" x="326" y="354">x1</text>
+      <text class="lbl" x="4" y="44">x2</text>
+      <line class="frontier" x1="40" y1="75.9" x2="281.5" y2="320"/>
+      <text class="zone-lbl zl0" x="52" y="306">Clase 0</text>
+      <text class="zone-lbl zl1" x="270" y="40">Clase 1</text>
+      <circle class="p0" cx="90" cy="270" r="6"/>
+      <text class="lbl" x="100" y="286">(1,1) 0.18</text>
+      <circle class="p0" cx="140" cy="220" r="6"/>
+      <text class="lbl" x="150" y="236">(2,2) 0.39</text>
+      <circle class="pmid" cx="162" cy="198" r="6"/>
+      <text class="lbl" x="96" y="184">0.50</text>
+      <circle class="p1" cx="190" cy="170" r="6"/>
+      <text class="lbl" x="200" y="186">(3,3) 0.65</text>
+      <circle class="p1" cx="290" cy="70" r="6"/>
+      <text class="lbl" x="208" y="92">(5,5) 0.94</text>
+    </svg>
+  </div>
+  <p class="caption">La línea punteada es la recta aprendida (donde <code>z = 0</code>). Cada número es <code>y_pred</code>, la probabilidad de clase 1.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Punto</th><th>z</th><th>sigmoid(z)</th><th>Interpretación</th></tr></thead>
+      <tbody>
+        <tr><td>(1, 1)</td><td>−1.52</td><td>0.18</td><td>lejos de la recta, lado azul → 82 % clase 0</td></tr>
+        <tr><td>(2, 2)</td><td>−0.46</td><td>0.39</td><td>cerca de la recta, lado azul → dudoso</td></tr>
+        <tr><td>(2.44, 2.44)</td><td>0.01</td><td><strong>0.50</strong></td><td><strong>justo sobre la recta</strong> → no sabe</td></tr>
+        <tr><td>(3, 3)</td><td>0.61</td><td>0.65</td><td>cerca, lado rojo → dudoso</td></tr>
+        <tr><td>(5, 5)</td><td>2.74</td><td>0.94</td><td>lejos, lado rojo → 94 % clase 1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <span class="num">IDEA 1</span>
+      <h3>La recta es donde vale 50 %</h3>
+      <p>Ahí <code>z = 0</code> y <code>sigmoid(0) = 0.5</code>. Es la misma recta que dibuja el gráfico en las líneas 153–156.</p>
+    </div>
+    <div class="card">
+      <span class="num">IDEA 2</span>
+      <h3>Más lejos = más seguro</h3>
+      <p><code>z</code> crece con la distancia a la recta, y la sigmoid convierte esa distancia en seguridad.</p>
+    </div>
+    <div class="card">
+      <span class="num">IDEA 3</span>
+      <h3>La otra clase es el complemento</h3>
+      <p>La neurona solo devuelve P(clase 1). P(clase 0) = <code>1 − y_pred</code>. Para (5, 5): 94 % clase 1 y 6 % clase 0.</p>
+    </div>
+  </div>
+
+  <p>Para la decisión final, la línea 136 corta en 0.5:</p>
+  <div class="file-ref">01_perceptron_simple.py · línea 136</div>
+<pre><code>y_pred_clase = (y_pred_final &gt;= 0.5).astype(int)   <span class="cm"># ≥ 0.5 → clase 1, &lt; 0.5 → clase 0</span></code></pre>
+
+  <h2>3. Dos aclaraciones</h2>
+  <div class="callout warn">
+    <strong>“Probabilidad” hay que leerlo con cuidado.</strong> El número indica la seguridad de la neurona, pero no es una probabilidad garantizada en sentido estadístico estricto: que diga 0.94 no asegura que acierte exactamente 94 de cada 100 veces en ese lugar. Sirve bien para ordenar qué tan seguro está un punto respecto de otro.
+  </div>
+  <div class="callout warn">
+    <strong>El script evalúa con los mismos datos con los que entrenó</strong> (líneas 135–137). El 100 % de accuracy dice que aprendió bien esos 100 puntos, pero no demuestra que acierte con puntos nuevos. La forma correcta es separar datos de entrenamiento y datos de prueba, algo que aparece más adelante en el curso.
+  </div>
+
+  <div class="callout">
+    <strong>En resumen:</strong> la neurona aprende dónde trazar la recta a partir de ejemplos etiquetados, y después usa la distancia de cada punto a esa recta para decir con qué seguridad pertenece a una clase o a la otra. Relacionado: <a href="01_fundamento_forward_pass.html" style="color: var(--accent-redes);">¿Qué es el forward pass?</a>, donde se ve paso a paso cómo se calcula <code>z</code> y la sigmoid.
+  </div>
+
+  <footer>
+    Fundamento de la <a href="index.html">Lección 1.1 — Perceptrón Simple</a>.
+  </footer>
+
+</div>
+</body>
+</html>
