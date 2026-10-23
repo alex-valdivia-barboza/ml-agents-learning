@@ -552,5 +552,24 @@
   </footer>
 
 </div>
+<script>
+  // En GitHub Pages: .py y .md se abren en la vista de GitHub (con formato),
+  // y se oculta data/ (no se sube al repo). En localhost no cambia nada.
+  (function () {
+    if (!/\.github\.io$/.test(location.hostname)) return;
+    var repo = 'https://github.com/alex-valdivia-barboza/ml-agents-learning/blob/main/';
+    document.querySelectorAll('a[href]').forEach(function (a) {
+      var href = a.getAttribute('href');
+      var py = href.match(/^vscode:\/\/file\/.*\/([^\/]+\.py)(:\d+)?$/);
+      if (py) {
+        a.href = repo + py[1];
+      } else if (/^[^:\/]+\.md$/.test(href)) {
+        a.href = repo + href;
+      } else if (href === 'data/') {
+        a.style.display = 'none';
+      }
+    });
+  })();
+</script>
 </body>
 </html>
