@@ -84,46 +84,7 @@
   .subtitle {
     color: var(--text-dim);
     font-size: 1rem;
-    margin: 0 0 18px;
-  }
-
-  .meta-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.8rem;
-    padding: 5px 12px;
-    border-radius: 999px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    text-decoration: none;
-  }
-  .pill:hover { border-color: var(--accent-docs); color: var(--text); }
-
-  .progress-bar-outer {
-    margin-top: 20px;
-    height: 8px;
-    border-radius: 999px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    overflow: hidden;
-  }
-  .progress-bar-inner {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent-redes), var(--accent-agentes));
-    border-radius: 999px;
-  }
-  .progress-label {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    margin-top: 6px;
+    margin: 0;
   }
 
   section.module {
@@ -409,17 +370,6 @@
     <h1>Aprendiendo IA desde cero</h1>
     <p class="topics">Material que he usado para aprender sobre 4 grandes temas: <strong>Redes Neuronales</strong>, <strong>PLN</strong>, <strong>Agentes</strong> y <strong>Modelos de IA</strong>.</p>
     <p class="subtitle">Plan de aprendizaje práctico, con código ejecutable en cada lección — NumPy puro para redes, Python puro para agentes.</p>
-    <div class="meta-row">
-      <a class="pill" href="00_INDEX_MASTER.md">📑 Índice maestro</a>
-      <a class="pill" href="TEORIA_MINIMA.md">∑ Teoría mínima</a>
-      <a class="pill" href="QUICK_START.md">▶ Quick start</a>
-      <a class="pill" href="PROGRESO.md">☑ Progreso</a>
-      <a class="pill" href="data/">🗂 data/</a>
-    </div>
-    <div class="progress-bar-outer">
-      <div class="progress-bar-inner" style="width: 16.6%;"></div>
-    </div>
-    <p class="progress-label">2 de 12 lecciones completadas · los scripts abren directo en VS Code (requiere tenerlo instalado)</p>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Temas">
@@ -716,7 +666,7 @@
   })();
 
   // En GitHub Pages: .py y .md se abren en la vista de GitHub (con formato),
-  // y se oculta data/ (no se sube al repo). En localhost no cambia nada.
+  // y se oculta cualquier enlace a data/ (no se sube al repo). En localhost no cambia nada.
   (function () {
     if (!/\.github\.io$/.test(location.hostname)) return;
     var repo = 'https://github.com/alex-valdivia-barboza/ml-agents-learning/blob/main/';
