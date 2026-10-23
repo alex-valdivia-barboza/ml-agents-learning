@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Redes Neuronales + Agentes — Plan de Aprendizaje</title>
+<title>Aprendiendo IA — Plan de Aprendizaje</title>
 <style>
   :root {
     --bg: #0f1420;
@@ -20,6 +20,10 @@
     --accent-agentes-bg: rgba(95, 212, 168, 0.12);
     --accent-docs: #c68ef0;
     --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --accent-pln: #f0a35b;
+    --accent-pln-bg: rgba(240, 163, 91, 0.12);
+    --accent-modelos: #f07a9b;
+    --accent-modelos-bg: rgba(240, 122, 155, 0.12);
     --text-faint: #4a5170;
     --done: #5fd4a8;
     --pending: #8b93ab;
@@ -41,6 +45,10 @@
       --accent-agentes-bg: rgba(31, 157, 111, 0.08);
       --accent-docs: #9645c9;
       --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --accent-pln: #b8640f;
+      --accent-pln-bg: rgba(184, 100, 15, 0.08);
+      --accent-modelos: #c2385f;
+      --accent-modelos-bg: rgba(194, 56, 95, 0.08);
       --text-faint: #b3b9cc;
       --done: #1f9d6f;
       --pending: #9aa2b8;
@@ -142,6 +150,84 @@
   }
   .tag-redes { background: var(--accent-redes-bg); color: var(--accent-redes); }
   .tag-agentes { background: var(--accent-agentes-bg); color: var(--accent-agentes); }
+  .tag-pln { background: var(--accent-pln-bg); color: var(--accent-pln); }
+  .tag-modelos { background: var(--accent-modelos-bg); color: var(--accent-modelos); }
+
+  .topics {
+    color: var(--text);
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+  .topics strong { font-weight: 600; }
+
+  /* Pestañas por tema */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    --tab-accent: var(--accent-redes);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    margin-bottom: -1px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dim);
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .tab:hover { color: var(--text); }
+  .tab[aria-selected="true"] {
+    color: var(--tab-accent);
+    border-bottom-color: var(--tab-accent);
+  }
+  .tab:focus-visible {
+    outline: 2px solid var(--tab-accent);
+    outline-offset: -2px;
+    border-radius: 6px 6px 0 0;
+  }
+  .tab-redes { --tab-accent: var(--accent-redes); }
+  .tab-pln { --tab-accent: var(--accent-pln); }
+  .tab-agentes { --tab-accent: var(--accent-agentes); }
+  .tab-modelos { --tab-accent: var(--accent-modelos); }
+
+  .tab-count {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tab-panel[hidden] { display: none; }
+
+  .empty-state {
+    background: var(--bg-card);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 28px 22px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+  .empty-state strong {
+    display: block;
+    color: var(--text);
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
 
   .module-desc {
     color: var(--text-dim);
@@ -320,8 +406,9 @@
 <div class="wrap">
 
   <header>
-    <h1>Redes Neuronales + Agentes</h1>
-    <p class="subtitle">Plan de aprendizaje práctico — NumPy puro para redes, Python puro para agentes. 4-6 semanas, ~2h diarias por módulo.</p>
+    <h1>Aprendiendo IA desde cero</h1>
+    <p class="topics">Material de estudio para aprender sobre 4 grandes temas: <strong>Redes Neuronales</strong>, <strong>PLN</strong>, <strong>Agentes</strong> y <strong>Modelos de IA</strong>.</p>
+    <p class="subtitle">Plan de aprendizaje práctico, con código ejecutable en cada lección — NumPy puro para redes, Python puro para agentes.</p>
     <div class="meta-row">
       <a class="pill" href="00_INDEX_MASTER.md">📑 Índice maestro</a>
       <a class="pill" href="TEORIA_MINIMA.md">∑ Teoría mínima</a>
@@ -335,7 +422,14 @@
     <p class="progress-label">2 de 12 lecciones completadas · los scripts abren directo en VS Code (requiere tenerlo instalado)</p>
   </header>
 
-  <section class="module redes">
+  <nav class="tabs" role="tablist" aria-label="Temas">
+    <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">1/6</span></button>
+    <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">0</span></button>
+    <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">1/6</span></button>
+    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">0</span></button>
+  </nav>
+
+  <section class="module redes tab-panel" id="redes" role="tabpanel" aria-labelledby="tab-redes">
     <div class="module-header">
       <h2>Módulo 1 — Redes Neuronales</h2>
       <span class="module-tag tag-redes">NumPy</span>
@@ -436,7 +530,19 @@
     </div>
   </section>
 
-  <section class="module agentes">
+  <section class="module pln tab-panel" id="pln" role="tabpanel" aria-labelledby="tab-pln">
+    <div class="module-header">
+      <h2>Procesamiento de Lenguaje Natural (PLN)</h2>
+      <span class="module-tag tag-pln">Próximamente</span>
+    </div>
+    <p class="module-desc">Cómo una máquina trabaja con texto: tokenización, representación de palabras, embeddings y modelos de lenguaje.</p>
+    <div class="empty-state">
+      <strong>Todavía no hay lecciones en este tema</strong>
+      Las lecciones de PLN aparecerán acá a medida que se agreguen al plan.
+    </div>
+  </section>
+
+  <section class="module agentes tab-panel" id="agentes" role="tabpanel" aria-labelledby="tab-agentes">
     <div class="module-header">
       <h2>Módulo 2 — Agentes Fundamentales</h2>
       <span class="module-tag tag-agentes">Python puro</span>
@@ -526,6 +632,18 @@
     </div>
   </section>
 
+  <section class="module modelos tab-panel" id="modelos" role="tabpanel" aria-labelledby="tab-modelos">
+    <div class="module-header">
+      <h2>Modelos de IA</h2>
+      <span class="module-tag tag-modelos">Próximamente</span>
+    </div>
+    <p class="module-desc">Qué hay detrás de los modelos actuales: arquitecturas, entrenamiento, uso de modelos preentrenados y cómo elegir uno.</p>
+    <div class="empty-state">
+      <strong>Todavía no hay lecciones en este tema</strong>
+      Las lecciones de Modelos de IA aparecerán acá a medida que se agreguen al plan.
+    </div>
+  </section>
+
   <section class="docs">
     <div class="module-header">
       <h2>Documentos de referencia</h2>
@@ -561,6 +679,42 @@
 
 </div>
 <script>
+  // Pestañas por tema: muestra solo el panel elegido y lo recuerda en la URL
+  // (#redes, #pln, #agentes, #modelos) para poder compartir o recargar.
+  (function () {
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+    var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
+
+    function activar(id, foco) {
+      tabs.forEach(function (t, i) {
+        var activa = t.getAttribute('aria-controls') === id;
+        t.setAttribute('aria-selected', activa);
+        t.tabIndex = activa ? 0 : -1;
+        panels[i].hidden = !activa;
+        if (activa && foco) t.focus();
+      });
+    }
+
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () {
+        var id = t.getAttribute('aria-controls');
+        activar(id);
+        history.replaceState(null, '', '#' + id);
+      });
+      // Flechas izquierda/derecha para moverse entre pestañas con el teclado
+      t.addEventListener('keydown', function (e) {
+        var paso = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!paso) return;
+        var sig = tabs[(i + paso + tabs.length) % tabs.length];
+        activar(sig.getAttribute('aria-controls'), true);
+        history.replaceState(null, '', '#' + sig.getAttribute('aria-controls'));
+      });
+    });
+
+    var inicial = location.hash.slice(1);
+    activar(document.getElementById(inicial) && panels.some(function (p) { return p.id === inicial; }) ? inicial : 'redes');
+  })();
+
   // En GitHub Pages: .py y .md se abren en la vista de GitHub (con formato),
   // y se oculta data/ (no se sube al repo). En localhost no cambia nada.
   (function () {
