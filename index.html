@@ -298,6 +298,42 @@
   }
   .extra-links a:hover { color: var(--text); }
 
+  /* Fundamentos agrupados por bloque, en orden de estudio */
+  .fund-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .fund-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+  }
+  .fund-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .fund-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-redes);
+  }
+  .fund-group a {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--text-dim);
+  }
+  .fund-group a:hover { color: var(--text); }
+  .fund-group em { font-style: normal; opacity: 0.75; }
+
   section.docs {
     margin-bottom: 40px;
   }
@@ -400,15 +436,27 @@
           <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/01_perceptron_simple.py:1">01_perceptron_simple.py →</a>
         </div>
         <div class="extra-links">
-          <a href="01_perceptron_simple.png">Ver gráfico generado (.png)</a>
-          <a href="01_fundamento_mezclar_datos.html">Fundamento: ¿por qué mezclar los datos?</a>
-          <a href="01_fundamento_epocas.html">Fundamento: ¿qué es una época?</a>
-          <a href="01_fundamento_funcion_entrenamiento.html">Fundamento: la función de entrenamiento</a>
-          <a href="01_fundamento_forward_pass.html">Fundamento: ¿qué es el forward pass?</a>
-          <a href="01_fundamento_objetivo_neurona.html">Fundamento: ¿cuál es el objetivo de la neurona?</a>
-          <a href="01_fundamento_derivada_sigmoid.html">Fundamento: la derivada de sigmoid</a>
-          <a href="01_fundamento_gradiente.html">Fundamento: el gradiente (X.T @ …)</a>
-          <a href="01_fundamento_tasa_aprendizaje.html">Fundamento: la tasa de aprendizaje</a>
+          <a href="01_perceptron_simple.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · Qué hace la neurona</span>
+            <a href="01_fundamento_forward_pass.html">1. ¿Qué es el forward pass?</a>
+            <a href="01_fundamento_objetivo_neurona.html">2. ¿Cuál es el objetivo de la neurona?</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Cómo aprende</span>
+            <a href="01_fundamento_derivada_sigmoid.html">3. La derivada de sigmoid</a>
+            <a href="01_fundamento_gradiente.html">4. El gradiente (X.T @ …)</a>
+            <a href="01_fundamento_tasa_aprendizaje.html">5. La tasa de aprendizaje</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · El entrenamiento completo</span>
+            <a href="01_fundamento_epocas.html">6. ¿Qué es una época?</a>
+            <a href="01_fundamento_funcion_entrenamiento.html">7. La función de entrenamiento</a>
+            <a href="01_fundamento_mezclar_datos.html">8. ¿Por qué mezclar los datos? <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 
