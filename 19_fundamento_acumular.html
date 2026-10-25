@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 4.1 — Sumar gradientes: el porqué del +=</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* Pipeline del forward pass: entrada → z → y_pred */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .flow .step {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .flow .step .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .flow .step p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+  .flow .arrow {
+    align-self: center;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 0 8px;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+  .chart .curve { fill: none; stroke: var(--accent-redes); stroke-width: 3; }
+  .chart .lbl { fill: var(--text-dim); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .pt1 { fill: var(--accent-agentes); }
+  .chart .pt0 { fill: var(--warn); }
+  .caption { font-size: 0.82rem; color: var(--text-dim); margin: 0 0 16px; }
+
+  /* Estilos comunes de los fundamentos 1.2 a 1.6 */
+  td.num-cell, th.num-cell { font-family: "SF Mono", Consolas, monospace; font-size: 0.82rem; }
+  .step-link, .rel { color: var(--accent-redes); }
+  .step-link { font-size: 0.8rem; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  :root { --clase0: #5b9cf6; --clase1: #f07070; }
+  @media (prefers-color-scheme: light) {
+    :root { --clase0: #2f6fd6; --clase1: #d64545; }
+  }
+  .chart .zone0 { fill: var(--clase0); opacity: 0.24; }
+  .chart .zone1 { fill: var(--clase1); opacity: 0.2; }
+  .chart .p0 { fill: var(--clase0); }
+  .chart .p1 { fill: var(--clase1); }
+  .chart .frame { stroke: var(--border); }
+  .chart .hl { fill: none; stroke: var(--text); stroke-width: 2; }
+  .chart .line-n { stroke: var(--text-dim); stroke-width: 1.5; opacity: 0.8; }
+  .chart .line-f { stroke: var(--text); stroke-width: 2; stroke-dasharray: 6 5; }
+  .chart.plane { max-width: 440px; margin-left: auto; margin-right: auto; }
+  .plane-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 0 0 8px; }
+  .plane-pair .chart { margin: 0; }
+  .plane-pair .caption { margin: 6px 4px 0; text-align: center; }
+
+  .chart .s0 { fill: none; stroke: var(--accent-redes); stroke-width: 2.5; }
+  .chart .s1 { fill: none; stroke: var(--accent-agentes); stroke-width: 2.5; }
+  .chart .s2 { fill: none; stroke: var(--warn); stroke-width: 2.5; }
+  .chart .s3 { fill: none; stroke: var(--accent-docs); stroke-width: 2.5; }
+  .chart .s4 { fill: none; stroke: var(--text-dim); stroke-width: 2; }
+  .chart .m0 { fill: var(--accent-redes); }
+  .chart .m1 { fill: var(--accent-agentes); }
+  .chart .m2 { fill: var(--warn); }
+  .chart .m3 { fill: var(--accent-docs); }
+  .chart .bar { fill: var(--accent-redes); }
+  .chart .bar1 { fill: var(--accent-agentes); }
+  .chart .bar2 { fill: var(--warn); }
+  .chart .bar3 { fill: var(--accent-docs); }
+  .chart .bar4 { fill: var(--text-dim); }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 0 0 6px;
+  }
+  .legend i {
+    display: inline-block;
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .legend .k0 { background: var(--accent-redes); }
+  .legend .k1 { background: var(--accent-agentes); }
+  .legend .k2 { background: var(--warn); }
+  .legend .k3 { background: var(--accent-docs); }
+  .legend .k4 { background: var(--text-dim); }
+  .legend .c0 { background: var(--clase0); height: 10px; width: 10px; border-radius: 50%; }
+  .legend .c1 { background: var(--clase1); height: 10px; width: 10px; border-radius: 50%; }
+
+  .shape-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85rem;
+  }
+  .shape-row .box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+  }
+  .shape-row .box small { display: block; color: var(--text-dim); font-size: 0.72rem; }
+  .shape-row .op { color: var(--text-dim); }
+  .matrices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+  .matrices pre { margin: 0; }
+
+  .digits { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 8px; }
+  .digits figure { margin: 0; text-align: center; font-size: 0.78rem; color: var(--text-dim); }
+  .digits svg { width: 84px; height: 84px; border-radius: 6px; display: block; margin-bottom: 4px; }
+  .digit .dbg { fill: var(--code-bg); }
+  .digit .dpx { fill: var(--text); }
+  .pixgrid { font-family: "SF Mono", Consolas, monospace; font-size: 0.66rem; line-height: 1.25; }
+
+  /* Temas por módulo: <div class="wrap agentes|pln|modelos"> */
+  :root { --accent-pln: #f0a35b; --accent-pln-bg: rgba(240, 163, 91, 0.12); --accent-modelos: #f07a9b; --accent-modelos-bg: rgba(240, 122, 155, 0.12); }
+  @media (prefers-color-scheme: light) {
+    :root { --accent-pln: #b8640f; --accent-pln-bg: rgba(184, 100, 15, 0.08); --accent-modelos: #c2385f; --accent-modelos-bg: rgba(194, 56, 95, 0.08); }
+  }
+  .agentes { --tema: var(--accent-agentes); --tema-bg: var(--accent-agentes-bg); }
+  .pln { --tema: var(--accent-pln); --tema-bg: var(--accent-pln-bg); }
+  .modelos { --tema: var(--accent-modelos); --tema-bg: var(--accent-modelos-bg); }
+  .agentes .module-tag, .pln .module-tag, .modelos .module-tag { background: var(--tema-bg); color: var(--tema); }
+  .agentes .rel, .pln .rel, .modelos .rel, .agentes .step-link, .pln .step-link, .modelos .step-link { color: var(--tema); }
+  .agentes .callout.key, .pln .callout.key, .modelos .callout.key { background: var(--tema-bg); border-color: color-mix(in srgb, var(--tema) 40%, var(--border)); }
+
+  /* Cuadrículas de agentes */
+  .chart .cell-l { fill: var(--code-bg); stroke: var(--border); }
+  .chart .cell-s { fill: var(--warn); fill-opacity: 0.32; stroke: var(--warn); }
+  .chart .cell-w { fill: var(--text-dim); opacity: 0.3; }
+  .chart .cell-v { fill: var(--accent-agentes); fill-opacity: 0.2; stroke: var(--border); }
+  .chart .cell-p { fill: var(--accent-agentes); opacity: 0.55; }
+  .chart .cell-a { fill: var(--clase0); fill-opacity: 0.45; stroke: var(--border); }
+  .chart .trail { fill: none; stroke: var(--accent-agentes); stroke-width: 3; stroke-linejoin: round; opacity: 0.85; }
+  .chart.grid-sm { max-width: 300px; margin-left: auto; margin-right: auto; }
+  .grid-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 0 0 8px; }
+  .grid-pair .chart { margin: 0; }
+  .grid-pair .caption { margin: 6px 4px 0; text-align: center; }
+  .chart .s5 { fill: none; stroke: var(--accent-modelos); stroke-width: 2.5; }
+  .chart .bar5 { fill: var(--accent-modelos); }
+  .legend .k5 { background: var(--accent-modelos); }
+  .chart .node { fill: var(--code-bg); stroke: var(--border); stroke-width: 1.2; }
+  .chart .node-hl { fill: var(--accent-modelos-bg); stroke: var(--accent-modelos); stroke-width: 1.5; }
+  .chart .edge { fill: none; stroke: var(--text-dim); stroke-width: 1.4; }
+  .chart .edge-g { fill: none; stroke: var(--accent-modelos); stroke-width: 1.6; stroke-dasharray: 5 4; }
+  .chart .ntxt { fill: var(--text); font-size: 13px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .gtxt { fill: var(--accent-modelos); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .arrow { fill: var(--text-dim); }
+  .chart .arrow-g { fill: var(--accent-modelos); }
+  .ok { color: var(--done); font-weight: 600; }
+  .bad { color: var(--warn); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap modelos">
+
+  <header>
+    <a class="back" href="index.html#modelos">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 4.1 · FUNDAMENTO</span>
+      <span class="module-tag">Cómo funciona</span>
+    </div>
+    <h1>Sumar gradientes: el porqué del +=</h1>
+    <p class="subtitle">Todas las funciones _atras usan += y no =. La razón: un valor usado en dos lugares recibe gradiente por los dos caminos. La consecuencia: antes de cada paso de entrenamiento hay que poner los gradientes en cero.</p>
+  </header>
+
+  <h2>1. Un valor usado dos veces</h2>
+  <div class="file-ref">19_autograd.py · líneas 128–131</div>
+<pre><code>a = Valor(3.0, nombre="a")
+f = a * a + a                      <span class="cm"># f = a² + a  →  df/da = 2a + 1 = 7</span>
+f.backward()</code></pre>
+  <p>Aquí <code>a</code> aparece tres veces: dos en el producto y una en la suma. Si mueves <code>a</code> un poquito, <code>f</code> cambia por los tres lados a la vez, y el cambio total es la <strong>suma</strong> de los tres efectos:</p>
+  <ul>
+    <li>por la suma: derivada local 1 → aporta 1</li>
+    <li>por el primer factor del producto: el otro factor vale 3 → aporta 3</li>
+    <li>por el segundo factor: aporta 3</li>
+  </ul>
+  <p>Total 1 + 3 + 3 = 7, que es <code>2a + 1</code> con <code>a = 3</code>. Es la regla de la cadena con varios caminos: <strong>los gradientes que llegan por caminos distintos se suman</strong>. En la red de la 1.3 pasaba lo mismo sin que se notara: cada neurona oculta envía su salida a la neurona de salida, y en redes más anchas a varias.</p>
+
+  <h2>2. Qué pasa con =</h2>
+  <p>El segundo experimento sugerido cambia los <code>+=</code> de <code>__mul__</code> (líneas 69–70) por <code>=</code>. Resultado real:</p>
+<pre><code>PARTE 2: f = a*a + a con a = 3  ->  df/da = 3.0 (esperado 2*3 + 1 = 7)</code></pre>
+  <p>Con <code>=</code>, cada camino <em>pisa</em> lo que dejó el anterior: el 1 de la suma se reemplaza por 3, y el segundo 3 reemplaza al primero. Queda el último que escribió. Ningún error, ninguna advertencia: solo un gradiente equivocado. Es el tipo de bug que el gradient checking (fundamento 6) detecta. La neurona de la Parte 1 da bien igual, porque ahí cada valor se usa una sola vez.</p>
+  <div class="callout key">
+    <strong>Aquí se ve por qué importa el orden topológico:</strong> un nodo intermedio usado en varios lugares tiene que recibir <em>todos</em> sus aportes antes de llamar a su propio <code>_atras</code>, y debe llamarlo una sola vez (eso asegura <code>visitados</code>). Si lo procesara antes, repartiría un gradiente incompleto.
+  </div>
+
+  <h2>3. El precio: limpiar antes de cada paso</h2>
+  <p>Como <code>+=</code> suma sobre lo que ya había, si llamas a <code>backward()</code> dos veces, el segundo gradiente se suma al primero. En un bucle de entrenamiento eso es un problema: cada paso necesita el gradiente <em>de ese paso</em>.</p>
+  <div class="file-ref">19_autograd.py · línea 236 y mini_autograd.py · líneas 230–232</div>
+<pre><code>parametros_en_cero(parametros)     <span class="cm"># los gradientes se ACUMULAN: hay que limpiarlos</span>
+
+def parametros_en_cero(parametros):
+    for p in parametros:
+        p.grad = np.zeros_like(p.data)</code></pre>
+  <p>Es el <code>optimizer.zero_grad()</code> que verás en todo código de PyTorch. El primer experimento sugerido lo quita. Resultado real:</p>
+  <div class="legend"><span><i class="k5"></i>con parametros_en_cero</span><span><i class="k2"></i>sin limpiar los gradientes</span></div>
+  <div class="chart"><svg viewBox="0 0 600 230" role="img" aria-label="Pérdida de la red XOR con y sin limpiar los gradientes">
+<line class="axis" x1="56" y1="196" x2="584" y2="196"/>
+<line class="axis" x1="56" y1="14" x2="56" y2="196"/>
+<line class="guide" x1="56" y1="196.0" x2="584" y2="196.0"/>
+<text class="lbl" x="50" y="200.0" text-anchor="end">0</text>
+<line class="guide" x1="56" y1="131.0" x2="584" y2="131.0"/>
+<text class="lbl" x="50" y="135.0" text-anchor="end">0.05</text>
+<line class="guide" x1="56" y1="66.0" x2="584" y2="66.0"/>
+<text class="lbl" x="50" y="70.0" text-anchor="end">0.1</text>
+<text class="lbl" x="56.0" y="212" text-anchor="middle">0</text>
+<text class="lbl" x="144.3" y="212" text-anchor="middle">500</text>
+<text class="lbl" x="232.6" y="212" text-anchor="middle">1000</text>
+<text class="lbl" x="320.9" y="212" text-anchor="middle">1500</text>
+<text class="lbl" x="409.2" y="212" text-anchor="middle">2000</text>
+<text class="lbl" x="497.5" y="212" text-anchor="middle">2500</text>
+<text class="lbl" x="585.8" y="212" text-anchor="middle">3000</text>
+<text class="lbl" x="584" y="226" text-anchor="end">época</text>
+<text class="lbl" x="60" y="24">pérdida</text>
+<polyline class="s5" points="56.0,17.3 57.8,27.5 59.5,29.1 61.3,30.3 63.1,31.3 64.8,32.1 66.6,32.7 68.4,33.2 70.1,33.6 71.9,33.9 73.7,34.3 75.4,34.6 77.2,34.9 79.0,35.2 80.7,35.5 82.5,35.8 84.3,36.2 86.0,36.6 87.8,37.1 89.6,37.6 91.3,38.2 93.1,38.9 94.8,39.6 96.6,40.4 98.4,41.3 100.1,42.2 101.9,43.3 103.7,44.4 105.4,45.7 107.2,47.0 109.0,48.5 110.7,50.0 112.5,51.6 114.3,53.4 116.0,55.2 117.8,57.1 119.6,59.2 121.3,61.3 123.1,63.5 124.9,65.7 126.6,68.1 128.4,70.5 130.2,73.0 131.9,75.6 133.7,78.2 135.5,80.9 137.2,83.7 139.0,86.5 140.8,89.5 142.5,92.5 144.3,95.5 146.1,98.7 147.8,101.9 149.6,105.2 151.4,108.5 153.1,111.8 154.9,115.2 156.7,118.6 158.4,122.0 160.2,125.4 162.0,128.8 163.7,132.0 165.5,135.2 167.3,138.3 169.0,141.3 170.8,144.2 172.5,146.9 174.3,149.5 176.1,152.0 177.8,154.3 179.6,156.5 181.4,158.5 183.1,160.4 184.9,162.2 186.7,163.9 188.4,165.4 190.2,166.9 192.0,168.2 193.7,169.5 195.5,170.7 197.3,171.8 199.0,172.8 200.8,173.7 202.6,174.6 204.3,175.4 206.1,176.2 207.9,177.0 209.6,177.6 211.4,178.3 213.2,178.9 214.9,179.4 216.7,180.0 218.5,180.5 220.2,181.0 222.0,181.4 223.8,181.8 225.5,182.2 227.3,182.6 229.1,183.0 230.8,183.3 232.6,183.6 234.4,183.9 236.1,184.2 237.9,184.5 239.7,184.8 241.4,185.0 243.2,185.3 244.9,185.5 246.7,185.7 248.5,185.9 250.2,186.1 252.0,186.3 253.8,186.5 255.5,186.7 257.3,186.9 259.1,187.0 260.8,187.2 262.6,187.3 264.4,187.5 266.1,187.6 267.9,187.8 269.7,187.9 271.4,188.0 273.2,188.2 275.0,188.3 276.7,188.4 278.5,188.5 280.3,188.6 282.0,188.7 283.8,188.8 285.6,188.9 287.3,189.0 289.1,189.1 290.9,189.2 292.6,189.3 294.4,189.4 296.2,189.4 297.9,189.5 299.7,189.6 301.5,189.7 303.2,189.7 305.0,189.8 306.8,189.9 308.5,190.0 310.3,190.0 312.1,190.1 313.8,190.1 315.6,190.2 317.4,190.3 319.1,190.3 320.9,190.4 322.6,190.4 324.4,190.5 326.2,190.5 327.9,190.6 329.7,190.6 331.5,190.7 333.2,190.7 335.0,190.8 336.8,190.8 338.5,190.9 340.3,190.9 342.1,191.0 343.8,191.0 345.6,191.1 347.4,191.1 349.1,191.1 350.9,191.2 352.7,191.2 354.4,191.3 356.2,191.3 358.0,191.3 359.7,191.4 361.5,191.4 363.3,191.4 365.0,191.5 366.8,191.5 368.6,191.5 370.3,191.6 372.1,191.6 373.9,191.6 375.6,191.7 377.4,191.7 379.2,191.7 380.9,191.8 382.7,191.8 384.5,191.8 386.2,191.8 388.0,191.9 389.8,191.9 391.5,191.9 393.3,192.0 395.1,192.0 396.8,192.0 398.6,192.0 400.3,192.1 402.1,192.1 403.9,192.1 405.6,192.1 407.4,192.2 409.2,192.2 410.9,192.2 412.7,192.2 414.5,192.3 416.2,192.3 418.0,192.3 419.8,192.3 421.5,192.3 423.3,192.4 425.1,192.4 426.8,192.4 428.6,192.4 430.4,192.4 432.1,192.5 433.9,192.5 435.7,192.5 437.4,192.5 439.2,192.5 441.0,192.6 442.7,192.6 444.5,192.6 446.3,192.6 448.0,192.6 449.8,192.7 451.6,192.7 453.3,192.7 455.1,192.7 456.9,192.7 458.6,192.7 460.4,192.8 462.2,192.8 463.9,192.8 465.7,192.8 467.5,192.8 469.2,192.8 471.0,192.9 472.7,192.9 474.5,192.9 476.3,192.9 478.0,192.9 479.8,192.9 481.6,192.9 483.3,193.0 485.1,193.0 486.9,193.0 488.6,193.0 490.4,193.0 492.2,193.0 493.9,193.0 495.7,193.1 497.5,193.1 499.2,193.1 501.0,193.1 502.8,193.1 504.5,193.1 506.3,193.1 508.1,193.1 509.8,193.2 511.6,193.2 513.4,193.2 515.1,193.2 516.9,193.2 518.7,193.2 520.4,193.2 522.2,193.2 524.0,193.3 525.7,193.3 527.5,193.3 529.3,193.3 531.0,193.3 532.8,193.3 534.6,193.3 536.3,193.3 538.1,193.3 539.9,193.4 541.6,193.4 543.4,193.4 545.2,193.4 546.9,193.4 548.7,193.4 550.4,193.4 552.2,193.4 554.0,193.4 555.7,193.5 557.5,193.5 559.3,193.5 561.0,193.5 562.8,193.5 564.6,193.5 566.3,193.5 568.1,193.5 569.9,193.5 571.6,193.5 573.4,193.6 575.2,193.6 576.9,193.6 578.7,193.6 580.5,193.6 582.2,193.6 584.0,193.6"/>
+<polyline class="s2" points="56.0,17.3 57.8,27.3 59.5,33.8 61.3,35.1 63.1,46.8 64.8,82.1 66.6,111.7 68.4,165.0 70.1,178.6 71.9,180.0 73.7,182.4 75.4,186.2 77.2,184.4 79.0,186.2 80.7,185.0 82.5,188.3 84.3,189.1 86.0,189.5 87.8,189.4 89.6,187.6 91.3,189.5 93.1,189.5 94.8,189.5 96.6,189.5 98.4,189.4 100.1,189.3 101.9,188.8 103.7,188.8 105.4,189.3 107.2,189.5 109.0,189.5 110.7,189.5 112.5,189.5 114.3,192.7 116.0,192.7 117.8,192.7 119.6,192.7 121.3,192.7 123.1,192.8 124.9,192.8 126.6,192.8 128.4,192.8 130.2,192.8 131.9,192.8 133.7,192.7 135.5,192.7 137.2,192.7 139.0,192.7 140.8,192.7 142.5,191.6 144.3,192.8 146.1,192.8 147.8,192.8 149.6,192.8 151.4,192.8 153.1,192.8 154.9,192.8 156.7,192.8 158.4,192.8 160.2,192.8 162.0,192.8 163.7,192.8 165.5,192.8 167.3,192.8 169.0,192.8 170.8,192.8 172.5,192.8 174.3,192.8 176.1,192.7 177.8,192.8 179.6,192.8 181.4,192.8 183.1,192.8 184.9,192.8 186.7,192.8 188.4,192.8 190.2,192.8 192.0,192.8 193.7,192.8 195.5,192.8 197.3,192.8 199.0,192.8 200.8,192.8 202.6,192.8 204.3,192.8 206.1,192.8 207.9,192.8 209.6,192.8 211.4,192.8 213.2,192.8 214.9,192.8 216.7,192.8 218.5,192.8 220.2,192.8 222.0,192.8 223.8,192.8 225.5,192.8 227.3,192.8 229.1,192.8 230.8,192.7 232.6,192.7 234.4,192.7 236.1,192.7 237.9,192.7 239.7,192.7 241.4,192.7 243.2,192.8 244.9,192.8 246.7,192.8 248.5,192.7 250.2,192.8 252.0,192.8 253.8,192.8 255.5,192.8 257.3,192.8 259.1,192.8 260.8,192.8 262.6,192.8 264.4,192.8 266.1,192.8 267.9,192.8 269.7,192.8 271.4,192.8 273.2,192.8 275.0,192.8 276.7,192.8 278.5,192.8 280.3,192.8 282.0,192.8 283.8,192.8 285.6,192.8 287.3,192.8 289.1,192.8 290.9,192.8 292.6,192.8 294.4,192.8 296.2,192.8 297.9,192.8 299.7,192.8 301.5,192.8 303.2,192.8 305.0,192.8 306.8,192.8 308.5,192.8 310.3,192.8 312.1,192.8 313.8,192.8 315.6,192.8 317.4,192.8 319.1,192.8 320.9,192.8 322.6,192.8 324.4,192.8 326.2,192.8 327.9,192.8 329.7,192.8 331.5,192.8 333.2,192.8 335.0,192.8 336.8,192.8 338.5,192.8 340.3,192.8 342.1,192.8 343.8,192.8 345.6,192.8 347.4,192.8 349.1,192.8 350.9,192.8 352.7,192.8 354.4,192.8 356.2,192.8 358.0,192.8 359.7,192.8 361.5,192.8 363.3,192.8 365.0,192.8 366.8,192.8 368.6,192.8 370.3,192.8 372.1,192.8 373.9,192.8 375.6,192.8 377.4,192.8 379.2,192.8 380.9,192.8 382.7,192.8 384.5,192.8 386.2,192.8 388.0,192.8 389.8,192.8 391.5,192.8 393.3,192.8 395.1,192.8 396.8,192.8 398.6,192.8 400.3,192.8 402.1,192.8 403.9,192.8 405.6,192.8 407.4,192.8 409.2,192.8 410.9,192.8 412.7,192.8 414.5,192.8 416.2,192.8 418.0,192.8 419.8,192.8 421.5,192.8 423.3,192.8 425.1,192.8 426.8,192.8 428.6,192.8 430.4,192.8 432.1,192.8 433.9,192.8 435.7,192.8 437.4,192.8 439.2,192.8 441.0,192.8 442.7,192.8 444.5,192.8 446.3,192.8 448.0,192.8 449.8,192.8 451.6,192.8 453.3,192.8 455.1,192.8 456.9,192.8 458.6,192.8 460.4,192.8 462.2,192.8 463.9,192.8 465.7,192.8 467.5,192.8 469.2,192.8 471.0,192.8 472.7,192.8 474.5,192.8 476.3,192.8 478.0,192.8 479.8,192.8 481.6,192.8 483.3,192.8 485.1,192.8 486.9,192.8 488.6,192.8 490.4,192.8 492.2,192.8 493.9,192.8 495.7,192.8 497.5,192.8 499.2,192.8 501.0,192.8 502.8,192.8 504.5,192.8 506.3,192.8 508.1,192.8 509.8,192.8 511.6,192.8 513.4,192.8 515.1,192.8 516.9,192.8 518.7,192.8 520.4,192.8 522.2,192.8 524.0,192.8 525.7,192.8 527.5,192.8 529.3,192.8 531.0,192.8 532.8,192.8 534.6,192.8 536.3,192.8 538.1,192.8 539.9,192.8 541.6,192.8 543.4,192.8 545.2,192.8 546.9,192.8 548.7,192.8 550.4,192.8 552.2,192.8 554.0,192.8 555.7,192.8 557.5,192.8 559.3,192.8 561.0,192.8 562.8,192.8 564.6,192.8 566.3,192.8 568.1,192.8 569.9,192.8 571.6,192.8 573.4,192.8 575.2,192.8 576.9,192.8 578.7,192.8 580.5,192.8 582.2,192.8 584.0,192.8"/>
+</svg></div>
+  <p class="caption">Pérdida de la red XOR (Parte 4), 3 000 épocas, tasa 2.0.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="num-cell">Época</th><th class="num-cell">Pérdida (sin limpiar)</th><th class="num-cell">Mayor |peso| de W1</th></tr></thead>
+      <tbody>
+        <tr><td class="num-cell">0</td><td class="num-cell">0.137</td><td class="num-cell">1.7</td></tr>
+        <tr><td class="num-cell">100</td><td class="num-cell">0.010</td><td class="num-cell">15.6</td></tr>
+        <tr><td class="num-cell">500</td><td class="num-cell">0.0025</td><td class="num-cell">120</td></tr>
+        <tr><td class="num-cell">2 999</td><td class="num-cell">0.0025</td><td class="num-cell"><span class="bad">796</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Al principio baja <em>más rápido</em> que la versión correcta: el paso de cada época usa la suma de todos los gradientes anteriores, que apuntan más o menos hacia el mismo lado, y es como si la tasa creciera sola. Pero esa suma no se “olvida” nunca: los pesos siguen creciendo aunque el gradiente actual sea casi cero (W1 llega a 796, W2 a 1 152). Las sigmoid quedan saturadas en 0 o 1 y la pérdida se clava en 0.0025 exactos: es <code>½ · 1/200</code>, un único punto clasificado al revés con total “seguridad” (99.5 % de exactitud), que la red ya no puede corregir porque en la saturación la derivada es cero (<a class="rel" href="06_fundamento_sigmoid_saturacion.html">1.5</a>).</p>
+
+  <div class="callout">
+    Siguiente: <a class="rel" href="19_fundamento_tensor.html">De números a arrays</a> · Antes: <a class="rel" href="19_fundamento_orden_topologico.html">Recorrer el grafo al revés</a>
+  </div>
+
+  <footer>
+    Fundamento de la <a href="index.html#modelos">Lección 4.1 — Autograd: el backward automático</a>.
+  </footer>
+
+</div>
+</body>
+</html>

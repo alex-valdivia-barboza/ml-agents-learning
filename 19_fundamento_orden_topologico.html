@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 4.1 — Recorrer el grafo al revés</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* Pipeline del forward pass: entrada → z → y_pred */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .flow .step {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .flow .step .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .flow .step p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+  .flow .arrow {
+    align-self: center;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 0 8px;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+  .chart .curve { fill: none; stroke: var(--accent-redes); stroke-width: 3; }
+  .chart .lbl { fill: var(--text-dim); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .pt1 { fill: var(--accent-agentes); }
+  .chart .pt0 { fill: var(--warn); }
+  .caption { font-size: 0.82rem; color: var(--text-dim); margin: 0 0 16px; }
+
+  /* Estilos comunes de los fundamentos 1.2 a 1.6 */
+  td.num-cell, th.num-cell { font-family: "SF Mono", Consolas, monospace; font-size: 0.82rem; }
+  .step-link, .rel { color: var(--accent-redes); }
+  .step-link { font-size: 0.8rem; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  :root { --clase0: #5b9cf6; --clase1: #f07070; }
+  @media (prefers-color-scheme: light) {
+    :root { --clase0: #2f6fd6; --clase1: #d64545; }
+  }
+  .chart .zone0 { fill: var(--clase0); opacity: 0.24; }
+  .chart .zone1 { fill: var(--clase1); opacity: 0.2; }
+  .chart .p0 { fill: var(--clase0); }
+  .chart .p1 { fill: var(--clase1); }
+  .chart .frame { stroke: var(--border); }
+  .chart .hl { fill: none; stroke: var(--text); stroke-width: 2; }
+  .chart .line-n { stroke: var(--text-dim); stroke-width: 1.5; opacity: 0.8; }
+  .chart .line-f { stroke: var(--text); stroke-width: 2; stroke-dasharray: 6 5; }
+  .chart.plane { max-width: 440px; margin-left: auto; margin-right: auto; }
+  .plane-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 0 0 8px; }
+  .plane-pair .chart { margin: 0; }
+  .plane-pair .caption { margin: 6px 4px 0; text-align: center; }
+
+  .chart .s0 { fill: none; stroke: var(--accent-redes); stroke-width: 2.5; }
+  .chart .s1 { fill: none; stroke: var(--accent-agentes); stroke-width: 2.5; }
+  .chart .s2 { fill: none; stroke: var(--warn); stroke-width: 2.5; }
+  .chart .s3 { fill: none; stroke: var(--accent-docs); stroke-width: 2.5; }
+  .chart .s4 { fill: none; stroke: var(--text-dim); stroke-width: 2; }
+  .chart .m0 { fill: var(--accent-redes); }
+  .chart .m1 { fill: var(--accent-agentes); }
+  .chart .m2 { fill: var(--warn); }
+  .chart .m3 { fill: var(--accent-docs); }
+  .chart .bar { fill: var(--accent-redes); }
+  .chart .bar1 { fill: var(--accent-agentes); }
+  .chart .bar2 { fill: var(--warn); }
+  .chart .bar3 { fill: var(--accent-docs); }
+  .chart .bar4 { fill: var(--text-dim); }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 0 0 6px;
+  }
+  .legend i {
+    display: inline-block;
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .legend .k0 { background: var(--accent-redes); }
+  .legend .k1 { background: var(--accent-agentes); }
+  .legend .k2 { background: var(--warn); }
+  .legend .k3 { background: var(--accent-docs); }
+  .legend .k4 { background: var(--text-dim); }
+  .legend .c0 { background: var(--clase0); height: 10px; width: 10px; border-radius: 50%; }
+  .legend .c1 { background: var(--clase1); height: 10px; width: 10px; border-radius: 50%; }
+
+  .shape-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85rem;
+  }
+  .shape-row .box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+  }
+  .shape-row .box small { display: block; color: var(--text-dim); font-size: 0.72rem; }
+  .shape-row .op { color: var(--text-dim); }
+  .matrices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+  .matrices pre { margin: 0; }
+
+  .digits { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 8px; }
+  .digits figure { margin: 0; text-align: center; font-size: 0.78rem; color: var(--text-dim); }
+  .digits svg { width: 84px; height: 84px; border-radius: 6px; display: block; margin-bottom: 4px; }
+  .digit .dbg { fill: var(--code-bg); }
+  .digit .dpx { fill: var(--text); }
+  .pixgrid { font-family: "SF Mono", Consolas, monospace; font-size: 0.66rem; line-height: 1.25; }
+
+  /* Temas por módulo: <div class="wrap agentes|pln|modelos"> */
+  :root { --accent-pln: #f0a35b; --accent-pln-bg: rgba(240, 163, 91, 0.12); --accent-modelos: #f07a9b; --accent-modelos-bg: rgba(240, 122, 155, 0.12); }
+  @media (prefers-color-scheme: light) {
+    :root { --accent-pln: #b8640f; --accent-pln-bg: rgba(184, 100, 15, 0.08); --accent-modelos: #c2385f; --accent-modelos-bg: rgba(194, 56, 95, 0.08); }
+  }
+  .agentes { --tema: var(--accent-agentes); --tema-bg: var(--accent-agentes-bg); }
+  .pln { --tema: var(--accent-pln); --tema-bg: var(--accent-pln-bg); }
+  .modelos { --tema: var(--accent-modelos); --tema-bg: var(--accent-modelos-bg); }
+  .agentes .module-tag, .pln .module-tag, .modelos .module-tag { background: var(--tema-bg); color: var(--tema); }
+  .agentes .rel, .pln .rel, .modelos .rel, .agentes .step-link, .pln .step-link, .modelos .step-link { color: var(--tema); }
+  .agentes .callout.key, .pln .callout.key, .modelos .callout.key { background: var(--tema-bg); border-color: color-mix(in srgb, var(--tema) 40%, var(--border)); }
+
+  /* Cuadrículas de agentes */
+  .chart .cell-l { fill: var(--code-bg); stroke: var(--border); }
+  .chart .cell-s { fill: var(--warn); fill-opacity: 0.32; stroke: var(--warn); }
+  .chart .cell-w { fill: var(--text-dim); opacity: 0.3; }
+  .chart .cell-v { fill: var(--accent-agentes); fill-opacity: 0.2; stroke: var(--border); }
+  .chart .cell-p { fill: var(--accent-agentes); opacity: 0.55; }
+  .chart .cell-a { fill: var(--clase0); fill-opacity: 0.45; stroke: var(--border); }
+  .chart .trail { fill: none; stroke: var(--accent-agentes); stroke-width: 3; stroke-linejoin: round; opacity: 0.85; }
+  .chart.grid-sm { max-width: 300px; margin-left: auto; margin-right: auto; }
+  .grid-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 0 0 8px; }
+  .grid-pair .chart { margin: 0; }
+  .grid-pair .caption { margin: 6px 4px 0; text-align: center; }
+  .chart .s5 { fill: none; stroke: var(--accent-modelos); stroke-width: 2.5; }
+  .chart .bar5 { fill: var(--accent-modelos); }
+  .legend .k5 { background: var(--accent-modelos); }
+  .chart .node { fill: var(--code-bg); stroke: var(--border); stroke-width: 1.2; }
+  .chart .node-hl { fill: var(--accent-modelos-bg); stroke: var(--accent-modelos); stroke-width: 1.5; }
+  .chart .edge { fill: none; stroke: var(--text-dim); stroke-width: 1.4; }
+  .chart .edge-g { fill: none; stroke: var(--accent-modelos); stroke-width: 1.6; stroke-dasharray: 5 4; }
+  .chart .ntxt { fill: var(--text); font-size: 13px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .gtxt { fill: var(--accent-modelos); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .arrow { fill: var(--text-dim); }
+  .chart .arrow-g { fill: var(--accent-modelos); }
+  .ok { color: var(--done); font-weight: 600; }
+  .bad { color: var(--warn); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap modelos">
+
+  <header>
+    <a class="back" href="index.html#modelos">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 4.1 · FUNDAMENTO</span>
+      <span class="module-tag">Cómo funciona</span>
+    </div>
+    <h1>Recorrer el grafo al revés</h1>
+    <p class="subtitle">El método backward(): ordenar los nodos para que cada uno se procese después de todos los que dependen de él, y llamar sus _atras en ese orden. Con los números reales de la neurona.</p>
+  </header>
+
+  <h2>1. El problema del orden</h2>
+  <p>Cada <code>_atras</code> usa <code>salida.grad</code>: el gradiente del nodo que produjo. Ese gradiente tiene que estar <strong>completo</strong> antes de repartirlo. Si se procesara <code>x1 * w1</code> antes que la suma que lo usa, su <code>grad</code> todavía valdría 0 y no repartiría nada.</p>
+  <p>La regla: un nodo se procesa solo cuando ya se procesaron todos los nodos que lo usan. Un orden así se llama <strong>orden topológico</strong> (al revés).</p>
+
+  <h2>2. El código</h2>
+  <div class="file-ref">19_autograd.py · líneas 83–97</div>
+<pre><code>def backward(self):
+    orden, visitados = [], set()
+
+    def construir(v):
+        if v not in visitados:
+            visitados.add(v)
+            for p in v.previos:
+                construir(p)               <span class="cm"># primero, todo aquello de lo que depende</span>
+            orden.append(v)                <span class="cm"># después, el nodo mismo</span>
+    construir(self)
+
+    self.grad = 1.0                        <span class="cm"># dL/dL = 1</span>
+    for v in reversed(orden):              <span class="cm"># de la salida hacia las entradas</span>
+        v._atras()</code></pre>
+  <ul>
+    <li><code>construir</code> es <strong>recursiva</strong>: se llama a sí misma con cada previo. Es una búsqueda en profundidad, pariente del DFS de la <a class="rel" href="08_fundamento_bfs_vs_dfs.html">lección 2.2</a>: baja hasta las hojas y agrega cada nodo a la lista recién al volver, cuando todos sus previos ya están.</li>
+    <li>Así <code>orden</code> queda con las hojas primero y <code>L</code> al final. Recorrerla con <code>reversed</code> da exactamente lo que hace falta: de la salida a las entradas.</li>
+    <li><code>visitados</code> es un conjunto (<code>set</code>) para no agregar dos veces un nodo al que se llega por dos caminos.</li>
+    <li>El punto de partida es <code>self.grad = 1.0</code>: la derivada de L respecto de sí misma.</li>
+  </ul>
+
+  <h2>3. La neurona, paso a paso</h2>
+  <div class="chart"><svg viewBox="0 0 690 375" role="img" aria-label="Grafo de cálculo de L = tanh(x1*w1 + x2*w2 + b)">
+<defs><marker id="fl41_grafo_grad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<path class="edge" d="M108.0,35 C132.5,35 132.5,72 155.0,72" marker-end="url(#fl41_grafo_grad)"/>
+<path class="edge" d="M108.0,110 C132.5,110 132.5,72 155.0,72" marker-end="url(#fl41_grafo_grad)"/>
+<path class="edge" d="M108.0,185 C132.5,185 132.5,222 155.0,222" marker-end="url(#fl41_grafo_grad)"/>
+<path class="edge" d="M108.0,260 C132.5,260 132.5,222 155.0,222" marker-end="url(#fl41_grafo_grad)"/>
+<path class="edge" d="M253.0,72 C275.0,72 275.0,147 295.0,147" marker-end="url(#fl41_grafo_grad)"/>
+<path class="edge" d="M253.0,222 C275.0,222 275.0,147 295.0,147" marker-end="url(#fl41_grafo_grad)"/>
+<path class="edge" d="M393.0,147 C415.0,147 415.0,250 435.0,250" marker-end="url(#fl41_grafo_grad)"/>
+<path class="edge" d="M108.0,335 C272.5,335 272.5,250 435.0,250" marker-end="url(#fl41_grafo_grad)"/>
+<path class="edge" d="M533.0,250 C555.0,250 555.0,250 575.0,250" marker-end="url(#fl41_grafo_grad)"/>
+<rect class="node" x="12.0" y="15.0" width="96" height="40" rx="8"/>
+<text class="ntxt" x="60" y="32" text-anchor="middle">x1</text>
+<text class="lbl" x="60" y="48" text-anchor="middle">2</text>
+<text class="gtxt" x="60" y="69.0" text-anchor="middle">grad -1.5</text>
+<circle class="m3" cx="106.0" cy="17.0" r="10"/>
+<text class="ntxt" x="106.0" y="21.5" text-anchor="middle" style="font-size:11px">10</text>
+<rect class="node" x="12.0" y="90.0" width="96" height="40" rx="8"/>
+<text class="ntxt" x="60" y="107" text-anchor="middle">w1</text>
+<text class="lbl" x="60" y="123" text-anchor="middle">-3</text>
+<text class="gtxt" x="60" y="144.0" text-anchor="middle">grad 1.0</text>
+<circle class="m3" cx="106.0" cy="92.0" r="10"/>
+<text class="ntxt" x="106.0" y="96.5" text-anchor="middle" style="font-size:11px">9</text>
+<rect class="node" x="12.0" y="165.0" width="96" height="40" rx="8"/>
+<text class="ntxt" x="60" y="182" text-anchor="middle">x2</text>
+<text class="lbl" x="60" y="198" text-anchor="middle">0</text>
+<text class="gtxt" x="60" y="219.0" text-anchor="middle">grad 0.5</text>
+<circle class="m3" cx="106.0" cy="167.0" r="10"/>
+<text class="ntxt" x="106.0" y="171.5" text-anchor="middle" style="font-size:11px">7</text>
+<rect class="node" x="12.0" y="240.0" width="96" height="40" rx="8"/>
+<text class="ntxt" x="60" y="257" text-anchor="middle">w2</text>
+<text class="lbl" x="60" y="273" text-anchor="middle">1</text>
+<text class="gtxt" x="60" y="294.0" text-anchor="middle">grad 0</text>
+<circle class="m3" cx="106.0" cy="242.0" r="10"/>
+<text class="ntxt" x="106.0" y="246.5" text-anchor="middle" style="font-size:11px">6</text>
+<rect class="node" x="12.0" y="315.0" width="96" height="40" rx="8"/>
+<text class="ntxt" x="60" y="332" text-anchor="middle">b</text>
+<text class="lbl" x="60" y="348" text-anchor="middle">6.88</text>
+<text class="gtxt" x="60" y="369.0" text-anchor="middle">grad 0.5</text>
+<circle class="m3" cx="106.0" cy="317.0" r="10"/>
+<text class="ntxt" x="106.0" y="321.5" text-anchor="middle" style="font-size:11px">3</text>
+<rect class="node" x="157.0" y="52.0" width="96" height="40" rx="8"/>
+<text class="ntxt" x="205" y="69" text-anchor="middle">*</text>
+<text class="lbl" x="205" y="85" text-anchor="middle">-6</text>
+<text class="gtxt" x="205" y="106.0" text-anchor="middle">grad 0.5</text>
+<circle class="m3" cx="251.0" cy="54.0" r="10"/>
+<text class="ntxt" x="251.0" y="58.5" text-anchor="middle" style="font-size:11px">8</text>
+<rect class="node" x="157.0" y="202.0" width="96" height="40" rx="8"/>
+<text class="ntxt" x="205" y="219" text-anchor="middle">*</text>
+<text class="lbl" x="205" y="235" text-anchor="middle">0</text>
+<text class="gtxt" x="205" y="256.0" text-anchor="middle">grad 0.5</text>
+<circle class="m3" cx="251.0" cy="204.0" r="10"/>
+<text class="ntxt" x="251.0" y="208.5" text-anchor="middle" style="font-size:11px">5</text>
+<rect class="node" x="297.0" y="127.0" width="96" height="40" rx="8"/>
+<text class="ntxt" x="345" y="144" text-anchor="middle">+</text>
+<text class="lbl" x="345" y="160" text-anchor="middle">-6</text>
+<text class="gtxt" x="345" y="181.0" text-anchor="middle">grad 0.5</text>
+<circle class="m3" cx="391.0" cy="129.0" r="10"/>
+<text class="ntxt" x="391.0" y="133.5" text-anchor="middle" style="font-size:11px">4</text>
+<rect class="node" x="437.0" y="230.0" width="96" height="40" rx="8"/>
+<text class="ntxt" x="485" y="247" text-anchor="middle">+  z</text>
+<text class="lbl" x="485" y="263" text-anchor="middle">0.88</text>
+<text class="gtxt" x="485" y="284.0" text-anchor="middle">grad 0.5</text>
+<circle class="m3" cx="531.0" cy="232.0" r="10"/>
+<text class="ntxt" x="531.0" y="236.5" text-anchor="middle" style="font-size:11px">2</text>
+<rect class="node-hl" x="577.0" y="230.0" width="96" height="40" rx="8"/>
+<text class="ntxt" x="625" y="247" text-anchor="middle">tanh  L</text>
+<text class="lbl" x="625" y="263" text-anchor="middle">0.707</text>
+<text class="gtxt" x="625" y="284.0" text-anchor="middle">grad 1</text>
+<circle class="m3" cx="671.0" cy="232.0" r="10"/>
+<text class="ntxt" x="671.0" y="236.5" text-anchor="middle" style="font-size:11px">1</text>
+</svg></div>
+  <p class="caption">El mismo grafo después de <code>L.backward()</code>. El círculo indica en qué turno se procesa cada nodo; debajo, su gradiente.</p>
+  <ul>
+    <li><strong>Turno 1, L (tanh):</strong> grad 1. Su <code>_atras</code> multiplica por <code>1 − 0.7071² = 0.5</code> → <code>z.grad = 0.5</code>.</li>
+    <li><strong>Turno 2, z (suma):</strong> pasa 0.5 sin cambios a sus dos previos: la otra suma y <code>b</code>.</li>
+    <li><strong>Turno 4, suma de los productos:</strong> pasa 0.5 a cada producto.</li>
+    <li><strong>Turno 5, x2 · w2:</strong> <code>w2.grad = x2 · 0.5 = 0</code> y <code>x2.grad = w2 · 0.5 = 0.5</code>.</li>
+    <li><strong>Turno 8, x1 · w1:</strong> <code>w1.grad = x1 · 0.5 = 1.0</code> y <code>x1.grad = w1 · 0.5 = −1.5</code>.</li>
+  </ul>
+  <p>Los turnos que faltan (3, 6, 7, 9 y 10) son hojas: <code>b</code>, los pesos y las entradas. Su <code>_atras</code> no hace nada; solo reciben su gradiente.</p>
+  <p>Salida real del script, con la comprobación a mano de las líneas 115–118:</p>
+<pre><code>PARTE 1: una neurona escalar
+  z = 0.8814   L = tanh(z) = 0.7071
+  dL/dw1 = +1.0000
+  dL/dw2 = +0.0000
+  dL/db = +0.5000
+  dL/dx1 = -1.5000
+  dL/dx2 = +0.5000
+  A mano: dL/dz = 0.5000, dL/dw1 = +1.0000, dL/dw2 = +0.0000</code></pre>
+  <div class="callout key">
+    <strong>Lectura:</strong> <code>dL/dw2 = 0</code> porque la entrada <code>x2</code> vale 0: ese peso no influyó en nada, así que no hay que moverlo. Es lo mismo que en la 1.3, donde <code>dW = X.T @ delta</code> también multiplicaba por la entrada. Autograd no “sabe” eso: sale solo de encadenar derivadas locales.
+  </div>
+
+  <div class="callout">
+    Siguiente: <a class="rel" href="19_fundamento_acumular.html">Sumar gradientes: el porqué del +=</a> · Antes: <a class="rel" href="19_fundamento_valor.html">Un número que recuerda de dónde viene</a>
+  </div>
+
+  <footer>
+    Fundamento de la <a href="index.html#modelos">Lección 4.1 — Autograd: el backward automático</a>.
+  </footer>
+
+</div>
+</body>
+</html>

@@ -415,7 +415,7 @@
     <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">6/6</span></button>
     <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">6/6</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">6/6</span></button>
-    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">0/6</span></button>
+    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">1/6</span></button>
   </nav>
 
   <section class="module redes tab-panel" id="redes" role="tabpanel" aria-labelledby="tab-redes">
@@ -1106,16 +1106,39 @@
     <p class="module-desc">Qué hay dentro de un modelo de lenguaje: autograd → transformer → mini-GPT → tokens BPE → muestreo → modelos grandes en la práctica.</p>
     <div class="lesson-grid">
 
-      <div class="lesson-card">
+      <div class="lesson-card done has-link">
         <div class="lesson-top">
           <span class="lesson-number">LECCIÓN 4.1</span>
-          <span class="status-badge status-pending">Pendiente</span>
+          <span class="status-badge status-done">Completa</span>
         </div>
         <h3 class="lesson-title">Autograd: el backward automático</h3>
-        <p class="lesson-desc">Construir un motor que calcula gradientes solo, como .backward() de PyTorch, sobre lo aprendido en la 1.3.</p>
+        <p class="lesson-desc">Un motor que calcula gradientes solo: primero con números (Valor) y luego con arrays (mini_autograd.py). Doce operaciones verificadas con gradient checking y la red XOR de la 1.3 entrenada sin escribir el backward.</p>
         <div class="lesson-foot">
           <span class="lesson-duration">2h</span>
-          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/19_autograd.py:1">19_autograd.py</a>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/19_autograd.py:1">19_autograd.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="19_autograd.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · La idea</span>
+            <a href="19_fundamento_por_que_autograd.html">1. Por qué automatizar el backward</a>
+            <a href="19_fundamento_valor.html">2. Un número que recuerda de dónde viene</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Cómo funciona</span>
+            <a href="19_fundamento_orden_topologico.html">3. Recorrer el grafo al revés</a>
+            <a href="19_fundamento_acumular.html">4. Sumar gradientes: el porqué del +=</a>
+            <a href="19_fundamento_tensor.html">5. De números a arrays</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Qué aprendió</span>
+            <a href="19_fundamento_comprobar.html">6. Comprobar cada operación</a>
+            <a href="19_fundamento_xor_autograd.html">7. La red XOR sin escribir el backward</a>
+            <a href="19_fundamento_costo_autograd.html">8. El precio de la comodidad y los frameworks reales <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 

@@ -379,6 +379,17 @@
   .grid-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 0 0 8px; }
   .grid-pair .chart { margin: 0; }
   .grid-pair .caption { margin: 6px 4px 0; text-align: center; }
+  .chart .s5 { fill: none; stroke: var(--accent-modelos); stroke-width: 2.5; }
+  .chart .bar5 { fill: var(--accent-modelos); }
+  .legend .k5 { background: var(--accent-modelos); }
+  .chart .node { fill: var(--code-bg); stroke: var(--border); stroke-width: 1.2; }
+  .chart .node-hl { fill: var(--accent-modelos-bg); stroke: var(--accent-modelos); stroke-width: 1.5; }
+  .chart .edge { fill: none; stroke: var(--text-dim); stroke-width: 1.4; }
+  .chart .edge-g { fill: none; stroke: var(--accent-modelos); stroke-width: 1.6; stroke-dasharray: 5 4; }
+  .chart .ntxt { fill: var(--text); font-size: 13px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .gtxt { fill: var(--accent-modelos); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .arrow { fill: var(--text-dim); }
+  .chart .arrow-g { fill: var(--accent-modelos); }
   .ok { color: var(--done); font-weight: 600; }
   .bad { color: var(--warn); font-weight: 600; }
 </style>
@@ -436,7 +447,7 @@ salida = pesos @ V                               <span class="cm"># (n, D): un v
   </div>
 
   <div class="callout">
-    Antes: <a class="rel" href="18_fundamento_distancia.html">La distancia no importa</a> · Siguiente módulo: Modelos de IA.
+    Antes: <a class="rel" href="18_fundamento_distancia.html">La distancia no importa</a> · Siguiente lección: <a class="rel" href="19_fundamento_por_que_autograd.html">4.1 Autograd</a>.
   </div>
 
   <footer>
