@@ -409,7 +409,7 @@
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Temas">
-    <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">3/6</span></button>
+    <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">4/6</span></button>
     <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">0</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">1/6</span></button>
     <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">0</span></button>
@@ -532,16 +532,39 @@
         </div>
       </div>
 
-      <div class="lesson-card">
+      <div class="lesson-card done has-link">
         <div class="lesson-top">
           <span class="lesson-number">LECCIÓN 1.4</span>
-          <span class="status-badge status-pending">Pendiente</span>
+          <span class="status-badge status-done">Completa</span>
         </div>
         <h3 class="lesson-title">Caso Real — MNIST</h3>
-        <p class="lesson-desc">Dataset de 60k dígitos. Normalización, red multicapa, accuracy vs. épocas.</p>
+        <p class="lesson-desc">60 000 dígitos escritos a mano, red 784-64-10 con softmax y cross-entropy, mini-batches. 97 % de accuracy en test.</p>
         <div class="lesson-foot">
           <span class="lesson-duration">2h</span>
-          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/05_mnist_classifier.py:1">05_mnist_classifier.py</a>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/05_mnist_classifier.py:1">05_mnist_classifier.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="05_mnist_classifier.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · Los datos</span>
+            <a href="05_fundamento_mnist.html">1. ¿Cómo es MNIST?</a>
+            <a href="05_fundamento_normalizar.html">2. Normalizar entradas y escalar pesos</a>
+            <a href="05_fundamento_train_test.html">3. Train y test: medir con datos nuevos</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Diez clases a la salida</span>
+            <a href="05_fundamento_one_hot.html">4. One-hot: etiquetas para 10 clases</a>
+            <a href="05_fundamento_softmax.html">5. Softmax</a>
+            <a href="05_fundamento_cross_entropy.html">6. Cross-entropy y su gradiente</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Entrenar a escala</span>
+            <a href="05_fundamento_mini_batches.html">7. Mini-batches</a>
+            <a href="05_fundamento_matriz_confusion.html">8. La matriz de confusión <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 

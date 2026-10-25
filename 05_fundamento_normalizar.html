@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 1.4 — Normalizar entradas y escalar pesos</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* Pipeline del forward pass: entrada → z → y_pred */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .flow .step {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .flow .step .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .flow .step p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+  .flow .arrow {
+    align-self: center;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 0 8px;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+  .chart .curve { fill: none; stroke: var(--accent-redes); stroke-width: 3; }
+  .chart .lbl { fill: var(--text-dim); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .pt1 { fill: var(--accent-agentes); }
+  .chart .pt0 { fill: var(--warn); }
+  .caption { font-size: 0.82rem; color: var(--text-dim); margin: 0 0 16px; }
+
+  /* Estilos comunes de los fundamentos 1.2 a 1.6 */
+  td.num-cell, th.num-cell { font-family: "SF Mono", Consolas, monospace; font-size: 0.82rem; }
+  .step-link, .rel { color: var(--accent-redes); }
+  .step-link { font-size: 0.8rem; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  :root { --clase0: #5b9cf6; --clase1: #f07070; }
+  @media (prefers-color-scheme: light) {
+    :root { --clase0: #2f6fd6; --clase1: #d64545; }
+  }
+  .chart .zone0 { fill: var(--clase0); opacity: 0.13; }
+  .chart .zone1 { fill: var(--clase1); opacity: 0.13; }
+  .chart .p0 { fill: var(--clase0); }
+  .chart .p1 { fill: var(--clase1); }
+  .chart .frame { stroke: var(--border); }
+  .chart .hl { fill: none; stroke: var(--text); stroke-width: 2; }
+  .chart .line-n { stroke: var(--text-dim); stroke-width: 1.5; opacity: 0.8; }
+  .chart .line-f { stroke: var(--text); stroke-width: 2; stroke-dasharray: 6 5; }
+  .chart.plane { max-width: 440px; margin-left: auto; margin-right: auto; }
+  .plane-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 0 0 8px; }
+  .plane-pair .chart { margin: 0; }
+  .plane-pair .caption { margin: 6px 4px 0; text-align: center; }
+
+  .chart .s0 { fill: none; stroke: var(--accent-redes); stroke-width: 2.5; }
+  .chart .s1 { fill: none; stroke: var(--accent-agentes); stroke-width: 2.5; }
+  .chart .s2 { fill: none; stroke: var(--warn); stroke-width: 2.5; }
+  .chart .s3 { fill: none; stroke: var(--accent-docs); stroke-width: 2.5; }
+  .chart .s4 { fill: none; stroke: var(--text-dim); stroke-width: 2; }
+  .chart .m0 { fill: var(--accent-redes); }
+  .chart .m1 { fill: var(--accent-agentes); }
+  .chart .m2 { fill: var(--warn); }
+  .chart .m3 { fill: var(--accent-docs); }
+  .chart .bar { fill: var(--accent-redes); }
+  .chart .bar1 { fill: var(--accent-agentes); }
+  .chart .bar2 { fill: var(--warn); }
+  .chart .bar3 { fill: var(--accent-docs); }
+  .chart .bar4 { fill: var(--text-dim); }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 0 0 6px;
+  }
+  .legend i {
+    display: inline-block;
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .legend .k0 { background: var(--accent-redes); }
+  .legend .k1 { background: var(--accent-agentes); }
+  .legend .k2 { background: var(--warn); }
+  .legend .k3 { background: var(--accent-docs); }
+  .legend .k4 { background: var(--text-dim); }
+  .legend .c0 { background: var(--clase0); height: 10px; width: 10px; border-radius: 50%; }
+  .legend .c1 { background: var(--clase1); height: 10px; width: 10px; border-radius: 50%; }
+
+  .shape-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85rem;
+  }
+  .shape-row .box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+  }
+  .shape-row .box small { display: block; color: var(--text-dim); font-size: 0.72rem; }
+  .shape-row .op { color: var(--text-dim); }
+  .matrices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+  .matrices pre { margin: 0; }
+
+  .digits { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 8px; }
+  .digits figure { margin: 0; text-align: center; font-size: 0.78rem; color: var(--text-dim); }
+  .digits svg { width: 84px; height: 84px; border-radius: 6px; display: block; margin-bottom: 4px; }
+  .digit .dbg { fill: var(--code-bg); }
+  .digit .dpx { fill: var(--text); }
+  .pixgrid { font-family: "SF Mono", Consolas, monospace; font-size: 0.66rem; line-height: 1.25; }
+  .ok { color: var(--done); font-weight: 600; }
+  .bad { color: var(--warn); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="back" href="index.html">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 1.4 · FUNDAMENTO</span>
+      <span class="module-tag">Los datos</span>
+    </div>
+    <h1>Normalizar entradas y escalar pesos</h1>
+    <p class="subtitle">Dos líneas que parecen detalles: el <code>/ 255.0</code> y el <code>* np.sqrt(1.0 / n_entrada)</code>. Sin ellas, la sigmoid se satura antes de empezar y la red casi no aprende. Medido con tus datos.</p>
+  </header>
+
+  <h2>1. Lo que ya sabes</h2>
+  <div class="callout key">
+    <strong>De la 1.1:</strong> cuando <code>z</code> es muy grande o muy chico, la sigmoid se <strong>satura</strong> (da casi 0 o casi 1) y su derivada <code>a·(1 − a)</code> es casi 0. Una neurona saturada casi no recibe gradiente: no aprende. Ver <a class="rel" href="01_fundamento_derivada_sigmoid.html">La derivada de sigmoid</a>.
+  </div>
+  <p>En XOR las entradas valían entre 0 y 1 y había 2. En MNIST hay 784, y sin preparar valen hasta 255. Ambas cosas hacen crecer <code>z1</code>.</p>
+
+  <h2>2. El tamaño de <code>z1</code> depende de cuántos términos se suman</h2>
+  <p>Para cada neurona oculta, <code>z1 = x[0]·W1[0] + x[1]·W1[1] + … + x[783]·W1[783] + b</code>: 784 productos sumados. Si los pesos son <code>randn</code> (desvío 1) y las entradas grandes, esa suma es enorme.</p>
+  <p>Medido con 1000 imágenes reales de tu dataset y pesos aleatorios de 784 × 64:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Entradas</th><th>Pesos iniciales</th><th class="num-cell">Desvío de z1</th><th class="num-cell">Neuronas saturadas</th></tr></thead>
+      <tbody>
+        <tr><td>0 a 255 (sin normalizar)</td><td><code>randn</code></td><td class="num-cell">2220</td><td class="num-cell"><span class="bad">99.8 %</span></td></tr>
+        <tr><td>0 a 255 (sin normalizar)</td><td><code>randn · √(1/784)</code></td><td class="num-cell">79</td><td class="num-cell"><span class="bad">95.0 %</span></td></tr>
+        <tr><td>0 a 1 (<code>/ 255</code>)</td><td><code>randn</code></td><td class="num-cell">8.7</td><td class="num-cell"><span class="bad">57.8 %</span></td></tr>
+        <tr><td>0 a 1 (<code>/ 255</code>)</td><td><code>randn · √(1/784)</code></td><td class="num-cell">0.31</td><td class="num-cell"><span class="ok">0 %</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="caption">“Saturada” = activación menor a 0.01 o mayor a 0.99. La última fila es la configuración del script.</p>
+  <p>Hacen falta <strong>las dos cosas</strong>. Cualquiera de las dos sola deja más de la mitad de las neuronas saturadas desde el principio.</p>
+
+  <h2>3. Normalizar las entradas: <code>/ 255.0</code></h2>
+  <div class="file-ref">05_mnist_classifier.py · líneas 85–86</div>
+<pre><code>X_train = imagenes_train.reshape(-1, 784) / 255.0      <span class="cm"># píxeles entre 0 y 1</span>
+X_test = imagenes_test.reshape(-1, 784) / 255.0</code></pre>
+  <p>Dividir por el valor máximo lleva todos los píxeles a [0, 1]. No cambia la información (un 253 sigue siendo “casi negro”), solo la escala. Además convierte los <code>uint8</code> en <code>float</code>, que es lo que necesitan las cuentas.</p>
+  <p>Fíjate que <code>X_test</code> se divide por <strong>el mismo</strong> 255. Cualquier preparación que se aplique a train se aplica igual a test, si no la red vería en test datos con otra escala.</p>
+
+  <h3>Experimento: quitar el <code>/ 255.0</code></h3>
+  <p>Es el primer experimento sugerido del script. Una época real sin normalizar (todo lo demás igual):</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th></th><th class="num-cell">Con / 255</th><th class="num-cell">Sin / 255</th></tr></thead>
+      <tbody>
+        <tr><td>Accuracy en test tras 1 época</td><td class="num-cell">92.4 %</td><td class="num-cell">46.0 %</td></tr>
+        <tr><td>Neuronas ocultas saturadas</td><td class="num-cell">0 %</td><td class="num-cell">99.98 %</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Además NumPy avisa <code>RuntimeWarning: overflow encountered in exp</code>: algunos <code>z1</code> son tan negativos que <code>np.exp(-z)</code> no entra en un <code>float</code>. Casi todas las neuronas ocultas quedan en 0 o en 1 exactos, como interruptores trabados, y la red solo aprende lo poco que logra ajustar la capa de salida.</p>
+
+  <h2>4. Escalar los pesos iniciales: <code>√(1/n_entrada)</code></h2>
+  <div class="file-ref">05_mnist_classifier.py · líneas 122–128</div>
+<pre><code>"W1": np.random.randn(n_entrada, n_oculta) * np.sqrt(1.0 / n_entrada),   <span class="cm"># × 1/28</span>
+"b1": np.zeros(n_oculta),
+"W2": np.random.randn(n_oculta, n_salida) * np.sqrt(1.0 / n_oculta),     <span class="cm"># × 1/8</span>
+"b2": np.zeros(n_salida),</code></pre>
+  <p>¿Por qué raíz cuadrada? Al sumar <code>n</code> términos aleatorios independientes, el desvío de la suma crece como <code>√n</code>, no como <code>n</code> (los positivos y negativos se cancelan en parte). Multiplicar cada peso por <code>1/√n</code> compensa justo ese crecimiento, y <code>z</code> queda con un desvío parecido sin importar cuántas entradas tenga la capa.</p>
+  <ul>
+    <li>Capa oculta: <code>√(1/784) = 1/28 ≈ 0.036</code>.</li>
+    <li>Capa de salida: <code>√(1/64) = 1/8 = 0.125</code>.</li>
+  </ul>
+  <p>Es la misma idea que el <code>* 0.1</code> de la 1.1, pero calculada según el tamaño de cada capa. Tiene nombre: <strong>inicialización de Xavier</strong> (o Glorot). En XOR (lección 1.2) no hacía falta porque cada neurona tenía solo 2 o 4 entradas.</p>
+
+  <div class="callout key">
+    <strong>Regla general:</strong> antes de entrenar, la red debería empezar con las neuronas en la zona “sensible” de su activación. Normalizar las entradas y escalar los pesos son las dos herramientas para lograrlo. Cuando una red no aprende y no sabes por qué, lo primero que conviene revisar es esto.
+  </div>
+
+  <div class="callout">
+    Siguiente: <a class="rel" href="05_fundamento_train_test.html">Train y test: medir con datos nuevos</a> · Antes: <a class="rel" href="05_fundamento_mnist.html">¿Cómo es MNIST?</a>
+  </div>
+
+  <footer>
+    Fundamento de la <a href="index.html">Lección 1.4 — Caso Real: MNIST</a>.
+  </footer>
+
+</div>
+</body>
+</html>
