@@ -409,7 +409,7 @@
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Temas">
-    <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">1/6</span></button>
+    <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">3/6</span></button>
     <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">0</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">1/6</span></button>
     <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">0</span></button>
@@ -460,29 +460,75 @@
         </div>
       </div>
 
-      <div class="lesson-card">
+      <div class="lesson-card done has-link">
         <div class="lesson-top">
           <span class="lesson-number">LECCIÓN 1.2</span>
-          <span class="status-badge status-pending">Pendiente</span>
+          <span class="status-badge status-done">Completa</span>
         </div>
         <h3 class="lesson-title">Red de 2 Capas</h3>
-        <p class="lesson-desc">Capa oculta, activaciones Sigmoid/ReLU, entrenamiento en datos no-lineales (XOR, circles).</p>
+        <p class="lesson-desc">Por qué el perceptrón falla en XOR, capa oculta de 4 neuronas sigmoid, frontera curva. Experimentos con círculos y tamaño de la capa.</p>
         <div class="lesson-foot">
           <span class="lesson-duration">2h</span>
-          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/03_neural_network_2layer.py:1">03_neural_network_2layer.py</a>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/03_neural_network_2layer.py:1">03_neural_network_2layer.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="03_neural_network_2layer.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · El problema</span>
+            <a href="03_fundamento_xor.html">1. ¿Por qué el perceptrón no puede con XOR?</a>
+            <a href="03_fundamento_capa_oculta.html">2. ¿Qué es una capa oculta?</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Cómo calcula la red</span>
+            <a href="03_fundamento_matrices_pesos.html">3. Los pesos como matrices (W1, W2)</a>
+            <a href="03_fundamento_forward_2capas.html">4. El forward pass de 2 capas</a>
+            <a href="03_fundamento_frontera_curva.html">5. ¿Cómo aparece una frontera curva?</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Entrenar la red</span>
+            <a href="03_fundamento_entrenar_2capas.html">6. El loop de entrenamiento con 2 capas</a>
+            <a href="03_fundamento_inicializacion.html">7. ¿Por qué los pesos iniciales no pueden ser iguales?</a>
+            <a href="03_fundamento_neuronas_ocultas.html">8. ¿Cuántas neuronas ocultas hacen falta? <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 
-      <div class="lesson-card">
+      <div class="lesson-card done has-link">
         <div class="lesson-top">
           <span class="lesson-number">LECCIÓN 1.3</span>
-          <span class="status-badge status-pending">Pendiente</span>
+          <span class="status-badge status-done">Completa</span>
         </div>
         <h3 class="lesson-title">Backpropagation Completa</h3>
-        <p class="lesson-desc">Derivadas y regla de la cadena. Forward y backward pass detallados, gradientes por peso.</p>
+        <p class="lesson-desc">Regla de la cadena, forward con cache, backward capa por capa (dZ, dW, db) y gradient checking contra la derivada numérica.</p>
         <div class="lesson-foot">
           <span class="lesson-duration">2h</span>
-          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/04_backpropagation_detailed.py:1">04_backpropagation_detailed.py</a>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/04_backpropagation_detailed.py:1">04_backpropagation_detailed.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="04_backpropagation_detailed.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · Las ideas</span>
+            <a href="04_fundamento_regla_cadena.html">1. La regla de la cadena</a>
+            <a href="04_fundamento_grafo_computacional.html">2. El forward pass como cadena de operaciones</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Hacia atrás, capa por capa</span>
+            <a href="04_fundamento_funcion_perdida.html">3. La pérdida y el signo del gradiente</a>
+            <a href="04_fundamento_delta_salida.html">4. El delta de la capa de salida</a>
+            <a href="04_fundamento_propagar_delta.html">5. Propagar el delta a la capa oculta</a>
+            <a href="04_fundamento_gradientes_pesos.html">6. Los gradientes de los pesos ocultos</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Verificar y entrenar</span>
+            <a href="04_fundamento_gradient_check.html">7. Gradient checking</a>
+            <a href="04_fundamento_por_que_hacia_atras.html">8. ¿Por qué hacia atrás? <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 

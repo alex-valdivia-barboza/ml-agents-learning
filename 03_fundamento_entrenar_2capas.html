@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 1.2 — El loop de entrenamiento con 2 capas</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* Pipeline del forward pass: entrada → z → y_pred */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .flow .step {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .flow .step .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .flow .step p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+  .flow .arrow {
+    align-self: center;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 0 8px;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+  .chart .curve { fill: none; stroke: var(--accent-redes); stroke-width: 3; }
+  .chart .lbl { fill: var(--text-dim); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .pt1 { fill: var(--accent-agentes); }
+  .chart .pt0 { fill: var(--warn); }
+  .caption { font-size: 0.82rem; color: var(--text-dim); margin: 0 0 16px; }
+
+  /* Estilos comunes de los fundamentos 1.2 a 1.6 */
+  td.num-cell, th.num-cell { font-family: "SF Mono", Consolas, monospace; font-size: 0.82rem; }
+  .step-link, .rel { color: var(--accent-redes); }
+  .step-link { font-size: 0.8rem; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  :root { --clase0: #5b9cf6; --clase1: #f07070; }
+  @media (prefers-color-scheme: light) {
+    :root { --clase0: #2f6fd6; --clase1: #d64545; }
+  }
+  .chart .zone0 { fill: var(--clase0); opacity: 0.13; }
+  .chart .zone1 { fill: var(--clase1); opacity: 0.13; }
+  .chart .p0 { fill: var(--clase0); }
+  .chart .p1 { fill: var(--clase1); }
+  .chart .frame { stroke: var(--border); }
+  .chart .hl { fill: none; stroke: var(--text); stroke-width: 2; }
+  .chart .line-n { stroke: var(--text-dim); stroke-width: 1.5; opacity: 0.8; }
+  .chart .line-f { stroke: var(--text); stroke-width: 2; stroke-dasharray: 6 5; }
+  .chart.plane { max-width: 440px; margin-left: auto; margin-right: auto; }
+  .plane-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 0 0 8px; }
+  .plane-pair .chart { margin: 0; }
+  .plane-pair .caption { margin: 6px 4px 0; text-align: center; }
+
+  .chart .s0 { fill: none; stroke: var(--accent-redes); stroke-width: 2.5; }
+  .chart .s1 { fill: none; stroke: var(--accent-agentes); stroke-width: 2.5; }
+  .chart .s2 { fill: none; stroke: var(--warn); stroke-width: 2.5; }
+  .chart .s3 { fill: none; stroke: var(--accent-docs); stroke-width: 2.5; }
+  .chart .s4 { fill: none; stroke: var(--text-dim); stroke-width: 2; }
+  .chart .m0 { fill: var(--accent-redes); }
+  .chart .m1 { fill: var(--accent-agentes); }
+  .chart .m2 { fill: var(--warn); }
+  .chart .m3 { fill: var(--accent-docs); }
+  .chart .bar { fill: var(--accent-redes); }
+  .chart .bar1 { fill: var(--accent-agentes); }
+  .chart .bar2 { fill: var(--warn); }
+  .chart .bar3 { fill: var(--accent-docs); }
+  .chart .bar4 { fill: var(--text-dim); }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 0 0 6px;
+  }
+  .legend i {
+    display: inline-block;
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .legend .k0 { background: var(--accent-redes); }
+  .legend .k1 { background: var(--accent-agentes); }
+  .legend .k2 { background: var(--warn); }
+  .legend .k3 { background: var(--accent-docs); }
+  .legend .k4 { background: var(--text-dim); }
+  .legend .c0 { background: var(--clase0); height: 10px; width: 10px; border-radius: 50%; }
+  .legend .c1 { background: var(--clase1); height: 10px; width: 10px; border-radius: 50%; }
+
+  .shape-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85rem;
+  }
+  .shape-row .box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+  }
+  .shape-row .box small { display: block; color: var(--text-dim); font-size: 0.72rem; }
+  .shape-row .op { color: var(--text-dim); }
+  .matrices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+  .matrices pre { margin: 0; }
+
+  .digits { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 8px; }
+  .digits figure { margin: 0; text-align: center; font-size: 0.78rem; color: var(--text-dim); }
+  .digits svg { width: 84px; height: 84px; border-radius: 6px; display: block; margin-bottom: 4px; }
+  .digit .dbg { fill: var(--code-bg); }
+  .digit .dpx { fill: var(--text); }
+  .pixgrid { font-family: "SF Mono", Consolas, monospace; font-size: 0.66rem; line-height: 1.25; }
+  .ok { color: var(--done); font-weight: 600; }
+  .bad { color: var(--warn); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="back" href="index.html">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 1.2 · FUNDAMENTO</span>
+      <span class="module-tag">Entrenar la red</span>
+    </div>
+    <h1>El loop de entrenamiento con 2 capas</h1>
+    <p class="subtitle">Los mismos pasos que <code>entrenar_perceptron</code> de la 1.1, con una novedad: el error se reparte hacia atrás para corregir también la capa oculta. Una primera mirada intuitiva; la lección 1.3 lo deriva en detalle.</p>
+  </header>
+
+  <h2>1. Lo que ya sabes</h2>
+  <div class="callout key">
+    <strong>De la 1.1:</strong> cada época es predecir → error → <code>error * derivada</code> → gradiente → actualizar. Ver <a class="rel" href="01_fundamento_funcion_entrenamiento.html">La función de entrenamiento</a>.
+  </div>
+  <p>Para la neurona de salida no cambia nada. El problema nuevo es la capa oculta: no hay una etiqueta que diga cuánto debería valer <code>a1</code>, así que no se puede calcular su error con <code>y - a1</code>.</p>
+
+  <h2>2. El loop completo</h2>
+  <div class="file-ref">03_neural_network_2layer.py · líneas 147–159</div>
+<pre><code>for epoca in range(epocas):
+    a1, y_pred = forward_red(X, W1, b1, W2, b2)        <span class="cm"># 1. predecir</span>
+    error = Y - y_pred                                 <span class="cm"># 2. error (n,1)</span>
+
+    delta2 = error * y_pred * (1 - y_pred)             <span class="cm"># 3. salida: igual que la 1.1</span>
+    delta1 = (delta2 @ W2.T) * a1 * (1 - a1)           <span class="cm"># 4. oculta: error repartido</span>
+
+    W2 += tasa_aprendizaje * a1.T @ delta2 / len(X)    <span class="cm"># 5. actualizar salida</span>
+    b2 += tasa_aprendizaje * np.mean(delta2, axis=0)
+    W1 += tasa_aprendizaje * X.T @ delta1 / len(X)     <span class="cm"># 6. actualizar oculta</span>
+    b1 += tasa_aprendizaje * np.mean(delta1, axis=0)</code></pre>
+
+  <h2>3. Compara con la 1.1, línea por línea</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Lección 1.1</th><th>Lección 1.2</th><th>Qué cambió</th></tr></thead>
+      <tbody>
+        <tr><td class="num-cell">error * derivada</td><td class="num-cell">delta2 = error * y_pred * (1 - y_pred)</td><td>Nada. Solo se le da un nombre: <strong>delta</strong>, el “empuje” de cada punto.</td></tr>
+        <tr><td class="num-cell">X.T @ (error * derivada)</td><td class="num-cell">a1.T @ delta2</td><td>La salida no recibe <code>X</code>, recibe <code>a1</code>. Por eso el gradiente usa <code>a1.T</code>.</td></tr>
+        <tr><td class="num-cell">—</td><td class="num-cell">delta1 = (delta2 @ W2.T) * a1 * (1 - a1)</td><td><strong>Lo nuevo.</strong> El empuje de cada neurona oculta.</td></tr>
+        <tr><td class="num-cell">—</td><td class="num-cell">X.T @ delta1</td><td>Igual que la 1.1, pero para las 4 neuronas ocultas a la vez.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>4. La idea de <code>delta1</code>: repartir la culpa</h2>
+  <p>Piensa en <code>delta2</code> como “cuánto se equivocó la salida en este punto”. ¿Cuánta de esa culpa es de cada neurona oculta? Depende de qué tan fuerte está conectada con la salida, o sea de su peso en <code>W2</code>:</p>
+<pre><code>delta2 @ W2.T          <span class="cm"># (200,1) @ (1,4) → (200,4): la culpa repartida según W2</span>
+* a1 * (1 - a1)        <span class="cm"># × la derivada de sigmoid de cada neurona oculta</span></code></pre>
+  <p>La segunda parte es la misma derivada de sigmoid que ya conoces, ahora aplicada a la capa oculta: una neurona saturada (cerca de 0 o 1) casi no puede cambiar, así que recibe poco empuje.</p>
+  <h3>Con números: <code>X[0]</code> en la época 0</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Paso</th><th class="num-cell">Valor</th></tr></thead>
+      <tbody>
+        <tr><td>Predicción (real: 0)</td><td class="num-cell">y_pred = 0.515</td></tr>
+        <tr><td><code>error</code></td><td class="num-cell">0 − 0.515 = −0.515</td></tr>
+        <tr><td><code>delta2</code></td><td class="num-cell">−0.515 · 0.515 · 0.485 = −0.129</td></tr>
+        <tr><td><code>W2</code> inicial</td><td class="num-cell">[−0.577, 0.755, 0.501, −0.978]</td></tr>
+        <tr><td><code>a1</code></td><td class="num-cell">[0.377, 0.252, 0.468, 0.152]</td></tr>
+        <tr><td><code>delta1</code></td><td class="num-cell">[0.017, −0.018, −0.016, 0.016]</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Mira los signos. La salida dijo “demasiado clase 1”. La neurona 1 tiene peso positivo (empuja hacia clase 1), así que su delta es negativo: debe encenderse menos para este punto. La neurona 0 tiene peso negativo, así que su delta es positivo: si se enciende más, baja la predicción. Cada neurona recibe la corrección que ayuda.</p>
+  <p>Cuenta para la neurona 0: <code>−0.129 · (−0.577) · 0.377 · 0.623 = 0.017</code>.</p>
+
+  <div class="callout">
+    <strong>Esto es backpropagation:</strong> el error se calcula en la salida y viaja hacia atrás, capa por capa, multiplicándose por los pesos (<code>W2.T</code>) y por las derivadas. Por qué la fórmula es exactamente esa (la regla de la cadena) es el tema de la <strong>lección 1.3</strong>.
+  </div>
+
+  <h2>5. La trampa de las shapes</h2>
+  <p><code>y_pred</code> sale con shape <code>(200, 1)</code> pero <code>y</code> tiene <code>(200,)</code>. Si las restas directo, el broadcasting no avisa: arma una matriz de <code>(200, 200)</code> comparando cada etiqueta con cada predicción. El cálculo “funciona” pero el resultado no tiene sentido. Es la misma trampa <code>(100,) + (100,1) → (100,100)</code> que viste en la 1.1. Por eso la línea 144 convierte <code>y</code> en columna:</p>
+  <div class="file-ref">03_neural_network_2layer.py · línea 144</div>
+<pre><code>Y = y.reshape(-1, 1)                     <span class="cm"># (200,) → (200, 1)</span></code></pre>
+  <p>El <code>-1</code> significa “calcula tú cuántas filas”: NumPy pone 200.</p>
+
+  <h2>6. La curva de aprendizaje</h2>
+  <div class="legend"><span><i class="k2"></i>Perceptrón</span><span><i class="k1"></i>Red de 2 capas</span></div>
+  <div class="chart"><svg viewBox="0 0 600 230" role="img" aria-label="Curvas de aprendizaje: perceptrón vs red de 2 capas">
+<line class="axis" x1="56" y1="196" x2="584" y2="196"/>
+<line class="axis" x1="56" y1="14" x2="56" y2="196"/>
+<line class="guide" x1="56" y1="196.0" x2="584" y2="196.0"/>
+<text class="lbl" x="50" y="200.0" text-anchor="end">0</text>
+<line class="guide" x1="56" y1="108.5" x2="584" y2="108.5"/>
+<text class="lbl" x="50" y="112.5" text-anchor="end">0.12</text>
+<line class="guide" x1="56" y1="21.0" x2="584" y2="21.0"/>
+<text class="lbl" x="50" y="25.0" text-anchor="end">0.25</text>
+<text class="lbl" x="56.0" y="212" text-anchor="middle">0</text>
+<text class="lbl" x="232.6" y="212" text-anchor="middle">1000</text>
+<text class="lbl" x="409.2" y="212" text-anchor="middle">2000</text>
+<text class="lbl" x="585.8" y="212" text-anchor="middle">3000</text>
+<text class="lbl" x="584" y="226" text-anchor="end">época</text>
+<text class="lbl" x="60" y="24">error cuadrático medio</text>
+<polyline class="s2" points="56.0,20.6 57.8,20.8 59.5,20.9 61.3,21.0 63.1,21.0 64.8,21.0 66.6,21.0 68.4,21.1 70.1,21.1 71.9,21.1 73.7,21.1 75.4,21.1 77.2,21.1 79.0,21.1 80.7,21.1 82.5,21.2 84.3,21.2 86.0,21.2 87.8,21.2 89.6,21.2 91.3,21.2 93.1,21.2 94.8,21.2 96.6,21.2 98.4,21.2 100.1,21.2 101.9,21.2 103.7,21.2 105.4,21.2 107.2,21.2 109.0,21.2 110.7,21.2 112.5,21.2 114.3,21.2 116.0,21.2 117.8,21.2 119.6,21.2 121.3,21.2 123.1,21.2 124.9,21.2 126.6,21.2 128.4,21.2 130.2,21.2 131.9,21.2 133.7,21.2 135.5,21.2 137.2,21.2 139.0,21.2 140.8,21.2 142.5,21.2 144.3,21.2 146.1,21.2 147.8,21.2 149.6,21.2 151.4,21.2 153.1,21.2 154.9,21.2 156.7,21.2 158.4,21.2 160.2,21.2 162.0,21.2 163.7,21.2 165.5,21.2 167.3,21.2 169.0,21.2 170.8,21.2 172.5,21.2 174.3,21.2 176.1,21.2 177.8,21.2 179.6,21.2 181.4,21.2 183.1,21.2 184.9,21.2 186.7,21.2 188.4,21.2 190.2,21.2 192.0,21.2 193.7,21.2 195.5,21.2 197.3,21.2 199.0,21.2 200.8,21.2 202.6,21.2 204.3,21.2 206.1,21.2 207.9,21.2 209.6,21.2 211.4,21.2 213.2,21.2 214.9,21.2 216.7,21.2 218.5,21.2 220.2,21.2 222.0,21.2 223.8,21.2 225.5,21.2 227.3,21.2 229.1,21.2 230.8,21.2 232.6,21.2 234.4,21.2 236.1,21.2 237.9,21.2 239.7,21.2 241.4,21.2 243.2,21.2 244.9,21.2 246.7,21.2 248.5,21.2 250.2,21.2 252.0,21.2 253.8,21.2 255.5,21.2 257.3,21.2 259.1,21.2 260.8,21.2 262.6,21.2 264.4,21.2 266.1,21.2 267.9,21.2 269.7,21.2 271.4,21.2 273.2,21.2 275.0,21.2 276.7,21.2 278.5,21.2 280.3,21.2 282.0,21.2 283.8,21.2 285.6,21.2 287.3,21.2 289.1,21.2 290.9,21.2 292.6,21.2 294.4,21.2 296.2,21.2 297.9,21.2 299.7,21.2 301.5,21.2 303.2,21.2 305.0,21.2 306.8,21.2 308.5,21.2 310.3,21.2 312.1,21.2 313.8,21.2 315.6,21.2 317.4,21.2 319.1,21.2 320.9,21.2 322.6,21.2 324.4,21.2 326.2,21.2 327.9,21.2 329.7,21.2 331.5,21.2 333.2,21.2 335.0,21.2 336.8,21.2 338.5,21.2 340.3,21.2 342.1,21.2 343.8,21.2 345.6,21.2 347.4,21.2 349.1,21.2 350.9,21.2 352.7,21.2 354.4,21.2 356.2,21.2 358.0,21.2 359.7,21.2 361.5,21.2 363.3,21.2 365.0,21.2 366.8,21.2 368.6,21.2 370.3,21.2 372.1,21.2 373.9,21.2 375.6,21.2 377.4,21.2 379.2,21.2 380.9,21.2 382.7,21.2 384.5,21.2 386.2,21.2 388.0,21.2 389.8,21.2 391.5,21.2 393.3,21.2 395.1,21.2 396.8,21.2 398.6,21.2 400.3,21.2 402.1,21.2 403.9,21.2 405.6,21.2 407.4,21.2 409.2,21.2 410.9,21.2 412.7,21.2 414.5,21.2 416.2,21.2 418.0,21.2 419.8,21.2 421.5,21.2 423.3,21.2 425.1,21.2 426.8,21.2 428.6,21.2 430.4,21.2 432.1,21.2 433.9,21.2 435.7,21.2 437.4,21.2 439.2,21.2 441.0,21.2 442.7,21.2 444.5,21.2 446.3,21.2 448.0,21.2 449.8,21.2 451.6,21.2 453.3,21.2 455.1,21.2 456.9,21.2 458.6,21.2 460.4,21.2 462.2,21.2 463.9,21.2 465.7,21.2 467.5,21.2 469.2,21.2 471.0,21.2 472.7,21.2 474.5,21.2 476.3,21.2 478.0,21.2 479.8,21.2 481.6,21.2 483.3,21.2 485.1,21.2 486.9,21.2 488.6,21.2 490.4,21.2 492.2,21.2 493.9,21.2 495.7,21.2 497.5,21.2 499.2,21.2 501.0,21.2 502.8,21.2 504.5,21.2 506.3,21.2 508.1,21.2 509.8,21.2 511.6,21.2 513.4,21.2 515.1,21.2 516.9,21.2 518.7,21.2 520.4,21.2 522.2,21.2 524.0,21.2 525.7,21.2 527.5,21.2 529.3,21.2 531.0,21.2 532.8,21.2 534.6,21.2 536.3,21.2 538.1,21.2 539.9,21.2 541.6,21.2 543.4,21.2 545.2,21.2 546.9,21.2 548.7,21.2 550.4,21.2 552.2,21.2 554.0,21.2 555.7,21.2 557.5,21.2 559.3,21.2 561.0,21.2 562.8,21.2 564.6,21.2 566.3,21.2 568.1,21.2 569.9,21.2 571.6,21.2 573.4,21.2 575.2,21.2 576.9,21.2 578.7,21.2 580.5,21.2 582.2,21.2 584.0,21.2"/>
+<polyline class="s1" points="56.0,23.4 57.8,24.0 59.5,24.5 61.3,25.2 63.1,25.9 64.8,26.8 66.6,27.7 68.4,28.7 70.1,29.9 71.9,31.1 73.7,32.5 75.4,33.9 77.2,35.5 79.0,37.1 80.7,38.9 82.5,40.7 84.3,42.6 86.0,44.5 87.8,46.6 89.6,48.6 91.3,50.7 93.1,52.8 94.8,55.0 96.6,57.2 98.4,59.4 100.1,61.6 101.9,63.9 103.7,66.2 105.4,68.5 107.2,70.8 109.0,73.2 110.7,75.7 112.5,78.2 114.3,80.7 116.0,83.3 117.8,85.9 119.6,88.6 121.3,91.3 123.1,94.0 124.9,96.8 126.6,99.6 128.4,102.5 130.2,105.3 131.9,108.1 133.7,111.0 135.5,113.8 137.2,116.5 139.0,119.3 140.8,122.0 142.5,124.7 144.3,127.3 146.1,129.9 147.8,132.4 149.6,134.9 151.4,137.3 153.1,139.7 154.9,142.0 156.7,144.2 158.4,146.3 160.2,148.4 162.0,150.4 163.7,152.4 165.5,154.3 167.3,156.1 169.0,157.8 170.8,159.4 172.5,161.0 174.3,162.5 176.1,163.9 177.8,165.3 179.6,166.6 181.4,167.8 183.1,169.0 184.9,170.1 186.7,171.1 188.4,172.1 190.2,173.1 192.0,174.0 193.7,174.8 195.5,175.6 197.3,176.3 199.0,177.0 200.8,177.7 202.6,178.4 204.3,179.0 206.1,179.5 207.9,180.1 209.6,180.6 211.4,181.1 213.2,181.6 214.9,182.0 216.7,182.4 218.5,182.8 220.2,183.2 222.0,183.6 223.8,183.9 225.5,184.3 227.3,184.6 229.1,184.9 230.8,185.2 232.6,185.5 234.4,185.7 236.1,186.0 237.9,186.2 239.7,186.5 241.4,186.7 243.2,186.9 244.9,187.1 246.7,187.3 248.5,187.5 250.2,187.7 252.0,187.9 253.8,188.0 255.5,188.2 257.3,188.4 259.1,188.5 260.8,188.7 262.6,188.8 264.4,188.9 266.1,189.1 267.9,189.2 269.7,189.3 271.4,189.4 273.2,189.6 275.0,189.7 276.7,189.8 278.5,189.9 280.3,190.0 282.0,190.1 283.8,190.2 285.6,190.3 287.3,190.4 289.1,190.5 290.9,190.6 292.6,190.6 294.4,190.7 296.2,190.8 297.9,190.9 299.7,191.0 301.5,191.0 303.2,191.1 305.0,191.2 306.8,191.2 308.5,191.3 310.3,191.4 312.1,191.4 313.8,191.5 315.6,191.6 317.4,191.6 319.1,191.7 320.9,191.7 322.6,191.8 324.4,191.8 326.2,191.9 327.9,191.9 329.7,192.0 331.5,192.0 333.2,192.1 335.0,192.1 336.8,192.2 338.5,192.2 340.3,192.3 342.1,192.3 343.8,192.4 345.6,192.4 347.4,192.4 349.1,192.5 350.9,192.5 352.7,192.6 354.4,192.6 356.2,192.6 358.0,192.7 359.7,192.7 361.5,192.7 363.3,192.8 365.0,192.8 366.8,192.8 368.6,192.9 370.3,192.9 372.1,192.9 373.9,193.0 375.6,193.0 377.4,193.0 379.2,193.0 380.9,193.1 382.7,193.1 384.5,193.1 386.2,193.1 388.0,193.2 389.8,193.2 391.5,193.2 393.3,193.3 395.1,193.3 396.8,193.3 398.6,193.3 400.3,193.3 402.1,193.4 403.9,193.4 405.6,193.4 407.4,193.4 409.2,193.5 410.9,193.5 412.7,193.5 414.5,193.5 416.2,193.5 418.0,193.6 419.8,193.6 421.5,193.6 423.3,193.6 425.1,193.6 426.8,193.7 428.6,193.7 430.4,193.7 432.1,193.7 433.9,193.7 435.7,193.7 437.4,193.8 439.2,193.8 441.0,193.8 442.7,193.8 444.5,193.8 446.3,193.8 448.0,193.9 449.8,193.9 451.6,193.9 453.3,193.9 455.1,193.9 456.9,193.9 458.6,193.9 460.4,194.0 462.2,194.0 463.9,194.0 465.7,194.0 467.5,194.0 469.2,194.0 471.0,194.0 472.7,194.1 474.5,194.1 476.3,194.1 478.0,194.1 479.8,194.1 481.6,194.1 483.3,194.1 485.1,194.1 486.9,194.2 488.6,194.2 490.4,194.2 492.2,194.2 493.9,194.2 495.7,194.2 497.5,194.2 499.2,194.2 501.0,194.2 502.8,194.3 504.5,194.3 506.3,194.3 508.1,194.3 509.8,194.3 511.6,194.3 513.4,194.3 515.1,194.3 516.9,194.3 518.7,194.3 520.4,194.4 522.2,194.4 524.0,194.4 525.7,194.4 527.5,194.4 529.3,194.4 531.0,194.4 532.8,194.4 534.6,194.4 536.3,194.4 538.1,194.4 539.9,194.5 541.6,194.5 543.4,194.5 545.2,194.5 546.9,194.5 548.7,194.5 550.4,194.5 552.2,194.5 554.0,194.5 555.7,194.5 557.5,194.5 559.3,194.5 561.0,194.5 562.8,194.6 564.6,194.6 566.3,194.6 568.1,194.6 569.9,194.6 571.6,194.6 573.4,194.6 575.2,194.6 576.9,194.6 578.7,194.6 580.5,194.6 582.2,194.6 584.0,194.6"/>
+</svg></div>
+  <p class="caption">Error cuadrático medio por época, de tu corrida.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="num-cell">Época</th><th class="num-cell">Error</th><th class="num-cell">Accuracy</th></tr></thead>
+      <tbody>
+        <tr><td class="num-cell">0</td><td class="num-cell">0.2465</td><td class="num-cell">34 %</td></tr>
+        <tr><td class="num-cell">500</td><td class="num-cell">0.0981</td><td class="num-cell">99.5 %</td></tr>
+        <tr><td class="num-cell">1000</td><td class="num-cell">0.0151</td><td class="num-cell">100 %</td></tr>
+        <tr><td class="num-cell">2999</td><td class="num-cell">0.0019</td><td class="num-cell">100 %</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Al principio la curva baja lento: las neuronas ocultas todavía no encontraron qué detectar. Entre las épocas 250 y 750 se “especializan” y el error cae rápido. Después solo afinan.</p>
+  <p>La tasa de aprendizaje es 2.0 (línea 142), más alta que el 0.5 de la 1.1. Con 2 capas los deltas de la capa oculta son más chicos (se multiplican por dos derivadas), así que una tasa más grande compensa.</p>
+
+  <div class="callout">
+    Siguiente: <a class="rel" href="03_fundamento_inicializacion.html">¿Por qué los pesos iniciales no pueden ser iguales?</a> · Antes: <a class="rel" href="03_fundamento_frontera_curva.html">¿Cómo aparece una frontera curva?</a>
+  </div>
+
+  <footer>
+    Fundamento de la <a href="index.html">Lección 1.2 — Red de 2 Capas</a>.
+  </footer>
+
+</div>
+</body>
+</html>
