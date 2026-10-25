@@ -415,7 +415,7 @@
     <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">6/6</span></button>
     <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">6/6</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">6/6</span></button>
-    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">2/6</span></button>
+    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">3/6</span></button>
   </nav>
 
   <section class="module redes tab-panel" id="redes" role="tabpanel" aria-labelledby="tab-redes">
@@ -1178,16 +1178,39 @@
         </div>
       </div>
 
-      <div class="lesson-card">
+      <div class="lesson-card done has-link">
         <div class="lesson-top">
           <span class="lesson-number">LECCIÓN 4.3</span>
-          <span class="status-badge status-pending">Pendiente</span>
+          <span class="status-badge status-done">Completa</span>
         </div>
         <h3 class="lesson-title">Mini-GPT</h3>
-        <p class="lesson-desc">Entrenar un transformer pequeño que predice el siguiente carácter y genera texto.</p>
+        <p class="lesson-desc">Un transformer de 2 bloques y 111 488 parámetros, entrenado con el Quijote carácter por carácter: perplejidad 4.67 contra 6.66 de la RNN de la 3.5. Genera texto y guarda el modelo para la 4.5 y la 4.6.</p>
         <div class="lesson-foot">
-          <span class="lesson-duration">2.5h</span>
-          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/21_mini_gpt.py:1">21_mini_gpt.py</a>
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/21_mini_gpt.py:1">21_mini_gpt.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="21_mini_gpt.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · De la RNN al GPT</span>
+            <a href="21_fundamento_de_rnn_a_gpt.html">1. De la RNN al GPT</a>
+            <a href="21_fundamento_ventanas.html">2. Una ventana, 64 predicciones</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Entrenar</span>
+            <a href="21_fundamento_modelo_gpt.html">3. El tamaño del mini-GPT</a>
+            <a href="21_fundamento_entrenar_gpt.html">4. El entrenamiento</a>
+            <a href="21_fundamento_generar_gpt.html">5. Generar con una ventana</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Qué aprendió</span>
+            <a href="21_fundamento_que_escribe.html">6. Qué escribe a medida que aprende</a>
+            <a href="21_fundamento_comparar_rnn.html">7. Mini-GPT contra RNN</a>
+            <a href="21_fundamento_atencion_gpt.html">8. A dónde mira el mini-GPT <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 
