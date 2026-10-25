@@ -409,7 +409,7 @@
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Temas">
-    <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">5/6</span></button>
+    <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">6/6</span></button>
     <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">0</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">1/6</span></button>
     <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">0</span></button>
@@ -604,16 +604,39 @@
         </div>
       </div>
 
-      <div class="lesson-card">
+      <div class="lesson-card done has-link">
         <div class="lesson-top">
           <span class="lesson-number">LECCIÓN 1.6</span>
-          <span class="status-badge status-pending">Pendiente</span>
+          <span class="status-badge status-done">Completa</span>
         </div>
         <h3 class="lesson-title">Regularización</h3>
-        <p class="lesson-desc">Overfitting, L1, L2 (Ridge), Dropout. Curvas de train vs. validation loss.</p>
+        <p class="lesson-desc">Overfitting provocado (100 puntos ruidosos, red de 10 501 parámetros), L2, L1, dropout y early stopping con train / validación / test.</p>
         <div class="lesson-foot">
           <span class="lesson-duration">1.5h</span>
-          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/07_regularization.py:1">07_regularization.py</a>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/07_regularization.py:1">07_regularization.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="07_regularization.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · El problema</span>
+            <a href="07_fundamento_overfitting.html">1. ¿Qué es el overfitting?</a>
+            <a href="07_fundamento_validacion.html">2. Train, validación y test</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Las técnicas</span>
+            <a href="07_fundamento_l2.html">3. Regularización L2</a>
+            <a href="07_fundamento_l1.html">4. Regularización L1</a>
+            <a href="07_fundamento_dropout.html">5. Dropout</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Usarlas bien</span>
+            <a href="07_fundamento_early_stopping.html">6. Early stopping</a>
+            <a href="07_fundamento_lambda.html">7. ¿Cuánto regularizar?</a>
+            <a href="07_fundamento_mas_datos.html">8. La mejor regularización: más datos <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 
