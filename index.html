@@ -332,6 +332,9 @@
     border-bottom: 1px dotted var(--text-dim);
   }
   .fund-group a:hover { color: var(--text); }
+  section.agentes .fund-label { color: var(--accent-agentes); }
+  section.pln .fund-label, section.pln .lesson-link { color: var(--accent-pln); }
+  section.modelos .fund-label, section.modelos .lesson-link { color: var(--accent-modelos); }
   .fund-group em { font-style: normal; opacity: 0.75; }
 
   section.docs {
@@ -674,6 +677,26 @@
         <div class="lesson-foot">
           <span class="lesson-duration">2h</span>
           <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/02_agent_hello_world.py:1">02_agent_hello_world.py →</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · Qué es un agente</span>
+            <a href="02_fundamento_ciclo_agente.html">1. El ciclo percibir, decidir, actuar</a>
+            <a href="02_fundamento_clases.html">2. Clases y objetos: el entorno</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Dos formas de decidir</span>
+            <a href="02_fundamento_agente_reactivo.html">3. El agente reactivo</a>
+            <a href="02_fundamento_estado_interno.html">4. Estado interno: el agente deliberativo</a>
+            <a href="02_fundamento_semillas.html">5. Semillas y comparación justa</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Comparar agentes</span>
+            <a href="02_fundamento_medir_eficiencia.html">6. Medir eficiencia: ¿alcanza una corrida?</a>
+            <a href="02_fundamento_tipos_agentes.html">7. Tipos de agentes y el mapa del módulo</a>
+            <a href="02_fundamento_regla_vs_memoria.html">8. ¿Regla fija o memoria? <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 
