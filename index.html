@@ -415,7 +415,7 @@
     <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">6/6</span></button>
     <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">6/6</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">6/6</span></button>
-    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">4/6</span></button>
+    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">5/6</span></button>
   </nav>
 
   <section class="module redes tab-panel" id="redes" role="tabpanel" aria-labelledby="tab-redes">
@@ -1250,16 +1250,39 @@
         </div>
       </div>
 
-      <div class="lesson-card">
+      <div class="lesson-card done has-link">
         <div class="lesson-top">
           <span class="lesson-number">LECCIÓN 4.5</span>
-          <span class="status-badge status-pending">Pendiente</span>
+          <span class="status-badge status-done">Completa</span>
         </div>
         <h3 class="lesson-title">Generar texto: muestreo</h3>
-        <p class="lesson-desc">Temperatura, top-k y top-p: cómo se elige la siguiente palabra y cómo cambia el resultado.</p>
+        <p class="lesson-desc">Greedy, temperatura, top-k y top-p con el mini-GPT de la 4.3, medidos en palabras reales y variedad: greedy queda 100 % correcto pero repite el 96 % de los trigramas; los recortes encuentran el punto medio.</p>
         <div class="lesson-foot">
-          <span class="lesson-duration">1h</span>
-          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/23_muestreo.py:1">23_muestreo.py</a>
+          <span class="lesson-duration">1.5h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/23_muestreo.py:1">23_muestreo.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="23_muestreo.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · Probabilidades y decisiones</span>
+            <a href="23_fundamento_probabilidades.html">1. El modelo da probabilidades, no texto</a>
+            <a href="23_fundamento_greedy.html">2. Greedy: siempre el más probable</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Las perillas</span>
+            <a href="23_fundamento_temperatura.html">3. Temperatura</a>
+            <a href="23_fundamento_top_k.html">4. Top-k</a>
+            <a href="23_fundamento_top_p.html">5. Top-p (nucleus)</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Qué aprendió</span>
+            <a href="23_fundamento_medir.html">6. Medir calidad y variedad</a>
+            <a href="23_fundamento_compromiso.html">7. El compromiso: correcto contra variado</a>
+            <a href="23_fundamento_muestreo_real.html">8. Azar, semillas y modelos reales <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 
