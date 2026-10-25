@@ -413,7 +413,7 @@
 
   <nav class="tabs" role="tablist" aria-label="Temas">
     <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">6/6</span></button>
-    <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">5/6</span></button>
+    <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">6/6</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">6/6</span></button>
     <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">0/6</span></button>
   </nav>
@@ -798,16 +798,39 @@
         </div>
       </div>
 
-      <div class="lesson-card">
+      <div class="lesson-card done has-link">
         <div class="lesson-top">
           <span class="lesson-number">LECCIÓN 3.5</span>
-          <span class="status-badge status-pending">Pendiente</span>
+          <span class="status-badge status-done">Completa</span>
         </div>
         <h3 class="lesson-title">Redes Recurrentes (RNN)</h3>
-        <p class="lesson-desc">Procesar secuencias con memoria: un modelo de lenguaje por caracteres entrenado con BPTT.</p>
+        <p class="lesson-desc">RNN por caracteres en NumPy entrenada con BPTT, recorte de gradiente y Adagrad sobre el Quijote. Perplejidad 6.66 contra 9.31 de los bigramas, y cuánto recuerda.</p>
         <div class="lesson-foot">
           <span class="lesson-duration">2h</span>
-          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/17_pln_rnn.py:1">17_pln_rnn.py</a>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/17_pln_rnn.py:1">17_pln_rnn.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="17_pln_rnn.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · La idea</span>
+            <a href="17_fundamento_memoria.html">1. Leer en orden, con memoria</a>
+            <a href="17_fundamento_caracteres.html">2. Trabajar con caracteres</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Cómo funciona</span>
+            <a href="17_fundamento_paso_recurrente.html">3. El paso recurrente</a>
+            <a href="17_fundamento_bptt.html">4. Backpropagation a través del tiempo</a>
+            <a href="17_fundamento_adagrad.html">5. Recorte del gradiente y Adagrad</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Qué aprendió</span>
+            <a href="17_fundamento_generar_rnn.html">6. Generar y evaluar</a>
+            <a href="17_fundamento_gradiente_tiempo.html">7. Cuánto recuerda una RNN</a>
+            <a href="17_fundamento_experimentos_rnn.html">8. Tamaño de la memoria y largo del tramo <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 
