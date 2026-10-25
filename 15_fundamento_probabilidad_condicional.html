@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 3.3 — Probabilidad condicional, contando</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* Pipeline del forward pass: entrada → z → y_pred */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .flow .step {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .flow .step .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .flow .step p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+  .flow .arrow {
+    align-self: center;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 0 8px;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+  .chart .curve { fill: none; stroke: var(--accent-redes); stroke-width: 3; }
+  .chart .lbl { fill: var(--text-dim); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .pt1 { fill: var(--accent-agentes); }
+  .chart .pt0 { fill: var(--warn); }
+  .caption { font-size: 0.82rem; color: var(--text-dim); margin: 0 0 16px; }
+
+  /* Estilos comunes de los fundamentos 1.2 a 1.6 */
+  td.num-cell, th.num-cell { font-family: "SF Mono", Consolas, monospace; font-size: 0.82rem; }
+  .step-link, .rel { color: var(--accent-redes); }
+  .step-link { font-size: 0.8rem; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  :root { --clase0: #5b9cf6; --clase1: #f07070; }
+  @media (prefers-color-scheme: light) {
+    :root { --clase0: #2f6fd6; --clase1: #d64545; }
+  }
+  .chart .zone0 { fill: var(--clase0); opacity: 0.24; }
+  .chart .zone1 { fill: var(--clase1); opacity: 0.2; }
+  .chart .p0 { fill: var(--clase0); }
+  .chart .p1 { fill: var(--clase1); }
+  .chart .frame { stroke: var(--border); }
+  .chart .hl { fill: none; stroke: var(--text); stroke-width: 2; }
+  .chart .line-n { stroke: var(--text-dim); stroke-width: 1.5; opacity: 0.8; }
+  .chart .line-f { stroke: var(--text); stroke-width: 2; stroke-dasharray: 6 5; }
+  .chart.plane { max-width: 440px; margin-left: auto; margin-right: auto; }
+  .plane-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 0 0 8px; }
+  .plane-pair .chart { margin: 0; }
+  .plane-pair .caption { margin: 6px 4px 0; text-align: center; }
+
+  .chart .s0 { fill: none; stroke: var(--accent-redes); stroke-width: 2.5; }
+  .chart .s1 { fill: none; stroke: var(--accent-agentes); stroke-width: 2.5; }
+  .chart .s2 { fill: none; stroke: var(--warn); stroke-width: 2.5; }
+  .chart .s3 { fill: none; stroke: var(--accent-docs); stroke-width: 2.5; }
+  .chart .s4 { fill: none; stroke: var(--text-dim); stroke-width: 2; }
+  .chart .m0 { fill: var(--accent-redes); }
+  .chart .m1 { fill: var(--accent-agentes); }
+  .chart .m2 { fill: var(--warn); }
+  .chart .m3 { fill: var(--accent-docs); }
+  .chart .bar { fill: var(--accent-redes); }
+  .chart .bar1 { fill: var(--accent-agentes); }
+  .chart .bar2 { fill: var(--warn); }
+  .chart .bar3 { fill: var(--accent-docs); }
+  .chart .bar4 { fill: var(--text-dim); }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 0 0 6px;
+  }
+  .legend i {
+    display: inline-block;
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .legend .k0 { background: var(--accent-redes); }
+  .legend .k1 { background: var(--accent-agentes); }
+  .legend .k2 { background: var(--warn); }
+  .legend .k3 { background: var(--accent-docs); }
+  .legend .k4 { background: var(--text-dim); }
+  .legend .c0 { background: var(--clase0); height: 10px; width: 10px; border-radius: 50%; }
+  .legend .c1 { background: var(--clase1); height: 10px; width: 10px; border-radius: 50%; }
+
+  .shape-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85rem;
+  }
+  .shape-row .box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+  }
+  .shape-row .box small { display: block; color: var(--text-dim); font-size: 0.72rem; }
+  .shape-row .op { color: var(--text-dim); }
+  .matrices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+  .matrices pre { margin: 0; }
+
+  .digits { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 8px; }
+  .digits figure { margin: 0; text-align: center; font-size: 0.78rem; color: var(--text-dim); }
+  .digits svg { width: 84px; height: 84px; border-radius: 6px; display: block; margin-bottom: 4px; }
+  .digit .dbg { fill: var(--code-bg); }
+  .digit .dpx { fill: var(--text); }
+  .pixgrid { font-family: "SF Mono", Consolas, monospace; font-size: 0.66rem; line-height: 1.25; }
+
+  /* Temas por módulo: <div class="wrap agentes|pln|modelos"> */
+  :root { --accent-pln: #f0a35b; --accent-pln-bg: rgba(240, 163, 91, 0.12); --accent-modelos: #f07a9b; --accent-modelos-bg: rgba(240, 122, 155, 0.12); }
+  @media (prefers-color-scheme: light) {
+    :root { --accent-pln: #b8640f; --accent-pln-bg: rgba(184, 100, 15, 0.08); --accent-modelos: #c2385f; --accent-modelos-bg: rgba(194, 56, 95, 0.08); }
+  }
+  .agentes { --tema: var(--accent-agentes); --tema-bg: var(--accent-agentes-bg); }
+  .pln { --tema: var(--accent-pln); --tema-bg: var(--accent-pln-bg); }
+  .modelos { --tema: var(--accent-modelos); --tema-bg: var(--accent-modelos-bg); }
+  .agentes .module-tag, .pln .module-tag, .modelos .module-tag { background: var(--tema-bg); color: var(--tema); }
+  .agentes .rel, .pln .rel, .modelos .rel, .agentes .step-link, .pln .step-link, .modelos .step-link { color: var(--tema); }
+  .agentes .callout.key, .pln .callout.key, .modelos .callout.key { background: var(--tema-bg); border-color: color-mix(in srgb, var(--tema) 40%, var(--border)); }
+
+  /* Cuadrículas de agentes */
+  .chart .cell-l { fill: var(--code-bg); stroke: var(--border); }
+  .chart .cell-s { fill: var(--warn); fill-opacity: 0.32; stroke: var(--warn); }
+  .chart .cell-w { fill: var(--text-dim); opacity: 0.3; }
+  .chart .cell-v { fill: var(--accent-agentes); fill-opacity: 0.2; stroke: var(--border); }
+  .chart .cell-p { fill: var(--accent-agentes); opacity: 0.55; }
+  .chart .cell-a { fill: var(--clase0); fill-opacity: 0.45; stroke: var(--border); }
+  .chart .trail { fill: none; stroke: var(--accent-agentes); stroke-width: 3; stroke-linejoin: round; opacity: 0.85; }
+  .chart.grid-sm { max-width: 300px; margin-left: auto; margin-right: auto; }
+  .grid-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 0 0 8px; }
+  .grid-pair .chart { margin: 0; }
+  .grid-pair .caption { margin: 6px 4px 0; text-align: center; }
+  .ok { color: var(--done); font-weight: 600; }
+  .bad { color: var(--warn); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap pln">
+
+  <header>
+    <a class="back" href="index.html#pln">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 3.3 · FUNDAMENTO</span>
+      <span class="module-tag">Predecir la siguiente palabra</span>
+    </div>
+    <h1>Probabilidad condicional, contando</h1>
+    <p class="subtitle">Qué significa <code>P(panza | sancho)</code> y cómo se estima con dos cuentas. Las probabilidades reales del Quijote, y la regla que permite calcular la probabilidad de una frase entera.</p>
+  </header>
+
+  <h2>1. La barra vertical</h2>
+  <div class="callout key">
+    <strong>Probabilidad condicional:</strong> <code>P(A | B)</code> se lee “la probabilidad de A, sabiendo que pasó B”. <code>P(panza | sancho)</code> es la probabilidad de que la siguiente palabra sea “panza”, sabiendo que la anterior fue “sancho”.
+  </div>
+  <p>Sin la condición, <code>P(panza)</code> es baja: “panza” es una palabra rara en el libro. Con la condición, sube mucho: después de “sancho” aparece seguido. El contexto cambia todo.</p>
+
+  <h2>2. Estimarla contando</h2>
+<pre><code>                      veces que aparece "sancho panza"     269
+P(panza | sancho) = ─────────────────────────────────── = ────── = 0.144
+                       veces que aparece "sancho"          1873</code></pre>
+  <p>De las 1873 veces que “sancho” va seguido de algo en el texto de train, 269 lo sigue “panza”: 14.4 %. Esa fracción es la estimación más natural (se llama de <em>máxima verosimilitud</em>: la que hace más probable el texto observado).</p>
+  <div class="file-ref">15_pln_ngramas.py · líneas 75–78</div>
+<pre><code>def siguientes(contexto, n=2, k=5):
+    conteo = modelos[n][tuple(contexto)]
+    total = sum(conteo.values())
+    return [(p, c / total) for p, c in conteo.most_common(k)], total</code></pre>
+
+  <h2>3. Lo que dice el Quijote</h2>
+  <div class="chart"><svg viewBox="0 0 600 220" role="img" aria-label="P(palabra | sancho)">
+<line class="axis" x1="50" y1="180" x2="590" y2="180"/>
+<rect class="bar" x="62.8" y="18.0" width="41.9" height="162.0" rx="3"/>
+<text class="lbl" x="83.8" y="13.0" text-anchor="middle">35%</text>
+<text class="lbl" x="83.8" y="196" text-anchor="middle">,</text>
+<rect class="bar" x="130.3" y="114.3" width="41.9" height="65.7" rx="3"/>
+<text class="lbl" x="151.2" y="109.3" text-anchor="middle">14%</text>
+<text class="lbl" x="151.2" y="196" text-anchor="middle">panza</text>
+<rect class="bar" x="197.8" y="155.8" width="41.9" height="24.2" rx="3"/>
+<text class="lbl" x="218.8" y="150.8" text-anchor="middle">5%</text>
+<text class="lbl" x="218.8" y="196" text-anchor="middle">.</text>
+<rect class="bar" x="265.3" y="160.7" width="41.9" height="19.3" rx="3"/>
+<text class="lbl" x="286.2" y="155.7" text-anchor="middle">4%</text>
+<text class="lbl" x="286.2" y="196" text-anchor="middle">que</text>
+<rect class="bar" x="332.8" y="160.9" width="41.9" height="19.1" rx="3"/>
+<text class="lbl" x="353.8" y="155.9" text-anchor="middle">4%</text>
+<text class="lbl" x="353.8" y="196" text-anchor="middle">dijo</text>
+<rect class="bar" x="400.3" y="161.7" width="41.9" height="18.3" rx="3"/>
+<text class="lbl" x="421.2" y="156.7" text-anchor="middle">4%</text>
+<text class="lbl" x="421.2" y="196" text-anchor="middle">:</text>
+<rect class="bar" x="467.8" y="165.6" width="41.9" height="14.4" rx="3"/>
+<text class="lbl" x="488.8" y="160.6" text-anchor="middle">3%</text>
+<text class="lbl" x="488.8" y="196" text-anchor="middle">;</text>
+<rect class="bar" x="535.3" y="168.5" width="41.9" height="11.5" rx="3"/>
+<text class="lbl" x="556.2" y="163.5" text-anchor="middle">3%</text>
+<text class="lbl" x="556.2" y="196" text-anchor="middle">respondió</text>
+</svg></div>
+  <p class="caption">Las 8 palabras más probables después de “sancho”.</p>
+<pre><code>despues de 'sancho' (1873 veces): , 35%, panza 14%, . 5%, que 4%, dijo 4%
+despues de 'don' (2207 veces): quijote 85%, fernando 6%, luis 2%, diego 1%, lorenzo 1%
+despues de 'dijo' (1608 veces): : 25%, don 16%, el 13%, sancho 13%, que 7%
+despues de '.' (7311 veces): y 11%, no 4%, en 3%, ¿ 3%, pero 3%
+despues de 'respondió sancho' (271 veces): , 53%, . 12%, : 10%, ; 10%, panza 5%</code></pre>
+  <p>Las probabilidades capturan el estilo del libro: después de “don” viene “quijote” el 85 % de las veces; después de “dijo”, dos puntos (empieza un diálogo). Después de un punto, “y” es lo más probable: Cervantes encadena oraciones con “y”. Nadie programó estas reglas; salen de contar.</p>
+
+  <h2>4. La probabilidad de una frase</h2>
+  <p>La <strong>regla de la cadena de la probabilidad</strong> (pariente de la de las derivadas de la 1.3) permite descomponer una frase en pasos de una palabra:</p>
+<pre><code>P(w₁ w₂ w₃ … wₙ) = P(w₁) · P(w₂ | w₁) · P(w₃ | w₁ w₂) · … · P(wₙ | w₁ … wₙ₋₁)</code></pre>
+  <p>Un modelo de <strong>bigramas</strong> simplifica: cada palabra depende solo de la anterior. Con “dijo sancho panza a su amo”:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Paso</th><th class="num-cell">Cuenta</th><th class="num-cell">Probabilidad</th></tr></thead>
+      <tbody>
+        <tr><td>P(sancho | dijo)</td><td class="num-cell">204 / 1608</td><td class="num-cell">0.127</td></tr>
+        <tr><td>P(panza | sancho)</td><td class="num-cell">269 / 1873</td><td class="num-cell">0.144</td></tr>
+        <tr><td>P(a | panza)</td><td class="num-cell">8 / 316</td><td class="num-cell">0.025</td></tr>
+        <tr><td>P(su | a)</td><td class="num-cell">505 / 8822</td><td class="num-cell">0.057</td></tr>
+        <tr><td>P(amo | su)</td><td class="num-cell">145 / 3050</td><td class="num-cell">0.048</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Multiplicadas dan un número diminuto (≈ 1.3 × 10⁻⁶). Por eso se trabaja con <strong>logaritmos</strong>: el producto se vuelve una suma, y no hay riesgo de que el número se haga tan chico que la computadora lo redondee a cero. Es lo que hace la perplejidad (fundamento 6).</p>
+  <div class="callout warn">
+    <strong>Suponer que solo importa la palabra anterior es una simplificación enorme.</strong> “Su amo” es probable porque antes dice “sancho”, tres palabras atrás, pero el bigrama no lo ve. Cuánto contexto mirar es el gran dilema de esta lección.
+  </div>
+
+  <div class="callout">
+    Siguiente: <a class="rel" href="15_fundamento_contar_ngramas.html">Contar n-gramas</a> · Antes: <a class="rel" href="15_fundamento_modelo_lenguaje.html">¿Qué es un modelo de lenguaje?</a>
+  </div>
+
+  <footer>
+    Fundamento de la <a href="index.html#pln">Lección 3.3 — Modelos de Lenguaje con N-gramas</a>.
+  </footer>
+
+</div>
+</body>
+</html>
