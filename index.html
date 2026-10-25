@@ -415,7 +415,7 @@
     <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">6/6</span></button>
     <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">6/6</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">6/6</span></button>
-    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">3/6</span></button>
+    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">4/6</span></button>
   </nav>
 
   <section class="module redes tab-panel" id="redes" role="tabpanel" aria-labelledby="tab-redes">
@@ -1214,16 +1214,39 @@
         </div>
       </div>
 
-      <div class="lesson-card">
+      <div class="lesson-card done has-link">
         <div class="lesson-top">
           <span class="lesson-number">LECCIÓN 4.4</span>
-          <span class="status-badge status-pending">Pendiente</span>
+          <span class="status-badge status-done">Completa</span>
         </div>
         <h3 class="lesson-title">Tokenización BPE</h3>
-        <p class="lesson-desc">Cómo los modelos actuales parten el texto en subpalabras: Byte Pair Encoding desde cero.</p>
+        <p class="lesson-desc">Un tokenizador BPE desde cero: 1 000 fusiones aprendidas del Quijote acortan el texto a un tercio (3 caracteres por token) y ninguna palabra queda desconocida.</p>
         <div class="lesson-foot">
-          <span class="lesson-duration">1.5h</span>
-          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/22_tokenizacion_bpe.py:1">22_tokenizacion_bpe.py</a>
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/22_tokenizacion_bpe.py:1">22_tokenizacion_bpe.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="22_tokenizacion_bpe.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · El problema</span>
+            <a href="22_fundamento_dos_extremos.html">1. Ni caracteres ni palabras</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · El algoritmo</span>
+            <a href="22_fundamento_preparar_corpus.html">2. Preparar el corpus</a>
+            <a href="22_fundamento_fusiones.html">3. Contar pares y fusionar</a>
+            <a href="22_fundamento_tokenizar.html">4. Tokenizar texto nuevo</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Qué aprendió</span>
+            <a href="22_fundamento_compresion.html">5. Cuánto se acorta el texto</a>
+            <a href="22_fundamento_vocabulario.html">6. Qué tokens quedaron</a>
+            <a href="22_fundamento_sin_desconocidas.html">7. No hay palabras desconocidas</a>
+            <a href="22_fundamento_tokens_reales.html">8. Tokens en los modelos reales <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 
