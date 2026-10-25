@@ -415,7 +415,7 @@
     <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">6/6</span></button>
     <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">6/6</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">6/6</span></button>
-    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">1/6</span></button>
+    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">2/6</span></button>
   </nav>
 
   <section class="module redes tab-panel" id="redes" role="tabpanel" aria-labelledby="tab-redes">
@@ -1142,16 +1142,39 @@
         </div>
       </div>
 
-      <div class="lesson-card">
+      <div class="lesson-card done has-link">
         <div class="lesson-top">
           <span class="lesson-number">LECCIÓN 4.2</span>
-          <span class="status-badge status-pending">Pendiente</span>
+          <span class="status-badge status-done">Completa</span>
         </div>
         <h3 class="lesson-title">El bloque Transformer</h3>
-        <p class="lesson-desc">Atención multi-cabeza, posiciones, normalización y conexiones residuales, pieza por pieza.</p>
+        <p class="lesson-desc">Auto-atención con máscara causal, varias cabezas, posiciones, layer norm y conexiones residuales, escritos solo con el forward (mini_transformer.py). Un bloque aprende a copiar el dígito de 3 posiciones atrás: 100 % con posiciones, 30 % sin ellas.</p>
         <div class="lesson-foot">
           <span class="lesson-duration">2h</span>
-          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/20_transformer_bloque.py:1">20_transformer_bloque.py</a>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/20_transformer_bloque.py:1">20_transformer_bloque.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="20_transformer_bloque.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · De la 3.6 al bloque</span>
+            <a href="20_fundamento_auto_atencion.html">1. Auto-atención y máscara causal</a>
+            <a href="20_fundamento_cabezas.html">2. Varias cabezas</a>
+            <a href="20_fundamento_posiciones.html">3. Dónde está cada token</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Armar el bloque</span>
+            <a href="20_fundamento_layer_norm.html">4. Layer norm</a>
+            <a href="20_fundamento_residual.html">5. Conexiones residuales y el bloque completo</a>
+            <a href="20_fundamento_verificar_bloque.html">6. Verificar el bloque</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Qué aprendió</span>
+            <a href="20_fundamento_tarea_retardo.html">7. Entrenar el bloque: copiar con retardo</a>
+            <a href="20_fundamento_experimentos_bloque.html">8. Profundidad, distancia y cabezas <em>(complemento)</em></a>
+          </div>
         </div>
       </div>
 

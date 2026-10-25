@@ -230,3 +230,25 @@ def cross_entropy(logits, objetivos):
 def parametros_en_cero(parametros):
     for p in parametros:
         p.grad = np.zeros_like(p.data)
+
+
+class Adam:
+    """Descenso de gradiente con tasa propia por peso (como Adagrad, leccion
+    3.5) y "inercia": promedia los gradientes recientes en vez de sumarlos
+    todos. Es el optimizador que se usa para entrenar transformers."""
+
+    def __init__(self, parametros, tasa=1e-3, beta1=0.9, beta2=0.999, eps=1e-8):
+        self.parametros = parametros
+        self.tasa, self.beta1, self.beta2, self.eps = tasa, beta1, beta2, eps
+        self.m = [np.zeros_like(p.data) for p in parametros]   # promedio del gradiente
+        self.v = [np.zeros_like(p.data) for p in parametros]   # promedio del gradiente al cuadrado
+        self.t = 0
+
+    def paso(self):
+        self.t += 1
+        for p, m, v in zip(self.parametros, self.m, self.v):
+            m[:] = self.beta1 * m + (1 - self.beta1) * p.grad
+            v[:] = self.beta2 * v + (1 - self.beta2) * p.grad ** 2
+            m_hat = m / (1 - self.beta1 ** self.t)              # correccion: al inicio m y v valen ~0
+            v_hat = v / (1 - self.beta2 ** self.t)
+            p.data -= self.tasa * m_hat / (np.sqrt(v_hat) + self.eps)

@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamento 4.2 — Entrenar el bloque: copiar con retardo</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --bg-panel: #161d2e;
+    --bg-card: #1c2438;
+    --bg-card-hover: #232d46;
+    --border: #2a3450;
+    --text: #e4e8f5;
+    --text-dim: #8b93ab;
+    --accent-redes: #5b9cf6;
+    --accent-redes-bg: rgba(91, 156, 246, 0.12);
+    --accent-agentes: #5fd4a8;
+    --accent-agentes-bg: rgba(95, 212, 168, 0.12);
+    --accent-docs: #c68ef0;
+    --accent-docs-bg: rgba(198, 142, 240, 0.12);
+    --warn: #f0b35b;
+    --warn-bg: rgba(240, 179, 91, 0.12);
+    --done: #5fd4a8;
+    --code-bg: #0a0e18;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6fb;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2fa;
+      --border: #dde1ee;
+      --text: #1a2033;
+      --text-dim: #5b6478;
+      --accent-redes: #2f6fd6;
+      --accent-redes-bg: rgba(47, 111, 214, 0.08);
+      --accent-agentes: #1f9d6f;
+      --accent-agentes-bg: rgba(31, 157, 111, 0.08);
+      --accent-docs: #9645c9;
+      --accent-docs-bg: rgba(150, 69, 201, 0.08);
+      --warn: #b8741a;
+      --warn-bg: rgba(184, 116, 26, 0.08);
+      --done: #1f9d6f;
+      --code-bg: #eef0f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0 16px 64px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); }
+
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .lesson-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .module-tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--accent-redes-bg);
+    color: var(--accent-redes);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 36px 0 10px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin: 0 0 14px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cm { color: var(--text-dim); }
+
+  .file-ref {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  }
+  .callout.warn strong:first-child { color: var(--warn); }
+  .callout.key {
+    background: var(--accent-redes-bg);
+    border-color: color-mix(in srgb, var(--accent-redes) 40%, var(--border));
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+  .card .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0 0 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* Pipeline del forward pass: entrada → z → y_pred */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .flow .step {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .flow .step .num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-docs);
+    font-family: "SF Mono", Consolas, monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .flow .step p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+  .flow .arrow {
+    align-self: center;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 0 8px;
+  }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.6; }
+  .chart .curve { fill: none; stroke: var(--accent-redes); stroke-width: 3; }
+  .chart .lbl { fill: var(--text-dim); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .pt1 { fill: var(--accent-agentes); }
+  .chart .pt0 { fill: var(--warn); }
+  .caption { font-size: 0.82rem; color: var(--text-dim); margin: 0 0 16px; }
+
+  /* Estilos comunes de los fundamentos 1.2 a 1.6 */
+  td.num-cell, th.num-cell { font-family: "SF Mono", Consolas, monospace; font-size: 0.82rem; }
+  .step-link, .rel { color: var(--accent-redes); }
+  .step-link { font-size: 0.8rem; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  :root { --clase0: #5b9cf6; --clase1: #f07070; }
+  @media (prefers-color-scheme: light) {
+    :root { --clase0: #2f6fd6; --clase1: #d64545; }
+  }
+  .chart .zone0 { fill: var(--clase0); opacity: 0.24; }
+  .chart .zone1 { fill: var(--clase1); opacity: 0.2; }
+  .chart .p0 { fill: var(--clase0); }
+  .chart .p1 { fill: var(--clase1); }
+  .chart .frame { stroke: var(--border); }
+  .chart .hl { fill: none; stroke: var(--text); stroke-width: 2; }
+  .chart .line-n { stroke: var(--text-dim); stroke-width: 1.5; opacity: 0.8; }
+  .chart .line-f { stroke: var(--text); stroke-width: 2; stroke-dasharray: 6 5; }
+  .chart.plane { max-width: 440px; margin-left: auto; margin-right: auto; }
+  .plane-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 0 0 8px; }
+  .plane-pair .chart { margin: 0; }
+  .plane-pair .caption { margin: 6px 4px 0; text-align: center; }
+
+  .chart .s0 { fill: none; stroke: var(--accent-redes); stroke-width: 2.5; }
+  .chart .s1 { fill: none; stroke: var(--accent-agentes); stroke-width: 2.5; }
+  .chart .s2 { fill: none; stroke: var(--warn); stroke-width: 2.5; }
+  .chart .s3 { fill: none; stroke: var(--accent-docs); stroke-width: 2.5; }
+  .chart .s4 { fill: none; stroke: var(--text-dim); stroke-width: 2; }
+  .chart .m0 { fill: var(--accent-redes); }
+  .chart .m1 { fill: var(--accent-agentes); }
+  .chart .m2 { fill: var(--warn); }
+  .chart .m3 { fill: var(--accent-docs); }
+  .chart .bar { fill: var(--accent-redes); }
+  .chart .bar1 { fill: var(--accent-agentes); }
+  .chart .bar2 { fill: var(--warn); }
+  .chart .bar3 { fill: var(--accent-docs); }
+  .chart .bar4 { fill: var(--text-dim); }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 0 0 6px;
+  }
+  .legend i {
+    display: inline-block;
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .legend .k0 { background: var(--accent-redes); }
+  .legend .k1 { background: var(--accent-agentes); }
+  .legend .k2 { background: var(--warn); }
+  .legend .k3 { background: var(--accent-docs); }
+  .legend .k4 { background: var(--text-dim); }
+  .legend .c0 { background: var(--clase0); height: 10px; width: 10px; border-radius: 50%; }
+  .legend .c1 { background: var(--clase1); height: 10px; width: 10px; border-radius: 50%; }
+
+  .shape-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85rem;
+  }
+  .shape-row .box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+  }
+  .shape-row .box small { display: block; color: var(--text-dim); font-size: 0.72rem; }
+  .shape-row .op { color: var(--text-dim); }
+  .matrices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+  .matrices pre { margin: 0; }
+
+  .digits { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 8px; }
+  .digits figure { margin: 0; text-align: center; font-size: 0.78rem; color: var(--text-dim); }
+  .digits svg { width: 84px; height: 84px; border-radius: 6px; display: block; margin-bottom: 4px; }
+  .digit .dbg { fill: var(--code-bg); }
+  .digit .dpx { fill: var(--text); }
+  .pixgrid { font-family: "SF Mono", Consolas, monospace; font-size: 0.66rem; line-height: 1.25; }
+
+  /* Temas por módulo: <div class="wrap agentes|pln|modelos"> */
+  :root { --accent-pln: #f0a35b; --accent-pln-bg: rgba(240, 163, 91, 0.12); --accent-modelos: #f07a9b; --accent-modelos-bg: rgba(240, 122, 155, 0.12); }
+  @media (prefers-color-scheme: light) {
+    :root { --accent-pln: #b8640f; --accent-pln-bg: rgba(184, 100, 15, 0.08); --accent-modelos: #c2385f; --accent-modelos-bg: rgba(194, 56, 95, 0.08); }
+  }
+  .agentes { --tema: var(--accent-agentes); --tema-bg: var(--accent-agentes-bg); }
+  .pln { --tema: var(--accent-pln); --tema-bg: var(--accent-pln-bg); }
+  .modelos { --tema: var(--accent-modelos); --tema-bg: var(--accent-modelos-bg); }
+  .agentes .module-tag, .pln .module-tag, .modelos .module-tag { background: var(--tema-bg); color: var(--tema); }
+  .agentes .rel, .pln .rel, .modelos .rel, .agentes .step-link, .pln .step-link, .modelos .step-link { color: var(--tema); }
+  .agentes .callout.key, .pln .callout.key, .modelos .callout.key { background: var(--tema-bg); border-color: color-mix(in srgb, var(--tema) 40%, var(--border)); }
+
+  /* Cuadrículas de agentes */
+  .chart .cell-l { fill: var(--code-bg); stroke: var(--border); }
+  .chart .cell-s { fill: var(--warn); fill-opacity: 0.32; stroke: var(--warn); }
+  .chart .cell-w { fill: var(--text-dim); opacity: 0.3; }
+  .chart .cell-v { fill: var(--accent-agentes); fill-opacity: 0.2; stroke: var(--border); }
+  .chart .cell-p { fill: var(--accent-agentes); opacity: 0.55; }
+  .chart .cell-a { fill: var(--clase0); fill-opacity: 0.45; stroke: var(--border); }
+  .chart .trail { fill: none; stroke: var(--accent-agentes); stroke-width: 3; stroke-linejoin: round; opacity: 0.85; }
+  .chart.grid-sm { max-width: 300px; margin-left: auto; margin-right: auto; }
+  .grid-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 0 0 8px; }
+  .grid-pair .chart { margin: 0; }
+  .grid-pair .caption { margin: 6px 4px 0; text-align: center; }
+  .chart .s5 { fill: none; stroke: var(--accent-modelos); stroke-width: 2.5; }
+  .chart .bar5 { fill: var(--accent-modelos); }
+  .legend .k5 { background: var(--accent-modelos); }
+  .chart .node { fill: var(--code-bg); stroke: var(--border); stroke-width: 1.2; }
+  .chart .node-hl { fill: var(--accent-modelos-bg); stroke: var(--accent-modelos); stroke-width: 1.5; }
+  .chart .edge { fill: none; stroke: var(--text-dim); stroke-width: 1.4; }
+  .chart .edge-g { fill: none; stroke: var(--accent-modelos); stroke-width: 1.6; stroke-dasharray: 5 4; }
+  .chart .ntxt { fill: var(--text); font-size: 13px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .gtxt { fill: var(--accent-modelos); font-size: 12px; font-family: "SF Mono", Consolas, monospace; }
+  .chart .arrow { fill: var(--text-dim); }
+  .chart .arrow-g { fill: var(--accent-modelos); }
+  .ok { color: var(--done); font-weight: 600; }
+  .bad { color: var(--warn); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap modelos">
+
+  <header>
+    <a class="back" href="index.html#modelos">← Volver al plan de aprendizaje</a>
+    <div class="kicker">
+      <span class="lesson-number">LECCIÓN 4.2 · FUNDAMENTO</span>
+      <span class="module-tag">Qué aprendió</span>
+    </div>
+    <h1>Entrenar el bloque: copiar con retardo</h1>
+    <p class="subtitle">La Parte 7 arma un modelo completo (embeddings, un bloque, salida) y lo entrena con Adam en una tarea que exige saber dónde está cada dígito. En 100 pasos llega al 100 %, y sus cuatro cabezas aprenden a mirar exactamente 3 posiciones atrás.</p>
+  </header>
+
+  <h2>1. La tarea</h2>
+  <div class="file-ref">20_transformer_bloque.py · líneas 149–156</div>
+<pre><code>V, T, RETARDO = 10, 16, 3
+D, H, N_BLOQUES, PASOS = 32, 4, 1, 600
+
+def lote(n):
+    x = rng.integers(0, V, (n, T))
+    return x, x[:, :T - RETARDO]</code></pre>
+  <p>Cada ejemplo son 16 dígitos al azar. El objetivo en la posición <code>t</code> es el dígito de la posición <code>t − 3</code>, así que <code>x[:, :13]</code> son las respuestas de las posiciones 3 a 15. Es la tarea más simple que necesita las tres piezas nuevas: <strong>auto-atención</strong> (traer información de otra posición), <strong>máscara causal</strong> (la respuesta está atrás, nunca adelante) y <strong>posiciones</strong> (“3 atrás” es una distancia, no un contenido). Como los dígitos son al azar, mirar solo el contenido no sirve de nada.</p>
+
+  <h2>2. El modelo completo</h2>
+  <div class="file-ref">mini_transformer.py · líneas 112–121</div>
+<pre><code>def forward(modelo, tokens, guardar=None, **opciones):
+    B, T = tokens.shape
+    x = modelo["E"][tokens]                        <span class="cm"># tokens → vectores</span>
+    if modelo["posiciones"]:
+        x = x + modelo["P"][np.arange(T)]          <span class="cm"># + dónde está cada uno</span>
+    for p in modelo["bloques"]:
+        x = bloque(x, p, modelo["H"], guardar=guardar, **opciones)
+    x = layer_norm(x, modelo["lnf_g"], modelo["lnf_b"])
+    return x @ modelo["W_salida"]                  <span class="cm"># (B, T, V): puntajes del siguiente token</span></code></pre>
+  <p>Esta es, literalmente, la arquitectura de GPT: embeddings + posiciones → <code>N</code> bloques → normalización final → una matriz que convierte cada vector en <code>V</code> puntajes (logits). La 4.3 usa esta misma función con más bloques y con caracteres del Quijote. <code>**opciones</code> recoge argumentos con nombre extra (como <code>residual=False</code>) y los pasa tal cual a <code>bloque</code>; sirve para los experimentos.</p>
+
+  <h2>3. El entrenamiento, y Adam</h2>
+  <div class="file-ref">20_transformer_bloque.py · líneas 161–170</div>
+<pre><code>optimizador = Adam(params, tasa=3e-3)
+...
+    logits = mt.forward(modelo, x)                 <span class="cm"># (32, 16, 10)</span>
+    L = cross_entropy(logits[:, RETARDO:], y)      <span class="cm"># solo las posiciones con respuesta</span>
+    L.backward()
+    optimizador.paso()</code></pre>
+  <p><code>logits[:, RETARDO:]</code> descarta las 3 primeras posiciones, que no tienen respuesta. El recorte es una operación de autograd más (<code>__getitem__</code>): el gradiente de esas posiciones queda en cero.</p>
+  <p><strong>Adam</strong> (mini_autograd.py, líneas 235–254) mejora el Adagrad de la <a class="rel" href="17_fundamento_adagrad.html">3.5</a> en dos cosas:</p>
+  <ul>
+    <li>En vez de sumar <em>todos</em> los gradientes al cuadrado desde el inicio (lo que hace que la tasa de Adagrad solo pueda bajar), usa un <strong>promedio móvil</strong> (<code>v</code>): recuerda sobre todo los últimos ~1 000 pasos.</li>
+    <li>Suaviza también el gradiente mismo (<code>m</code>, promedio de los últimos ~10): si los pasos apuntan siempre al mismo lado, se acumula “inercia”; si oscilan, se cancelan.</li>
+    <li>Las líneas <code>m_hat</code> y <code>v_hat</code> corrigen el arranque: <code>m</code> y <code>v</code> empiezan en cero y sin la corrección los primeros pasos serían demasiado chicos.</li>
+  </ul>
+  <p>Con un bloque transformer, el descenso de gradiente simple con una sola tasa funciona mal: los distintos parámetros (embeddings, <code>Wq</code>, normas…) tienen gradientes de escalas muy distintas. Adam es el optimizador con el que se entrenan prácticamente todos los transformers.</p>
+
+  <h2>4. Resultado</h2>
+  <div class="legend"><span><i class="k5"></i>con posiciones</span><span><i class="k4"></i>sin posiciones</span></div>
+  <div class="chart"><svg viewBox="0 0 600 230" role="img" aria-label="Pérdida con y sin posiciones">
+<line class="axis" x1="56" y1="196" x2="584" y2="196"/>
+<line class="axis" x1="56" y1="14" x2="56" y2="196"/>
+<line class="guide" x1="56" y1="196.0" x2="584" y2="196.0"/>
+<text class="lbl" x="50" y="200.0" text-anchor="end">0</text>
+<line class="guide" x1="56" y1="120.2" x2="584" y2="120.2"/>
+<text class="lbl" x="50" y="124.2" text-anchor="end">1</text>
+<line class="guide" x1="56" y1="44.3" x2="584" y2="44.3"/>
+<text class="lbl" x="50" y="48.3" text-anchor="end">2</text>
+<text class="lbl" x="56.0" y="212" text-anchor="middle">0</text>
+<text class="lbl" x="147.0" y="212" text-anchor="middle">100</text>
+<text class="lbl" x="238.1" y="212" text-anchor="middle">200</text>
+<text class="lbl" x="329.1" y="212" text-anchor="middle">300</text>
+<text class="lbl" x="420.1" y="212" text-anchor="middle">400</text>
+<text class="lbl" x="511.2" y="212" text-anchor="middle">500</text>
+<text class="lbl" x="584" y="226" text-anchor="end">paso</text>
+<polyline class="s5" points="56.0,22.9 56.9,25.4 57.8,27.7 58.7,29.5 59.6,31.4 60.6,33.3 61.5,35.3 62.4,37.2 63.3,39.1 64.2,41.3 65.1,43.6 66.0,46.0 66.9,48.8 67.8,51.6 68.7,54.7 69.7,58.1 70.6,61.7 71.5,65.4 72.4,69.6 73.3,74.0 74.2,78.8 75.1,83.6 76.0,88.3 76.9,93.4 77.8,98.6 78.8,104.0 79.7,109.6 80.6,114.9 81.5,120.5 82.4,125.8 83.3,131.2 84.2,136.4 85.1,141.3 86.0,146.3 87.0,150.9 87.9,155.2 88.8,159.4 89.7,163.4 90.6,167.1 91.5,170.3 92.4,173.3 93.3,176.0 94.2,178.6 95.1,180.8 96.1,182.7 97.0,184.3 97.9,185.7 98.8,187.0 99.7,188.2 100.6,189.1 101.5,189.9 102.4,190.6 103.3,191.2 104.2,191.7 105.2,192.1 106.1,192.5 107.0,192.8 107.9,193.0 108.8,193.2 109.7,193.5 110.6,193.7 111.5,193.8 112.4,194.0 113.4,194.1 114.3,194.2 115.2,194.3 116.1,194.5 117.0,194.5 117.9,194.6 118.8,194.7 119.7,194.7 120.6,194.8 121.5,194.8 122.5,194.9 123.4,194.9 124.3,195.0 125.2,195.0 126.1,195.0 127.0,195.1 127.9,195.1 128.8,195.1 129.7,195.2 130.6,195.2 131.6,195.2 132.5,195.2 133.4,195.2 134.3,195.3 135.2,195.3 136.1,195.3 137.0,195.3 137.9,195.3 138.8,195.3 139.8,195.4 140.7,195.4 141.6,195.4 142.5,195.4 143.4,195.4 144.3,195.4 145.2,195.4 146.1,195.4 147.0,195.5 147.9,195.5 148.9,195.5 149.8,195.5 150.7,195.5 151.6,195.5 152.5,195.5 153.4,195.5 154.3,195.5 155.2,195.5 156.1,195.5 157.0,195.5 158.0,195.5 158.9,195.5 159.8,195.6 160.7,195.6 161.6,195.6 162.5,195.6 163.4,195.6 164.3,195.6 165.2,195.6 166.2,195.6 167.1,195.6 168.0,195.6 168.9,195.6 169.8,195.6 170.7,195.6 171.6,195.6 172.5,195.6 173.4,195.6 174.3,195.6 175.3,195.6 176.2,195.6 177.1,195.6 178.0,195.6 178.9,195.7 179.8,195.7 180.7,195.7 181.6,195.7 182.5,195.7 183.4,195.7 184.4,195.7 185.3,195.7 186.2,195.7 187.1,195.7 188.0,195.7 188.9,195.7 189.8,195.7 190.7,195.7 191.6,195.7 192.6,195.7 193.5,195.7 194.4,195.7 195.3,195.7 196.2,195.7 197.1,195.7 198.0,195.7 198.9,195.7 199.8,195.7 200.7,195.7 201.7,195.7 202.6,195.7 203.5,195.7 204.4,195.7 205.3,195.7 206.2,195.7 207.1,195.7 208.0,195.7 208.9,195.7 209.8,195.7 210.8,195.7 211.7,195.8 212.6,195.8 213.5,195.8 214.4,195.8 215.3,195.8 216.2,195.8 217.1,195.8 218.0,195.8 219.0,195.8 219.9,195.8 220.8,195.8 221.7,195.8 222.6,195.8 223.5,195.8 224.4,195.8 225.3,195.8 226.2,195.8 227.1,195.8 228.1,195.8 229.0,195.8 229.9,195.8 230.8,195.8 231.7,195.8 232.6,195.8 233.5,195.8 234.4,195.8 235.3,195.8 236.2,195.8 237.2,195.8 238.1,195.8 239.0,195.8 239.9,195.8 240.8,195.8 241.7,195.8 242.6,195.8 243.5,195.8 244.4,195.8 245.4,195.8 246.3,195.8 247.2,195.8 248.1,195.8 249.0,195.8 249.9,195.8 250.8,195.8 251.7,195.8 252.6,195.8 253.5,195.8 254.5,195.8 255.4,195.8 256.3,195.8 257.2,195.8 258.1,195.8 259.0,195.8 259.9,195.8 260.8,195.8 261.7,195.8 262.6,195.8 263.6,195.8 264.5,195.8 265.4,195.8 266.3,195.8 267.2,195.8 268.1,195.8 269.0,195.8 269.9,195.8 270.8,195.8 271.8,195.8 272.7,195.8 273.6,195.8 274.5,195.9 275.4,195.9 276.3,195.9 277.2,195.9 278.1,195.9 279.0,195.9 279.9,195.9 280.9,195.9 281.8,195.9 282.7,195.9 283.6,195.9 284.5,195.9 285.4,195.9 286.3,195.9 287.2,195.9 288.1,195.9 289.0,195.9 290.0,195.9 290.9,195.9 291.8,195.9 292.7,195.9 293.6,195.9 294.5,195.9 295.4,195.9 296.3,195.9 297.2,195.9 298.2,195.9 299.1,195.9 300.0,195.9 300.9,195.9 301.8,195.9 302.7,195.9 303.6,195.9 304.5,195.9 305.4,195.9 306.3,195.9 307.3,195.9 308.2,195.9 309.1,195.9 310.0,195.9 310.9,195.9 311.8,195.9 312.7,195.9 313.6,195.9 314.5,195.9 315.4,195.9 316.4,195.9 317.3,195.9 318.2,195.9 319.1,195.9 320.0,195.9 320.9,195.9 321.8,195.9 322.7,195.9 323.6,195.9 324.6,195.9 325.5,195.9 326.4,195.9 327.3,195.9 328.2,195.9 329.1,195.9 330.0,195.9 330.9,195.9 331.8,195.9 332.7,195.9 333.7,195.9 334.6,195.9 335.5,195.9 336.4,195.9 337.3,195.9 338.2,195.9 339.1,195.9 340.0,195.9 340.9,195.9 341.8,195.9 342.8,195.9 343.7,195.9 344.6,195.9 345.5,195.9 346.4,195.9 347.3,195.9 348.2,195.9 349.1,195.9 350.0,195.9 351.0,195.9 351.9,195.9 352.8,195.9 353.7,195.9 354.6,195.9 355.5,195.9 356.4,195.9 357.3,195.9 358.2,195.9 359.1,195.9 360.1,195.9 361.0,195.9 361.9,195.9 362.8,195.9 363.7,195.9 364.6,195.9 365.5,195.9 366.4,195.9 367.3,195.9 368.2,195.9 369.2,195.9 370.1,195.9 371.0,195.9 371.9,195.9 372.8,195.9 373.7,195.9 374.6,195.9 375.5,195.9 376.4,195.9 377.4,195.9 378.3,195.9 379.2,195.9 380.1,195.9 381.0,195.9 381.9,195.9 382.8,195.9 383.7,195.9 384.6,195.9 385.5,195.9 386.5,195.9 387.4,195.9 388.3,195.9 389.2,195.9 390.1,195.9 391.0,195.9 391.9,195.9 392.8,195.9 393.7,195.9 394.6,195.9 395.6,195.9 396.5,195.9 397.4,195.9 398.3,195.9 399.2,195.9 400.1,195.9 401.0,195.9 401.9,195.9 402.8,195.9 403.8,195.9 404.7,195.9 405.6,195.9 406.5,195.9 407.4,195.9 408.3,195.9 409.2,195.9 410.1,195.9 411.0,195.9 411.9,195.9 412.9,195.9 413.8,195.9 414.7,195.9 415.6,195.9 416.5,195.9 417.4,195.9 418.3,195.9 419.2,195.9 420.1,195.9 421.0,195.9 422.0,195.9 422.9,195.9 423.8,195.9 424.7,195.9 425.6,195.9 426.5,195.9 427.4,195.9 428.3,195.9 429.2,195.9 430.2,195.9 431.1,195.9 432.0,195.9 432.9,195.9 433.8,195.9 434.7,195.9 435.6,195.9 436.5,195.9 437.4,195.9 438.3,195.9 439.3,195.9 440.2,195.9 441.1,195.9 442.0,195.9 442.9,195.9 443.8,195.9 444.7,195.9 445.6,195.9 446.5,195.9 447.4,195.9 448.4,195.9 449.3,195.9 450.2,195.9 451.1,195.9 452.0,195.9 452.9,195.9 453.8,195.9 454.7,195.9 455.6,195.9 456.6,195.9 457.5,195.9 458.4,195.9 459.3,195.9 460.2,195.9 461.1,195.9 462.0,195.9 462.9,195.9 463.8,195.9 464.7,195.9 465.7,195.9 466.6,195.9 467.5,195.9 468.4,195.9 469.3,195.9 470.2,195.9 471.1,195.9 472.0,195.9 472.9,195.9 473.8,195.9 474.8,195.9 475.7,195.9 476.6,195.9 477.5,195.9 478.4,195.9 479.3,195.9 480.2,195.9 481.1,195.9 482.0,195.9 483.0,195.9 483.9,195.9 484.8,195.9 485.7,195.9 486.6,195.9 487.5,195.9 488.4,195.9 489.3,195.9 490.2,195.9 491.1,195.9 492.1,195.9 493.0,195.9 493.9,195.9 494.8,195.9 495.7,195.9 496.6,195.9 497.5,195.9 498.4,195.9 499.3,195.9 500.2,195.9 501.2,196.0 502.1,196.0 503.0,196.0 503.9,196.0 504.8,196.0 505.7,196.0 506.6,196.0 507.5,196.0 508.4,196.0 509.4,196.0 510.3,196.0 511.2,196.0 512.1,196.0 513.0,196.0 513.9,196.0 514.8,196.0 515.7,196.0 516.6,196.0 517.5,196.0 518.5,196.0 519.4,196.0 520.3,196.0 521.2,196.0 522.1,196.0 523.0,196.0 523.9,196.0 524.8,196.0 525.7,196.0 526.6,196.0 527.6,196.0 528.5,196.0 529.4,196.0 530.3,196.0 531.2,196.0 532.1,196.0 533.0,196.0 533.9,196.0 534.8,196.0 535.8,196.0 536.7,196.0 537.6,196.0 538.5,196.0 539.4,196.0 540.3,196.0 541.2,196.0 542.1,196.0 543.0,196.0 543.9,196.0 544.9,196.0 545.8,196.0 546.7,196.0 547.6,196.0 548.5,196.0 549.4,196.0 550.3,196.0 551.2,196.0 552.1,196.0 553.0,196.0 554.0,196.0 554.9,196.0 555.8,196.0 556.7,196.0 557.6,196.0 558.5,196.0 559.4,196.0 560.3,196.0 561.2,196.0 562.2,196.0 563.1,196.0 564.0,196.0 564.9,196.0 565.8,196.0 566.7,196.0 567.6,196.0 568.5,196.0 569.4,196.0 570.3,196.0 571.3,196.0 572.2,196.0 573.1,196.0 574.0,196.0 574.9,196.0 575.8,196.0 576.7,196.0 577.6,196.0 578.5,196.0 579.4,196.0 580.4,196.0 581.3,196.0 582.2,196.0 583.1,196.0 584.0,196.0"/>
+<polyline class="s4" points="56.0,28.5 56.9,31.1 57.8,32.8 58.7,34.3 59.6,35.4 60.6,36.7 61.5,37.8 62.4,38.7 63.3,39.8 64.2,40.5 65.1,41.3 66.0,42.3 66.9,43.2 67.8,43.8 68.7,44.5 69.7,45.2 70.6,45.9 71.5,46.5 72.4,47.0 73.3,47.7 74.2,48.1 75.1,48.9 76.0,49.3 76.9,49.8 77.8,50.5 78.8,50.7 79.7,51.1 80.6,51.7 81.5,51.9 82.4,52.4 83.3,52.6 84.2,52.8 85.1,52.8 86.0,53.2 87.0,53.4 87.9,53.8 88.8,53.8 89.7,53.9 90.6,54.1 91.5,54.3 92.4,54.7 93.3,54.9 94.2,55.1 95.1,55.4 96.1,55.5 97.0,56.1 97.9,56.0 98.8,56.2 99.7,56.4 100.6,56.5 101.5,57.0 102.4,57.2 103.3,57.4 104.2,57.5 105.2,57.7 106.1,57.6 107.0,58.0 107.9,58.0 108.8,58.1 109.7,58.1 110.6,58.1 111.5,58.1 112.4,58.2 113.4,58.0 114.3,58.1 115.2,58.1 116.1,58.3 117.0,58.3 117.9,58.6 118.8,58.6 119.7,58.5 120.6,58.6 121.5,58.7 122.5,58.7 123.4,58.5 124.3,58.7 125.2,58.4 126.1,58.7 127.0,58.9 127.9,58.9 128.8,58.9 129.7,58.9 130.6,58.8 131.6,58.9 132.5,58.7 133.4,58.9 134.3,59.0 135.2,58.9 136.1,58.8 137.0,58.7 137.9,58.6 138.8,58.6 139.8,58.5 140.7,58.4 141.6,58.6 142.5,58.7 143.4,58.8 144.3,58.7 145.2,58.6 146.1,58.5 147.0,58.5 147.9,58.6 148.9,58.8 149.8,58.8 150.7,58.7 151.6,58.6 152.5,58.3 153.4,58.5 154.3,58.5 155.2,58.7 156.1,58.8 157.0,58.8 158.0,59.0 158.9,59.1 159.8,59.1 160.7,58.9 161.6,59.0 162.5,59.2 163.4,59.3 164.3,59.5 165.2,59.6 166.2,59.7 167.1,59.8 168.0,60.0 168.9,60.2 169.8,60.1 170.7,60.2 171.6,60.2 172.5,60.4 173.4,60.5 174.3,60.6 175.3,60.7 176.2,60.7 177.1,60.8 178.0,60.7 178.9,61.1 179.8,61.0 180.7,60.8 181.6,61.1 182.5,61.0 183.4,61.0 184.4,60.8 185.3,60.8 186.2,60.9 187.1,60.8 188.0,60.8 188.9,61.1 189.8,61.1 190.7,61.1 191.6,61.0 192.6,60.7 193.5,60.8 194.4,61.0 195.3,60.9 196.2,61.1 197.1,61.0 198.0,61.3 198.9,61.2 199.8,61.1 200.7,61.3 201.7,61.2 202.6,61.3 203.5,61.0 204.4,60.9 205.3,61.0 206.2,61.3 207.1,61.4 208.0,61.3 208.9,61.2 209.8,61.4 210.8,61.3 211.7,61.3 212.6,61.1 213.5,61.2 214.4,61.3 215.3,61.4 216.2,61.4 217.1,61.4 218.0,61.4 219.0,61.5 219.9,61.6 220.8,61.5 221.7,61.6 222.6,61.8 223.5,61.9 224.4,61.9 225.3,61.8 226.2,61.9 227.1,61.9 228.1,62.0 229.0,62.3 229.9,62.3 230.8,62.5 231.7,62.5 232.6,62.6 233.5,62.4 234.4,62.4 235.3,62.6 236.2,62.7 237.2,62.7 238.1,62.8 239.0,63.1 239.9,63.4 240.8,63.2 241.7,63.2 242.6,63.1 243.5,63.1 244.4,63.1 245.4,63.2 246.3,63.0 247.2,63.0 248.1,63.1 249.0,63.0 249.9,63.0 250.8,62.9 251.7,63.0 252.6,63.1 253.5,63.1 254.5,63.2 255.4,62.9 256.3,62.9 257.2,62.8 258.1,62.8 259.0,62.9 259.9,62.9 260.8,62.9 261.7,63.0 262.6,63.0 263.6,63.1 264.5,63.4 265.4,63.4 266.3,63.2 267.2,63.3 268.1,63.6 269.0,63.7 269.9,63.8 270.8,63.7 271.8,63.7 272.7,63.6 273.6,63.7 274.5,63.8 275.4,63.8 276.3,63.8 277.2,63.6 278.1,63.6 279.0,63.5 279.9,63.6 280.9,63.8 281.8,63.7 282.7,63.7 283.6,63.7 284.5,63.9 285.4,63.8 286.3,63.6 287.2,63.4 288.1,63.4 289.0,63.4 290.0,63.3 290.9,63.2 291.8,63.3 292.7,63.3 293.6,63.2 294.5,63.1 295.4,63.5 296.3,63.4 297.2,63.7 298.2,63.6 299.1,63.6 300.0,63.6 300.9,63.4 301.8,63.5 302.7,63.5 303.6,63.5 304.5,63.7 305.4,63.7 306.3,63.9 307.3,64.0 308.2,64.0 309.1,64.2 310.0,64.1 310.9,64.1 311.8,64.4 312.7,64.5 313.6,64.3 314.5,64.3 315.4,64.2 316.4,64.1 317.3,64.0 318.2,64.3 319.1,64.4 320.0,64.4 320.9,64.6 321.8,64.7 322.7,64.8 323.6,64.8 324.6,64.9 325.5,64.9 326.4,65.0 327.3,65.1 328.2,65.3 329.1,65.4 330.0,65.4 330.9,65.4 331.8,65.5 332.7,65.7 333.7,65.9 334.6,66.0 335.5,66.2 336.4,66.1 337.3,66.1 338.2,66.1 339.1,66.1 340.0,66.1 340.9,65.9 341.8,65.9 342.8,65.7 343.7,65.9 344.6,66.0 345.5,66.0 346.4,65.9 347.3,65.9 348.2,65.7 349.1,65.8 350.0,65.9 351.0,65.9 351.9,65.6 352.8,65.6 353.7,65.4 354.6,65.5 355.5,65.5 356.4,65.5 357.3,65.3 358.2,65.1 359.1,65.3 360.1,65.2 361.0,65.3 361.9,65.4 362.8,65.2 363.7,65.2 364.6,65.1 365.5,65.0 366.4,65.2 367.3,65.0 368.2,65.0 369.2,64.9 370.1,65.3 371.0,65.5 371.9,65.4 372.8,65.4 373.7,65.5 374.6,65.6 375.5,65.5 376.4,65.9 377.4,65.9 378.3,66.1 379.2,66.1 380.1,66.2 381.0,66.1 381.9,66.3 382.8,66.5 383.7,66.4 384.6,66.4 385.5,66.4 386.5,66.4 387.4,66.2 388.3,66.1 389.2,66.0 390.1,66.2 391.0,66.4 391.9,66.3 392.8,66.3 393.7,66.5 394.6,66.4 395.6,66.5 396.5,66.6 397.4,66.4 398.3,66.2 399.2,66.2 400.1,66.2 401.0,66.1 401.9,66.2 402.8,66.2 403.8,66.2 404.7,66.3 405.6,66.5 406.5,66.4 407.4,66.3 408.3,66.1 409.2,65.8 410.1,65.8 411.0,65.8 411.9,65.7 412.9,65.6 413.8,65.5 414.7,65.4 415.6,65.7 416.5,65.9 417.4,65.9 418.3,66.0 419.2,66.0 420.1,66.0 421.0,66.1 422.0,66.2 422.9,66.1 423.8,66.2 424.7,66.3 425.6,66.4 426.5,66.6 427.4,66.8 428.3,66.9 429.2,66.8 430.2,67.1 431.1,66.9 432.0,67.0 432.9,67.2 433.8,67.0 434.7,66.8 435.6,66.8 436.5,66.7 437.4,66.9 438.3,67.1 439.3,67.0 440.2,67.0 441.1,67.1 442.0,67.1 442.9,67.2 443.8,67.3 444.7,67.3 445.6,67.4 446.5,67.2 447.4,67.2 448.4,67.0 449.3,67.1 450.2,67.2 451.1,67.0 452.0,66.8 452.9,66.9 453.8,67.1 454.7,67.2 455.6,67.2 456.6,67.2 457.5,67.3 458.4,67.3 459.3,67.5 460.2,67.4 461.1,67.1 462.0,67.1 462.9,67.1 463.8,66.9 464.7,67.1 465.7,67.2 466.6,67.2 467.5,67.1 468.4,67.3 469.3,67.4 470.2,67.8 471.1,67.9 472.0,67.9 472.9,67.7 473.8,67.7 474.8,67.7 475.7,67.8 476.6,67.9 477.5,67.7 478.4,67.7 479.3,67.8 480.2,67.7 481.1,67.6 482.0,67.5 483.0,67.7 483.9,67.8 484.8,68.1 485.7,68.3 486.6,68.0 487.5,68.1 488.4,67.8 489.3,67.9 490.2,67.9 491.1,67.8 492.1,67.8 493.0,67.8 493.9,67.7 494.8,67.7 495.7,67.6 496.6,67.7 497.5,67.9 498.4,67.8 499.3,67.9 500.2,67.9 501.2,67.7 502.1,67.4 503.0,67.1 503.9,67.3 504.8,67.1 505.7,67.0 506.6,67.1 507.5,66.8 508.4,66.8 509.4,66.8 510.3,66.8 511.2,66.6 512.1,66.7 513.0,66.5 513.9,66.4 514.8,66.4 515.7,66.3 516.6,66.6 517.5,66.6 518.5,66.6 519.4,66.8 520.3,67.0 521.2,67.1 522.1,66.9 523.0,67.1 523.9,67.3 524.8,67.3 525.7,67.3 526.6,67.3 527.6,67.4 528.5,67.4 529.4,67.7 530.3,67.5 531.2,67.6 532.1,67.6 533.0,67.6 533.9,67.4 534.8,67.3 535.8,67.2 536.7,67.2 537.6,67.1 538.5,67.2 539.4,67.3 540.3,67.5 541.2,67.5 542.1,67.2 543.0,67.2 543.9,67.3 544.9,67.4 545.8,67.4 546.7,67.6 547.6,67.7 548.5,67.9 549.4,67.8 550.3,67.9 551.2,68.2 552.1,68.6 553.0,68.8 554.0,69.0 554.9,69.1 555.8,68.9 556.7,69.0 557.6,68.9 558.5,68.8 559.4,68.8 560.3,69.0 561.2,68.9 562.2,69.1 563.1,69.1 564.0,69.1 564.9,68.8 565.8,68.5 566.7,68.6 567.6,68.7 568.5,68.7 569.4,68.5 570.3,68.4 571.3,68.2 572.2,68.1 573.1,68.1 574.0,68.1 574.9,68.1 575.8,68.2 576.7,68.1 577.6,68.1 578.5,68.2 579.4,68.5 580.4,68.4 581.3,68.3 582.2,68.3 583.1,68.4 584.0,68.6"/>
+<polyline class="s4" points="56.0,21.4 584.0,21.4" stroke-dasharray="4 4"/>
+</svg></div>
+  <p class="caption">Pérdida (promedio móvil de 20 pasos). La línea punteada es ln 10 = 2.30, la de adivinar al azar entre 10 dígitos.</p>
+  <p>Con posiciones, la pérdida cae de 2.3 a casi 0 en unos 80 pasos y termina en 0.001, con <strong>100 % de exactitud</strong> en 1 000 secuencias nuevas. Tardó 7 segundos.</p>
+
+  <h2>5. A dónde miran las cabezas</h2>
+  <div class="grid-pair">
+    <div><div class="chart"><svg viewBox="0 0 392 392" role="img" aria-label="Pesos de atención promedio de la cabeza 2">
+<text class="lbl" x="24" y="45.0" text-anchor="end">0</text>
+<text class="lbl" x="41.0" y="22" text-anchor="middle">0</text>
+<rect class="bar5" x="30" y="30" width="21" height="21" rx="2" fill-opacity="1.00"/>
+<rect class="cell-l" x="52" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="74" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="96" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="118" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="140" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="162" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="30" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="67.0" text-anchor="end">1</text>
+<text class="lbl" x="63.0" y="22" text-anchor="middle">1</text>
+<rect class="bar5" x="30" y="52" width="21" height="21" rx="2" fill-opacity="0.35"/>
+<rect class="bar5" x="52" y="52" width="21" height="21" rx="2" fill-opacity="0.65"/>
+<rect class="cell-l" x="74" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="96" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="118" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="140" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="162" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="52" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="89.0" text-anchor="end">2</text>
+<text class="lbl" x="85.0" y="22" text-anchor="middle">2</text>
+<rect class="bar5" x="30" y="74" width="21" height="21" rx="2" fill-opacity="0.49"/>
+<rect class="bar5" x="52" y="74" width="21" height="21" rx="2" fill-opacity="0.35"/>
+<rect class="bar5" x="74" y="74" width="21" height="21" rx="2" fill-opacity="0.16"/>
+<rect class="cell-l" x="96" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="118" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="140" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="162" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="74" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="111.0" text-anchor="end">3</text>
+<text class="lbl" x="107.0" y="22" text-anchor="middle">3</text>
+<rect class="bar5" x="30" y="96" width="21" height="21" rx="2" fill-opacity="0.88"/>
+<rect class="bar5" x="52" y="96" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="74" y="96" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="96" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="cell-l" x="118" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="140" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="162" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="96" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="133.0" text-anchor="end">4</text>
+<text class="lbl" x="129.0" y="22" text-anchor="middle">4</text>
+<rect class="bar5" x="30" y="118" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="118" width="21" height="21" rx="2" fill-opacity="0.97"/>
+<rect class="bar5" x="74" y="118" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="118" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="118" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="140" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="162" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="118" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="155.0" text-anchor="end">5</text>
+<text class="lbl" x="151.0" y="22" text-anchor="middle">5</text>
+<rect class="bar5" x="30" y="140" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="140" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="140" width="21" height="21" rx="2" fill-opacity="0.96"/>
+<rect class="bar5" x="96" y="140" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="140" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="140" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="162" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="140" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="177.0" text-anchor="end">6</text>
+<text class="lbl" x="173.0" y="22" text-anchor="middle">6</text>
+<rect class="bar5" x="30" y="162" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="162" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="162" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="162" width="21" height="21" rx="2" fill-opacity="0.93"/>
+<rect class="bar5" x="118" y="162" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="162" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="162" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="184" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="162" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="199.0" text-anchor="end">7</text>
+<text class="lbl" x="195.0" y="22" text-anchor="middle">7</text>
+<rect class="bar5" x="30" y="184" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="184" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="184" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="184" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="184" width="21" height="21" rx="2" fill-opacity="0.99"/>
+<rect class="bar5" x="140" y="184" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="184" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="184" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="206" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="184" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="221.0" text-anchor="end">8</text>
+<text class="lbl" x="217.0" y="22" text-anchor="middle">8</text>
+<rect class="bar5" x="30" y="206" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="206" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="206" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="206" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="206" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="206" width="21" height="21" rx="2" fill-opacity="0.92"/>
+<rect class="bar5" x="162" y="206" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="206" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="206" y="206" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="228" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="206" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="243.0" text-anchor="end">9</text>
+<text class="lbl" x="239.0" y="22" text-anchor="middle">9</text>
+<rect class="bar5" x="30" y="228" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="228" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="228" width="21" height="21" rx="2" fill-opacity="0.05"/>
+<rect class="bar5" x="96" y="228" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="228" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="228" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="228" width="21" height="21" rx="2" fill-opacity="0.84"/>
+<rect class="bar5" x="184" y="228" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="206" y="228" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="228" y="228" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="250" y="228" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="228" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="228" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="228" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="228" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="228" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="265.0" text-anchor="end">10</text>
+<text class="lbl" x="261.0" y="22" text-anchor="middle">10</text>
+<rect class="bar5" x="30" y="250" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="52" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="250" width="21" height="21" rx="2" fill-opacity="0.87"/>
+<rect class="bar5" x="206" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="228" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="250" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="272" y="250" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="250" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="250" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="250" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="250" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="287.0" text-anchor="end">11</text>
+<text class="lbl" x="283.0" y="22" text-anchor="middle">11</text>
+<rect class="bar5" x="30" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="206" y="272" width="21" height="21" rx="2" fill-opacity="0.98"/>
+<rect class="bar5" x="228" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="250" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="272" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="294" y="272" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="272" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="272" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="272" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="309.0" text-anchor="end">12</text>
+<text class="lbl" x="305.0" y="22" text-anchor="middle">12</text>
+<rect class="bar5" x="30" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="206" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="228" y="294" width="21" height="21" rx="2" fill-opacity="0.90"/>
+<rect class="bar5" x="250" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="272" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="294" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="316" y="294" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="294" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="294" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="331.0" text-anchor="end">13</text>
+<text class="lbl" x="327.0" y="22" text-anchor="middle">13</text>
+<rect class="bar5" x="30" y="316" width="21" height="21" rx="2" fill-opacity="0.09"/>
+<rect class="bar5" x="52" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="316" width="21" height="21" rx="2" fill-opacity="0.08"/>
+<rect class="bar5" x="118" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="316" width="21" height="21" rx="2" fill-opacity="0.11"/>
+<rect class="bar5" x="184" y="316" width="21" height="21" rx="2" fill-opacity="0.10"/>
+<rect class="bar5" x="206" y="316" width="21" height="21" rx="2" fill-opacity="0.05"/>
+<rect class="bar5" x="228" y="316" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="250" y="316" width="21" height="21" rx="2" fill-opacity="0.32"/>
+<rect class="bar5" x="272" y="316" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="bar5" x="294" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="316" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="338" y="316" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="316" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="353.0" text-anchor="end">14</text>
+<text class="lbl" x="349.0" y="22" text-anchor="middle">14</text>
+<rect class="bar5" x="30" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="338" width="21" height="21" rx="2" fill-opacity="0.05"/>
+<rect class="bar5" x="140" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="206" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="228" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="250" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="272" y="338" width="21" height="21" rx="2" fill-opacity="0.81"/>
+<rect class="bar5" x="294" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="316" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="338" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="360" y="338" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="375.0" text-anchor="end">15</text>
+<text class="lbl" x="371.0" y="22" text-anchor="middle">15</text>
+<rect class="bar5" x="30" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="360" width="21" height="21" rx="2" fill-opacity="0.05"/>
+<rect class="bar5" x="162" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="206" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="228" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="250" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="272" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="294" y="360" width="21" height="21" rx="2" fill-opacity="0.82"/>
+<rect class="bar5" x="316" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="338" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="360" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+</svg></div><p class="caption">Cabeza 2</p></div>
+    <div><div class="chart"><svg viewBox="0 0 392 392" role="img" aria-label="Pesos de atención promedio de la cabeza 3">
+<text class="lbl" x="24" y="45.0" text-anchor="end">0</text>
+<text class="lbl" x="41.0" y="22" text-anchor="middle">0</text>
+<rect class="bar5" x="30" y="30" width="21" height="21" rx="2" fill-opacity="1.00"/>
+<rect class="cell-l" x="52" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="74" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="96" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="118" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="140" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="162" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="30" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="30" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="67.0" text-anchor="end">1</text>
+<text class="lbl" x="63.0" y="22" text-anchor="middle">1</text>
+<rect class="bar5" x="30" y="52" width="21" height="21" rx="2" fill-opacity="0.50"/>
+<rect class="bar5" x="52" y="52" width="21" height="21" rx="2" fill-opacity="0.50"/>
+<rect class="cell-l" x="74" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="96" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="118" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="140" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="162" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="52" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="52" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="89.0" text-anchor="end">2</text>
+<text class="lbl" x="85.0" y="22" text-anchor="middle">2</text>
+<rect class="bar5" x="30" y="74" width="21" height="21" rx="2" fill-opacity="0.51"/>
+<rect class="bar5" x="52" y="74" width="21" height="21" rx="2" fill-opacity="0.23"/>
+<rect class="bar5" x="74" y="74" width="21" height="21" rx="2" fill-opacity="0.25"/>
+<rect class="cell-l" x="96" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="118" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="140" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="162" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="74" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="74" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="111.0" text-anchor="end">3</text>
+<text class="lbl" x="107.0" y="22" text-anchor="middle">3</text>
+<rect class="bar5" x="30" y="96" width="21" height="21" rx="2" fill-opacity="0.81"/>
+<rect class="bar5" x="52" y="96" width="21" height="21" rx="2" fill-opacity="0.09"/>
+<rect class="bar5" x="74" y="96" width="21" height="21" rx="2" fill-opacity="0.08"/>
+<rect class="bar5" x="96" y="96" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="118" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="140" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="162" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="96" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="96" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="133.0" text-anchor="end">4</text>
+<text class="lbl" x="129.0" y="22" text-anchor="middle">4</text>
+<rect class="bar5" x="30" y="118" width="21" height="21" rx="2" fill-opacity="0.14"/>
+<rect class="bar5" x="52" y="118" width="21" height="21" rx="2" fill-opacity="0.43"/>
+<rect class="bar5" x="74" y="118" width="21" height="21" rx="2" fill-opacity="0.07"/>
+<rect class="bar5" x="96" y="118" width="21" height="21" rx="2" fill-opacity="0.08"/>
+<rect class="bar5" x="118" y="118" width="21" height="21" rx="2" fill-opacity="0.27"/>
+<rect class="cell-l" x="140" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="162" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="118" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="118" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="155.0" text-anchor="end">5</text>
+<text class="lbl" x="151.0" y="22" text-anchor="middle">5</text>
+<rect class="bar5" x="30" y="140" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="bar5" x="52" y="140" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="140" width="21" height="21" rx="2" fill-opacity="0.78"/>
+<rect class="bar5" x="96" y="140" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="bar5" x="118" y="140" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="140" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="cell-l" x="162" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="184" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="140" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="140" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="177.0" text-anchor="end">6</text>
+<text class="lbl" x="173.0" y="22" text-anchor="middle">6</text>
+<rect class="bar5" x="30" y="162" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="162" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="bar5" x="74" y="162" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="bar5" x="96" y="162" width="21" height="21" rx="2" fill-opacity="0.82"/>
+<rect class="bar5" x="118" y="162" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="162" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="162" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="184" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="206" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="162" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="162" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="199.0" text-anchor="end">7</text>
+<text class="lbl" x="195.0" y="22" text-anchor="middle">7</text>
+<rect class="bar5" x="30" y="184" width="21" height="21" rx="2" fill-opacity="0.07"/>
+<rect class="bar5" x="52" y="184" width="21" height="21" rx="2" fill-opacity="0.14"/>
+<rect class="bar5" x="74" y="184" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="184" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="184" width="21" height="21" rx="2" fill-opacity="0.63"/>
+<rect class="bar5" x="140" y="184" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="162" y="184" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="184" width="21" height="21" rx="2" fill-opacity="0.07"/>
+<rect class="cell-l" x="206" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="228" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="184" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="184" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="221.0" text-anchor="end">8</text>
+<text class="lbl" x="217.0" y="22" text-anchor="middle">8</text>
+<rect class="bar5" x="30" y="206" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="bar5" x="52" y="206" width="21" height="21" rx="2" fill-opacity="0.09"/>
+<rect class="bar5" x="74" y="206" width="21" height="21" rx="2" fill-opacity="0.11"/>
+<rect class="bar5" x="96" y="206" width="21" height="21" rx="2" fill-opacity="0.05"/>
+<rect class="bar5" x="118" y="206" width="21" height="21" rx="2" fill-opacity="0.05"/>
+<rect class="bar5" x="140" y="206" width="21" height="21" rx="2" fill-opacity="0.42"/>
+<rect class="bar5" x="162" y="206" width="21" height="21" rx="2" fill-opacity="0.10"/>
+<rect class="bar5" x="184" y="206" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="206" y="206" width="21" height="21" rx="2" fill-opacity="0.08"/>
+<rect class="cell-l" x="228" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="250" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="206" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="206" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="243.0" text-anchor="end">9</text>
+<text class="lbl" x="239.0" y="22" text-anchor="middle">9</text>
+<rect class="bar5" x="30" y="228" width="21" height="21" rx="2" fill-opacity="0.11"/>
+<rect class="bar5" x="52" y="228" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="bar5" x="74" y="228" width="21" height="21" rx="2" fill-opacity="0.13"/>
+<rect class="bar5" x="96" y="228" width="21" height="21" rx="2" fill-opacity="0.11"/>
+<rect class="bar5" x="118" y="228" width="21" height="21" rx="2" fill-opacity="0.07"/>
+<rect class="bar5" x="140" y="228" width="21" height="21" rx="2" fill-opacity="0.10"/>
+<rect class="bar5" x="162" y="228" width="21" height="21" rx="2" fill-opacity="0.18"/>
+<rect class="bar5" x="184" y="228" width="21" height="21" rx="2" fill-opacity="0.12"/>
+<rect class="bar5" x="206" y="228" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="228" y="228" width="21" height="21" rx="2" fill-opacity="0.08"/>
+<rect class="cell-l" x="250" y="228" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="272" y="228" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="228" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="228" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="228" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="228" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="265.0" text-anchor="end">10</text>
+<text class="lbl" x="261.0" y="22" text-anchor="middle">10</text>
+<rect class="bar5" x="30" y="250" width="21" height="21" rx="2" fill-opacity="0.07"/>
+<rect class="bar5" x="52" y="250" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="bar5" x="74" y="250" width="21" height="21" rx="2" fill-opacity="0.05"/>
+<rect class="bar5" x="96" y="250" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="118" y="250" width="21" height="21" rx="2" fill-opacity="0.07"/>
+<rect class="bar5" x="140" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="250" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="184" y="250" width="21" height="21" rx="2" fill-opacity="0.52"/>
+<rect class="bar5" x="206" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="228" y="250" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="250" y="250" width="21" height="21" rx="2" fill-opacity="0.10"/>
+<rect class="cell-l" x="272" y="250" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="294" y="250" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="250" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="250" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="250" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="287.0" text-anchor="end">11</text>
+<text class="lbl" x="283.0" y="22" text-anchor="middle">11</text>
+<rect class="bar5" x="30" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="206" y="272" width="21" height="21" rx="2" fill-opacity="0.93"/>
+<rect class="bar5" x="228" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="250" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="272" y="272" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="cell-l" x="294" y="272" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="316" y="272" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="272" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="272" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="309.0" text-anchor="end">12</text>
+<text class="lbl" x="305.0" y="22" text-anchor="middle">12</text>
+<rect class="bar5" x="30" y="294" width="21" height="21" rx="2" fill-opacity="0.09"/>
+<rect class="bar5" x="52" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="294" width="21" height="21" rx="2" fill-opacity="0.07"/>
+<rect class="bar5" x="96" y="294" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="118" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="294" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="162" y="294" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="bar5" x="184" y="294" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="206" y="294" width="21" height="21" rx="2" fill-opacity="0.05"/>
+<rect class="bar5" x="228" y="294" width="21" height="21" rx="2" fill-opacity="0.37"/>
+<rect class="bar5" x="250" y="294" width="21" height="21" rx="2" fill-opacity="0.07"/>
+<rect class="bar5" x="272" y="294" width="21" height="21" rx="2" fill-opacity="0.07"/>
+<rect class="bar5" x="294" y="294" width="21" height="21" rx="2" fill-opacity="0.12"/>
+<rect class="cell-l" x="316" y="294" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="338" y="294" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="294" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="331.0" text-anchor="end">13</text>
+<text class="lbl" x="327.0" y="22" text-anchor="middle">13</text>
+<rect class="bar5" x="30" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="316" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="118" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="316" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="206" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="228" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="250" y="316" width="21" height="21" rx="2" fill-opacity="0.71"/>
+<rect class="bar5" x="272" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="294" y="316" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="316" y="316" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="cell-l" x="338" y="316" width="21" height="21" rx="2"/>
+<rect class="cell-l" x="360" y="316" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="353.0" text-anchor="end">14</text>
+<text class="lbl" x="349.0" y="22" text-anchor="middle">14</text>
+<rect class="bar5" x="30" y="338" width="21" height="21" rx="2" fill-opacity="0.09"/>
+<rect class="bar5" x="52" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="96" y="338" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="118" y="338" width="21" height="21" rx="2" fill-opacity="0.05"/>
+<rect class="bar5" x="140" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="162" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="338" width="21" height="21" rx="2" fill-opacity="0.09"/>
+<rect class="bar5" x="206" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="228" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="250" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="272" y="338" width="21" height="21" rx="2" fill-opacity="0.55"/>
+<rect class="bar5" x="294" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="316" y="338" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="338" y="338" width="21" height="21" rx="2" fill-opacity="0.06"/>
+<rect class="cell-l" x="360" y="338" width="21" height="21" rx="2"/>
+<text class="lbl" x="24" y="375.0" text-anchor="end">15</text>
+<text class="lbl" x="371.0" y="22" text-anchor="middle">15</text>
+<rect class="bar5" x="30" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="52" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="74" y="360" width="21" height="21" rx="2" fill-opacity="0.07"/>
+<rect class="bar5" x="96" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="118" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="140" y="360" width="21" height="21" rx="2" fill-opacity="0.10"/>
+<rect class="bar5" x="162" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="184" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="206" y="360" width="21" height="21" rx="2" fill-opacity="0.04"/>
+<rect class="bar5" x="228" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="250" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="272" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="294" y="360" width="21" height="21" rx="2" fill-opacity="0.55"/>
+<rect class="bar5" x="316" y="360" width="21" height="21" rx="2" fill-opacity="0.05"/>
+<rect class="bar5" x="338" y="360" width="21" height="21" rx="2" fill-opacity="0.03"/>
+<rect class="bar5" x="360" y="360" width="21" height="21" rx="2" fill-opacity="0.06"/>
+</svg></div><p class="caption">Cabeza 3</p></div>
+  </div>
+  <p class="caption">Pesos de atención promediados sobre 500 secuencias. Fila = posición que mira; columna = posición mirada. Gris: prohibido por la máscara.</p>
+  <p>Una diagonal nítida 3 lugares a la izquierda de la diagonal principal: cada posición mira la que está 3 atrás. Promediando sobre las posiciones 5 a 15, el peso puesto a distancia 3 es:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Cabeza</th><th class="num-cell">k = 0</th><th class="num-cell">k = 1</th><th class="num-cell">k = 2</th><th class="num-cell">k = 3</th><th class="num-cell">k = 4</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="num-cell">0.03</td><td class="num-cell">0.02</td><td class="num-cell">0.02</td><td class="num-cell"><strong>0.82</strong></td><td class="num-cell">0.03</td></tr>
+        <tr><td>2</td><td class="num-cell">0.02</td><td class="num-cell">0.00</td><td class="num-cell">0.01</td><td class="num-cell"><strong>0.85</strong></td><td class="num-cell">0.01</td></tr>
+        <tr><td>3</td><td class="num-cell">0.06</td><td class="num-cell">0.02</td><td class="num-cell">0.05</td><td class="num-cell"><strong>0.59</strong></td><td class="num-cell">0.04</td></tr>
+        <tr><td>4</td><td class="num-cell">0.03</td><td class="num-cell">0.02</td><td class="num-cell">0.03</td><td class="num-cell"><strong>0.67</strong></td><td class="num-cell">0.04</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Nadie le dijo que mirara 3 atrás: lo descubrió porque era la forma de bajar la pérdida, igual que la capa de la 3.6 aprendió a buscar la clave correcta. Las cuatro cabezas aprendieron lo mismo (la tarea no necesita más), con distinta nitidez; sumadas en <code>Wo</code>, alcanzan para acertar siempre. En un modelo de lenguaje, cada cabeza termina especializándose en patrones distintos (la palabra anterior, el sujeto del verbo, la comilla que abrió…).</p>
+
+  <div class="callout">
+    Siguiente: <a class="rel" href="20_fundamento_experimentos_bloque.html">Profundidad, distancia y cabezas</a> · Antes: <a class="rel" href="20_fundamento_verificar_bloque.html">Verificar el bloque</a>
+  </div>
+
+  <footer>
+    Fundamento de la <a href="index.html#modelos">Lección 4.2 — El bloque Transformer</a>.
+  </footer>
+
+</div>
+</body>
+</html>
