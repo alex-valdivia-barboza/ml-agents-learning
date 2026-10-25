@@ -413,9 +413,9 @@
 
   <nav class="tabs" role="tablist" aria-label="Temas">
     <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">6/6</span></button>
-    <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">0</span></button>
+    <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">1/6</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">6/6</span></button>
-    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">0</span></button>
+    <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">0/6</span></button>
   </nav>
 
   <section class="module redes tab-panel" id="redes" role="tabpanel" aria-labelledby="tab-redes">
@@ -648,13 +648,113 @@
 
   <section class="module pln tab-panel" id="pln" role="tabpanel" aria-labelledby="tab-pln">
     <div class="module-header">
-      <h2>Procesamiento de Lenguaje Natural (PLN)</h2>
-      <span class="module-tag tag-pln">Próximamente</span>
+      <h2>Módulo 3 — Procesamiento de Lenguaje Natural (PLN)</h2>
+      <span class="module-tag tag-pln">Python + NumPy</span>
     </div>
-    <p class="module-desc">Cómo una máquina trabaja con texto: tokenización, representación de palabras, embeddings y modelos de lenguaje.</p>
-    <div class="empty-state">
-      <strong>Todavía no hay lecciones en este tema</strong>
-      Las lecciones de PLN aparecerán acá a medida que se agreguen al plan.
+    <p class="module-desc">Cómo una máquina trabaja con texto: tokens → bolsa de palabras → n-gramas → embeddings → redes recurrentes → atención.</p>
+    <div class="lesson-grid">
+
+      <div class="lesson-card done has-link">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 3.1</span>
+          <span class="status-badge status-done">Completa</span>
+        </div>
+        <h3 class="lesson-title">Del texto a los números</h3>
+        <p class="lesson-desc">Normalizar, tokenizar con regex, contar y construir un vocabulario sobre el Quijote. Ley de Zipf y palabras desconocidas en texto nuevo.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">1.5h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/13_pln_tokenizacion.py:1">13_pln_tokenizacion.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="13_pln_tokenizacion.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <span class="fund-title">Fundamentos, en orden de estudio</span>
+          <div class="fund-group">
+            <span class="fund-label">1 · El texto como datos</span>
+            <a href="13_fundamento_corpus.html">1. El texto como datos</a>
+            <a href="13_fundamento_normalizar.html">2. Normalizar el texto</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Partir y numerar</span>
+            <a href="13_fundamento_tokenizar.html">3. Tokenizar</a>
+            <a href="13_fundamento_contar.html">4. Contar palabras</a>
+            <a href="13_fundamento_vocabulario.html">5. El vocabulario: palabras a números</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Lo que revelan los números</span>
+            <a href="13_fundamento_zipf.html">6. La ley de Zipf</a>
+            <a href="13_fundamento_desconocidas.html">7. Palabras desconocidas</a>
+            <a href="13_fundamento_que_es_token.html">8. ¿Palabras, letras o pedazos? <em>(complemento)</em></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 3.2</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Bolsa de Palabras y TF-IDF</h3>
+        <p class="lesson-desc">Representar documentos como vectores y clasificar reseñas con la neurona de la 1.1.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/14_pln_bolsa_palabras.py:1">14_pln_bolsa_palabras.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 3.3</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Modelos de Lenguaje con N-gramas</h3>
+        <p class="lesson-desc">Probabilidad de la siguiente palabra por conteo, generación de texto, suavizado y perplejidad.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/15_pln_ngramas.py:1">15_pln_ngramas.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 3.4</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Embeddings de Palabras</h3>
+        <p class="lesson-desc">Word2vec (skip-gram) en NumPy: palabras como vectores que capturan significado.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/16_pln_embeddings.py:1">16_pln_embeddings.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 3.5</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Redes Recurrentes (RNN)</h3>
+        <p class="lesson-desc">Procesar secuencias con memoria: un modelo de lenguaje por caracteres entrenado con BPTT.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/17_pln_rnn.py:1">17_pln_rnn.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 3.6</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Atención</h3>
+        <p class="lesson-desc">Que cada palabra mire a las demás: consultas, claves, valores y pesos de atención.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/18_pln_atencion.py:1">18_pln_atencion.py</a>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -885,13 +985,90 @@
 
   <section class="module modelos tab-panel" id="modelos" role="tabpanel" aria-labelledby="tab-modelos">
     <div class="module-header">
-      <h2>Modelos de IA</h2>
-      <span class="module-tag tag-modelos">Próximamente</span>
+      <h2>Módulo 4 — Modelos de IA</h2>
+      <span class="module-tag tag-modelos">NumPy</span>
     </div>
-    <p class="module-desc">Qué hay detrás de los modelos actuales: arquitecturas, entrenamiento, uso de modelos preentrenados y cómo elegir uno.</p>
-    <div class="empty-state">
-      <strong>Todavía no hay lecciones en este tema</strong>
-      Las lecciones de Modelos de IA aparecerán acá a medida que se agreguen al plan.
+    <p class="module-desc">Qué hay dentro de un modelo de lenguaje: autograd → transformer → mini-GPT → tokens BPE → muestreo → modelos grandes en la práctica.</p>
+    <div class="lesson-grid">
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 4.1</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Autograd: el backward automático</h3>
+        <p class="lesson-desc">Construir un motor que calcula gradientes solo, como .backward() de PyTorch, sobre lo aprendido en la 1.3.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/19_autograd.py:1">19_autograd.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 4.2</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">El bloque Transformer</h3>
+        <p class="lesson-desc">Atención multi-cabeza, posiciones, normalización y conexiones residuales, pieza por pieza.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/20_transformer_bloque.py:1">20_transformer_bloque.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 4.3</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Mini-GPT</h3>
+        <p class="lesson-desc">Entrenar un transformer pequeño que predice el siguiente carácter y genera texto.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2.5h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/21_mini_gpt.py:1">21_mini_gpt.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 4.4</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Tokenización BPE</h3>
+        <p class="lesson-desc">Cómo los modelos actuales parten el texto en subpalabras: Byte Pair Encoding desde cero.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">1.5h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/22_tokenizacion_bpe.py:1">22_tokenizacion_bpe.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 4.5</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Generar texto: muestreo</h3>
+        <p class="lesson-desc">Temperatura, top-k y top-p: cómo se elige la siguiente palabra y cómo cambia el resultado.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">1h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/23_muestreo.py:1">23_muestreo.py</a>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 4.6</span>
+          <span class="status-badge status-pending">Pendiente</span>
+        </div>
+        <h3 class="lesson-title">Modelos grandes en la práctica</h3>
+        <p class="lesson-desc">Preentrenamiento, ajuste fino, instrucciones, ventana de contexto y cómo elegir un modelo.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">1.5h</span>
+          <a class="lesson-link pending-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/24_modelos_en_practica.py:1">24_modelos_en_practica.py</a>
+        </div>
+      </div>
+
     </div>
   </section>
 
