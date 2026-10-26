@@ -400,14 +400,14 @@
 
   <header>
     <h1>Aprendiendo IA desde cero</h1>
-    <p class="topics">Material que he usado para aprender sobre 4 grandes temas: <strong>Redes Neuronales</strong>, <strong>PLN</strong>, <strong>Agentes</strong> y <strong>Modelos de IA</strong>.</p>
+    <p class="topics">Material que he usado para aprender sobre 4 grandes temas: <strong>Redes Neuronales</strong>, <strong>Agentes</strong>, <strong>PLN</strong> y <strong>Modelos de IA</strong>.</p>
     <p class="subtitle">Plan de aprendizaje práctico, con código ejecutable en cada lección — NumPy puro para redes, Python puro para agentes.</p>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Temas">
     <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">6/6</span></button>
-    <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">6/6</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">6/6</span></button>
+    <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">6/6</span></button>
     <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">6/6</span></button>
   </nav>
 
@@ -633,6 +633,225 @@
     </div>
   </section>
 
+  <section class="module agentes tab-panel" id="agentes" role="tabpanel" aria-labelledby="tab-agentes">
+    <div class="module-header">
+      <h2>Módulo 2 — Agentes Fundamentales</h2>
+      <span class="module-tag tag-agentes">Python puro</span>
+    </div>
+    <p class="module-desc">Del ciclo básico percibir-decidir-actuar hasta agentes con LLM: búsqueda, planificación y aprendizaje por refuerzo.</p>
+
+    <div class="lesson-grid">
+
+      <div class="lesson-card done has-link">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.1</span>
+          <span class="status-badge status-done">Completa</span>
+        </div>
+        <h3 class="lesson-title">Agente Reactivo vs. Deliberativo</h3>
+        <p class="lesson-desc">Cuadrícula 3x3 con celdas sucias. Ciclo percibir-decidir-actuar, comparación de eficiencia con y sin memoria.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/02_agent_hello_world.py:1">02_agent_hello_world.py →</a>
+        </div>
+        <div class="fund-groups">
+          <div class="fund-group">
+            <span class="fund-label">1 · Qué es un agente</span>
+            <a href="02_fundamento_ciclo_agente.html">1. El ciclo percibir, decidir, actuar</a>
+            <a href="02_fundamento_clases.html">2. Clases y objetos: el entorno</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Dos formas de decidir</span>
+            <a href="02_fundamento_agente_reactivo.html">3. El agente reactivo</a>
+            <a href="02_fundamento_estado_interno.html">4. Estado interno: el agente deliberativo</a>
+            <a href="02_fundamento_semillas.html">5. Semillas y comparación justa</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Comparar agentes</span>
+            <a href="02_fundamento_medir_eficiencia.html">6. Medir eficiencia: ¿alcanza una corrida?</a>
+            <a href="02_fundamento_tipos_agentes.html">7. Tipos de agentes y el mapa del módulo</a>
+            <a href="02_fundamento_regla_vs_memoria.html">8. ¿Regla fija o memoria? <em>(complemento)</em></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card done has-link">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.2</span>
+          <span class="status-badge status-done">Completa</span>
+        </div>
+        <h3 class="lesson-title">Búsqueda BFS</h3>
+        <p class="lesson-desc">Espacio de estados, cola FIFO, exploración por capas y camino más corto en un laberinto. Comparación con DFS y un agente de limpieza que busca.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/08_agent_search_bfs.py:1">08_agent_search_bfs.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="08_agent_search_bfs.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <div class="fund-group">
+            <span class="fund-label">1 · Formular el problema</span>
+            <a href="08_fundamento_espacio_estados.html">1. El espacio de estados</a>
+            <a href="08_fundamento_mapa_datos.html">2. El mapa como datos</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · El algoritmo</span>
+            <a href="08_fundamento_cola_fifo.html">3. La cola FIFO</a>
+            <a href="08_fundamento_bfs_capas.html">4. BFS paso a paso: las capas</a>
+            <a href="08_fundamento_reconstruir_camino.html">5. Reconstruir el camino</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Propiedades y uso</span>
+            <a href="08_fundamento_bfs_vs_dfs.html">6. ¿Por qué BFS encuentra el camino más corto?</a>
+            <a href="08_fundamento_costo_busqueda.html">7. El costo de buscar</a>
+            <a href="08_fundamento_agente_que_busca.html">8. Un agente que busca <em>(complemento)</em></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card done has-link">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.3</span>
+          <span class="status-badge status-done">Completa</span>
+        </div>
+        <h3 class="lesson-title">Búsqueda A*</h3>
+        <p class="lesson-desc">Costos distintos (tierra y agua), cola de prioridad, costo uniforme, heurística Manhattan y f = g + h. Comparación de cuatro algoritmos.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/09_agent_search_astar.py:1">09_agent_search_astar.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="09_agent_search_astar.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <div class="fund-group">
+            <span class="fund-label">1 · Del paso al costo</span>
+            <a href="09_fundamento_costos.html">1. Cuando las acciones cuestan distinto</a>
+            <a href="09_fundamento_cola_prioridad.html">2. La cola de prioridad</a>
+            <a href="09_fundamento_costo_uniforme.html">3. Búsqueda de costo uniforme</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Usar información</span>
+            <a href="09_fundamento_heuristica.html">4. Heurísticas</a>
+            <a href="09_fundamento_astar.html">5. A*: f = g + h</a>
+            <a href="09_fundamento_admisibilidad.html">6. Admisibilidad: por qué A* es óptimo</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Comparar</span>
+            <a href="09_fundamento_comparacion.html">7. Comparar los cuatro algoritmos</a>
+            <a href="09_fundamento_ponderado.html">8. A* ponderado <em>(complemento)</em></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card done has-link">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.4</span>
+          <span class="status-badge status-done">Completa</span>
+        </div>
+        <h3 class="lesson-title">Planificación</h3>
+        <p class="lesson-desc">Estados como hechos, acciones STRIPS con precondiciones y efectos, planificación hacia adelante y hacia atrás, anomalía de Sussman y A* con heurística de metas.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/10_agent_planning.py:1">10_agent_planning.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="10_agent_planning.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <div class="fund-group">
+            <span class="fund-label">1 · Representar el mundo</span>
+            <a href="10_fundamento_hechos.html">1. Estados como conjuntos de hechos</a>
+            <a href="10_fundamento_acciones_strips.html">2. Acciones STRIPS: precondiciones y efectos</a>
+            <a href="10_fundamento_instanciar.html">3. Instanciar acciones</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Buscar un plan</span>
+            <a href="10_fundamento_hacia_adelante.html">4. Planificar hacia adelante</a>
+            <a href="10_fundamento_sussman.html">5. La anomalía de Sussman</a>
+            <a href="10_fundamento_hacia_atras.html">6. Planificar hacia atrás</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Escalar</span>
+            <a href="10_fundamento_heuristica_plan.html">7. Una heurística para planificar</a>
+            <a href="10_fundamento_planificar_practica.html">8. Planificar en la práctica <em>(complemento)</em></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card done has-link">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.5</span>
+          <span class="status-badge status-done">Completa</span>
+        </div>
+        <h3 class="lesson-title">Q-Learning Básico</h3>
+        <p class="lesson-desc">Aprender sin modelo en el acantilado: recompensas, tabla Q, regla de actualización, exploración ε-greedy, α y γ. Del Q-learning tabular a las redes.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/11_agent_learning.py:1">11_agent_learning.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="11_agent_learning.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <div class="fund-group">
+            <span class="fund-label">1 · Aprender sin modelo</span>
+            <a href="11_fundamento_recompensas.html">1. Aprender de recompensas</a>
+            <a href="11_fundamento_tabla_q.html">2. La tabla Q</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · La regla de aprendizaje</span>
+            <a href="11_fundamento_actualizacion_q.html">3. La regla de actualización</a>
+            <a href="11_fundamento_exploracion.html">4. Explorar o explotar</a>
+            <a href="11_fundamento_alfa_gamma.html">5. α y γ</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Resultados</span>
+            <a href="11_fundamento_politica.html">6. Leer la política aprendida</a>
+            <a href="11_fundamento_curva_aprendizaje.html">7. La curva de aprendizaje</a>
+            <a href="11_fundamento_tabla_a_red.html">8. De la tabla a la red neuronal <em>(complemento)</em></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card done has-link">
+        <div class="lesson-top">
+          <span class="lesson-number">LECCIÓN 2.6</span>
+          <span class="status-badge status-done">Completa</span>
+        </div>
+        <h3 class="lesson-title">Agentes con LLM (Claude API)</h3>
+        <p class="lesson-desc">Tool use con Claude: herramientas con JSON Schema, el ciclo pedir-ejecutar-devolver, errores como información y prompt de sistema. Modo real y modo simulado sin conexión; comparación con BFS.</p>
+        <div class="lesson-foot">
+          <span class="lesson-duration">2h</span>
+          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/12_agent_with_llm.py:1">12_agent_with_llm.py →</a>
+        </div>
+        <div class="extra-links">
+          <a href="12_agent_with_llm.png">Punto de partida: ver el resultado (.png)</a>
+        </div>
+        <div class="fund-groups">
+          <div class="fund-group">
+            <span class="fund-label">1 · La idea</span>
+            <a href="12_fundamento_llm_como_decision.html">1. Un modelo de lenguaje como “decidir”</a>
+            <a href="12_fundamento_api_mensajes.html">2. La API: mensajes sin memoria</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">2 · Tool use</span>
+            <a href="12_fundamento_herramientas.html">3. Describir herramientas</a>
+            <a href="12_fundamento_ciclo_tool_use.html">4. El ciclo de tool use</a>
+            <a href="12_fundamento_errores_herramientas.html">5. Errores como información</a>
+          </div>
+          <div class="fund-group">
+            <span class="fund-label">3 · Usarlo bien</span>
+            <a href="12_fundamento_prompt_sistema.html">6. El prompt de sistema</a>
+            <a href="12_fundamento_llm_vs_algoritmo.html">7. LLM o algoritmo clásico</a>
+            <a href="12_fundamento_modo_real.html">8. Correr el modo real <em>(complemento)</em></a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
   <section class="module pln tab-panel" id="pln" role="tabpanel" aria-labelledby="tab-pln">
     <div class="module-header">
       <h2>Módulo 3 — Procesamiento de Lenguaje Natural (PLN)</h2>
@@ -847,225 +1066,6 @@
             <a href="18_fundamento_ver_atencion.html">6. Ver a dónde mira</a>
             <a href="18_fundamento_distancia.html">7. La distancia no importa</a>
             <a href="18_fundamento_hacia_transformer.html">8. De aquí al transformer <em>(complemento)</em></a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <section class="module agentes tab-panel" id="agentes" role="tabpanel" aria-labelledby="tab-agentes">
-    <div class="module-header">
-      <h2>Módulo 2 — Agentes Fundamentales</h2>
-      <span class="module-tag tag-agentes">Python puro</span>
-    </div>
-    <p class="module-desc">Del ciclo básico percibir-decidir-actuar hasta agentes con LLM: búsqueda, planificación y aprendizaje por refuerzo.</p>
-
-    <div class="lesson-grid">
-
-      <div class="lesson-card done has-link">
-        <div class="lesson-top">
-          <span class="lesson-number">LECCIÓN 2.1</span>
-          <span class="status-badge status-done">Completa</span>
-        </div>
-        <h3 class="lesson-title">Agente Reactivo vs. Deliberativo</h3>
-        <p class="lesson-desc">Cuadrícula 3x3 con celdas sucias. Ciclo percibir-decidir-actuar, comparación de eficiencia con y sin memoria.</p>
-        <div class="lesson-foot">
-          <span class="lesson-duration">2h</span>
-          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/02_agent_hello_world.py:1">02_agent_hello_world.py →</a>
-        </div>
-        <div class="fund-groups">
-          <div class="fund-group">
-            <span class="fund-label">1 · Qué es un agente</span>
-            <a href="02_fundamento_ciclo_agente.html">1. El ciclo percibir, decidir, actuar</a>
-            <a href="02_fundamento_clases.html">2. Clases y objetos: el entorno</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">2 · Dos formas de decidir</span>
-            <a href="02_fundamento_agente_reactivo.html">3. El agente reactivo</a>
-            <a href="02_fundamento_estado_interno.html">4. Estado interno: el agente deliberativo</a>
-            <a href="02_fundamento_semillas.html">5. Semillas y comparación justa</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">3 · Comparar agentes</span>
-            <a href="02_fundamento_medir_eficiencia.html">6. Medir eficiencia: ¿alcanza una corrida?</a>
-            <a href="02_fundamento_tipos_agentes.html">7. Tipos de agentes y el mapa del módulo</a>
-            <a href="02_fundamento_regla_vs_memoria.html">8. ¿Regla fija o memoria? <em>(complemento)</em></a>
-          </div>
-        </div>
-      </div>
-
-      <div class="lesson-card done has-link">
-        <div class="lesson-top">
-          <span class="lesson-number">LECCIÓN 2.2</span>
-          <span class="status-badge status-done">Completa</span>
-        </div>
-        <h3 class="lesson-title">Búsqueda BFS</h3>
-        <p class="lesson-desc">Espacio de estados, cola FIFO, exploración por capas y camino más corto en un laberinto. Comparación con DFS y un agente de limpieza que busca.</p>
-        <div class="lesson-foot">
-          <span class="lesson-duration">2h</span>
-          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/08_agent_search_bfs.py:1">08_agent_search_bfs.py →</a>
-        </div>
-        <div class="extra-links">
-          <a href="08_agent_search_bfs.png">Punto de partida: ver el resultado (.png)</a>
-        </div>
-        <div class="fund-groups">
-          <div class="fund-group">
-            <span class="fund-label">1 · Formular el problema</span>
-            <a href="08_fundamento_espacio_estados.html">1. El espacio de estados</a>
-            <a href="08_fundamento_mapa_datos.html">2. El mapa como datos</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">2 · El algoritmo</span>
-            <a href="08_fundamento_cola_fifo.html">3. La cola FIFO</a>
-            <a href="08_fundamento_bfs_capas.html">4. BFS paso a paso: las capas</a>
-            <a href="08_fundamento_reconstruir_camino.html">5. Reconstruir el camino</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">3 · Propiedades y uso</span>
-            <a href="08_fundamento_bfs_vs_dfs.html">6. ¿Por qué BFS encuentra el camino más corto?</a>
-            <a href="08_fundamento_costo_busqueda.html">7. El costo de buscar</a>
-            <a href="08_fundamento_agente_que_busca.html">8. Un agente que busca <em>(complemento)</em></a>
-          </div>
-        </div>
-      </div>
-
-      <div class="lesson-card done has-link">
-        <div class="lesson-top">
-          <span class="lesson-number">LECCIÓN 2.3</span>
-          <span class="status-badge status-done">Completa</span>
-        </div>
-        <h3 class="lesson-title">Búsqueda A*</h3>
-        <p class="lesson-desc">Costos distintos (tierra y agua), cola de prioridad, costo uniforme, heurística Manhattan y f = g + h. Comparación de cuatro algoritmos.</p>
-        <div class="lesson-foot">
-          <span class="lesson-duration">2h</span>
-          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/09_agent_search_astar.py:1">09_agent_search_astar.py →</a>
-        </div>
-        <div class="extra-links">
-          <a href="09_agent_search_astar.png">Punto de partida: ver el resultado (.png)</a>
-        </div>
-        <div class="fund-groups">
-          <div class="fund-group">
-            <span class="fund-label">1 · Del paso al costo</span>
-            <a href="09_fundamento_costos.html">1. Cuando las acciones cuestan distinto</a>
-            <a href="09_fundamento_cola_prioridad.html">2. La cola de prioridad</a>
-            <a href="09_fundamento_costo_uniforme.html">3. Búsqueda de costo uniforme</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">2 · Usar información</span>
-            <a href="09_fundamento_heuristica.html">4. Heurísticas</a>
-            <a href="09_fundamento_astar.html">5. A*: f = g + h</a>
-            <a href="09_fundamento_admisibilidad.html">6. Admisibilidad: por qué A* es óptimo</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">3 · Comparar</span>
-            <a href="09_fundamento_comparacion.html">7. Comparar los cuatro algoritmos</a>
-            <a href="09_fundamento_ponderado.html">8. A* ponderado <em>(complemento)</em></a>
-          </div>
-        </div>
-      </div>
-
-      <div class="lesson-card done has-link">
-        <div class="lesson-top">
-          <span class="lesson-number">LECCIÓN 2.4</span>
-          <span class="status-badge status-done">Completa</span>
-        </div>
-        <h3 class="lesson-title">Planificación</h3>
-        <p class="lesson-desc">Estados como hechos, acciones STRIPS con precondiciones y efectos, planificación hacia adelante y hacia atrás, anomalía de Sussman y A* con heurística de metas.</p>
-        <div class="lesson-foot">
-          <span class="lesson-duration">2h</span>
-          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/10_agent_planning.py:1">10_agent_planning.py →</a>
-        </div>
-        <div class="extra-links">
-          <a href="10_agent_planning.png">Punto de partida: ver el resultado (.png)</a>
-        </div>
-        <div class="fund-groups">
-          <div class="fund-group">
-            <span class="fund-label">1 · Representar el mundo</span>
-            <a href="10_fundamento_hechos.html">1. Estados como conjuntos de hechos</a>
-            <a href="10_fundamento_acciones_strips.html">2. Acciones STRIPS: precondiciones y efectos</a>
-            <a href="10_fundamento_instanciar.html">3. Instanciar acciones</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">2 · Buscar un plan</span>
-            <a href="10_fundamento_hacia_adelante.html">4. Planificar hacia adelante</a>
-            <a href="10_fundamento_sussman.html">5. La anomalía de Sussman</a>
-            <a href="10_fundamento_hacia_atras.html">6. Planificar hacia atrás</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">3 · Escalar</span>
-            <a href="10_fundamento_heuristica_plan.html">7. Una heurística para planificar</a>
-            <a href="10_fundamento_planificar_practica.html">8. Planificar en la práctica <em>(complemento)</em></a>
-          </div>
-        </div>
-      </div>
-
-      <div class="lesson-card done has-link">
-        <div class="lesson-top">
-          <span class="lesson-number">LECCIÓN 2.5</span>
-          <span class="status-badge status-done">Completa</span>
-        </div>
-        <h3 class="lesson-title">Q-Learning Básico</h3>
-        <p class="lesson-desc">Aprender sin modelo en el acantilado: recompensas, tabla Q, regla de actualización, exploración ε-greedy, α y γ. Del Q-learning tabular a las redes.</p>
-        <div class="lesson-foot">
-          <span class="lesson-duration">2h</span>
-          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/11_agent_learning.py:1">11_agent_learning.py →</a>
-        </div>
-        <div class="extra-links">
-          <a href="11_agent_learning.png">Punto de partida: ver el resultado (.png)</a>
-        </div>
-        <div class="fund-groups">
-          <div class="fund-group">
-            <span class="fund-label">1 · Aprender sin modelo</span>
-            <a href="11_fundamento_recompensas.html">1. Aprender de recompensas</a>
-            <a href="11_fundamento_tabla_q.html">2. La tabla Q</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">2 · La regla de aprendizaje</span>
-            <a href="11_fundamento_actualizacion_q.html">3. La regla de actualización</a>
-            <a href="11_fundamento_exploracion.html">4. Explorar o explotar</a>
-            <a href="11_fundamento_alfa_gamma.html">5. α y γ</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">3 · Resultados</span>
-            <a href="11_fundamento_politica.html">6. Leer la política aprendida</a>
-            <a href="11_fundamento_curva_aprendizaje.html">7. La curva de aprendizaje</a>
-            <a href="11_fundamento_tabla_a_red.html">8. De la tabla a la red neuronal <em>(complemento)</em></a>
-          </div>
-        </div>
-      </div>
-
-      <div class="lesson-card done has-link">
-        <div class="lesson-top">
-          <span class="lesson-number">LECCIÓN 2.6</span>
-          <span class="status-badge status-done">Completa</span>
-        </div>
-        <h3 class="lesson-title">Agentes con LLM (Claude API)</h3>
-        <p class="lesson-desc">Tool use con Claude: herramientas con JSON Schema, el ciclo pedir-ejecutar-devolver, errores como información y prompt de sistema. Modo real y modo simulado sin conexión; comparación con BFS.</p>
-        <div class="lesson-foot">
-          <span class="lesson-duration">2h</span>
-          <a class="lesson-link" href="vscode://file/C:/flexcomputer/capacitacion/ml-agents-learning/12_agent_with_llm.py:1">12_agent_with_llm.py →</a>
-        </div>
-        <div class="extra-links">
-          <a href="12_agent_with_llm.png">Punto de partida: ver el resultado (.png)</a>
-        </div>
-        <div class="fund-groups">
-          <div class="fund-group">
-            <span class="fund-label">1 · La idea</span>
-            <a href="12_fundamento_llm_como_decision.html">1. Un modelo de lenguaje como “decidir”</a>
-            <a href="12_fundamento_api_mensajes.html">2. La API: mensajes sin memoria</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">2 · Tool use</span>
-            <a href="12_fundamento_herramientas.html">3. Describir herramientas</a>
-            <a href="12_fundamento_ciclo_tool_use.html">4. El ciclo de tool use</a>
-            <a href="12_fundamento_errores_herramientas.html">5. Errores como información</a>
-          </div>
-          <div class="fund-group">
-            <span class="fund-label">3 · Usarlo bien</span>
-            <a href="12_fundamento_prompt_sistema.html">6. El prompt de sistema</a>
-            <a href="12_fundamento_llm_vs_algoritmo.html">7. LLM o algoritmo clásico</a>
-            <a href="12_fundamento_modo_real.html">8. Correr el modo real <em>(complemento)</em></a>
           </div>
         </div>
       </div>
