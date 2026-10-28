@@ -28,6 +28,7 @@
     --done: #5fd4a8;
     --pending: #8b93ab;
     --code-bg: #0a0e18;
+    --mapa-relacion: #f2c14e;
   }
 
   @media (prefers-color-scheme: light) {
@@ -53,6 +54,7 @@
       --done: #1f9d6f;
       --pending: #9aa2b8;
       --code-bg: #eef0f7;
+      --mapa-relacion: #b7791f;
     }
   }
 
@@ -160,6 +162,140 @@
   .tab-pln { --tab-accent: var(--accent-pln); }
   .tab-agentes { --tab-accent: var(--accent-agentes); }
   .tab-modelos { --tab-accent: var(--accent-modelos); }
+  .tab-mapa { --tab-accent: var(--accent-docs); }
+
+  /* Mapa 3D de conceptos */
+  .tag-mapa { background: var(--accent-docs-bg); color: var(--accent-docs); }
+  .mapa-controles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 18px;
+    margin: 0 0 12px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .mapa-controles label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .mapa-controles input { accent-color: var(--accent-docs); }
+  .mapa-controles button {
+    font: inherit;
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .mapa-controles button:hover { background: var(--bg-card-hover); }
+  .mapa-cuerpo { position: relative; }
+  .mapa-wrap {
+    position: relative;
+    height: min(72vh, 680px);
+    min-height: 420px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-panel);
+  }
+  .mapa-3d { position: absolute; inset: 0; }
+  .mapa-etiquetas { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .mapa-etq {
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    text-shadow: 0 0 3px var(--bg-panel), 0 0 6px var(--bg-panel);
+    transition: opacity 0.2s;
+  }
+  .mapa-etq.n0 { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .mapa-etq.n1 { font-size: 0.9rem; font-weight: 700; color: var(--c); }
+  .mapa-etq.tenue { opacity: 0.2; }
+  .mapa-estado {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+  .mapa-info {
+    --c: var(--accent-docs);
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 310px;
+    max-height: calc(100% - 24px);
+    overflow: auto;
+    background: color-mix(in srgb, var(--bg-card) 94%, transparent);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 0.84rem;
+  }
+  .mapa-info[hidden] { display: none; }
+  .mapa-info .kicker {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--c);
+  }
+  .mapa-info h3 { margin: 2px 24px 6px 0; font-size: 1rem; }
+  .mapa-info h4 { margin: 10px 0 4px; font-size: 0.78rem; color: var(--text); }
+  .mapa-info p { margin: 0 0 8px; color: var(--text-dim); }
+  .mapa-info ul { margin: 0 0 6px; padding-left: 18px; color: var(--text-dim); }
+  .mapa-info li { margin-bottom: 4px; }
+  .mapa-info a { color: var(--c); font-weight: 600; }
+  .mapa-info .ir {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    border-bottom: 1px dotted var(--text-dim);
+  }
+  .mapa-info .ir:hover { color: var(--c); }
+  .mapa-info .cerrar {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--text-dim);
+    cursor: pointer;
+  }
+  .mapa-leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+  .mapa-leyenda i {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 6px;
+    border-radius: 50%;
+    vertical-align: -1px;
+    background: var(--c);
+  }
+  .mapa-leyenda i.linea { width: 18px; height: 2px; border-radius: 0; vertical-align: 3px; }
+  @media (max-width: 640px) {
+    .mapa-wrap { height: 62vh; min-height: 360px; }
+    .mapa-info { position: static; width: auto; max-height: none; margin-top: 12px; }
+  }
 
   .tab-count {
     font-size: 0.72rem;
@@ -405,11 +541,43 @@
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Temas">
+    <button class="tab tab-mapa" role="tab" id="tab-mapa" aria-controls="mapa" aria-selected="false">Mapa <span class="tab-count">3D</span></button>
     <button class="tab tab-redes" role="tab" id="tab-redes" aria-controls="redes" aria-selected="true">Redes Neuronales <span class="tab-count">6/6</span></button>
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">6/6</span></button>
     <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">6/6</span></button>
     <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">6/6</span></button>
   </nav>
+
+  <section class="module mapa tab-panel" id="mapa" role="tabpanel" aria-labelledby="tab-mapa" hidden>
+    <div class="module-header">
+      <h2>Mapa de conceptos</h2>
+      <span class="module-tag tag-mapa">3D</span>
+    </div>
+    <p class="module-desc">Todo el material como un árbol: del centro salen los 4 módulos, de cada módulo sus lecciones y de cada lección sus fundamentos. Las líneas doradas unen conceptos de lecciones distintas: la partícula viaja desde el concepto que se usa hacia el que lo retoma. Arrastra para girar, usa la rueda para acercar y haz clic en una esfera para ver de qué trata.</p>
+
+    <div class="mapa-controles">
+      <label><input type="checkbox" id="mapa-ver-fund" checked> Fundamentos</label>
+      <label><input type="checkbox" id="mapa-ver-rel" checked> Relaciones entre lecciones</label>
+      <button type="button" id="mapa-reiniciar">Ver todo</button>
+    </div>
+
+    <div class="mapa-cuerpo">
+      <div class="mapa-wrap">
+        <div class="mapa-3d" id="mapa-3d"></div>
+        <div class="mapa-etiquetas" id="mapa-etiquetas"></div>
+        <div class="mapa-estado" id="mapa-estado">Cargando el mapa…</div>
+      </div>
+      <aside class="mapa-info" id="mapa-info" hidden aria-live="polite"></aside>
+    </div>
+
+    <div class="mapa-leyenda" id="mapa-leyenda">
+      <span><i style="--c: var(--accent-redes)"></i>Redes Neuronales</span>
+      <span><i style="--c: var(--accent-agentes)"></i>Agentes</span>
+      <span><i style="--c: var(--accent-pln)"></i>PLN</span>
+      <span><i style="--c: var(--accent-modelos)"></i>Modelos IA</span>
+      <span><i class="linea" style="--c: var(--mapa-relacion)"></i>Un concepto que se retoma en otra lección</span>
+    </div>
+  </section>
 
   <section class="module redes tab-panel" id="redes" role="tabpanel" aria-labelledby="tab-redes">
     <div class="module-header">
@@ -1329,8 +1497,377 @@
 
 </div>
 <script>
+  // Mapa 3D de conceptos. Los nodos se arman leyendo las tarjetas de esta misma
+  // página (módulos → lecciones → fundamentos), así que el mapa crece solo al
+  // agregar lecciones o fundamentos. Lo único escrito a mano son RELACIONES:
+  // [fundamento que se usa, fundamento que lo retoma, por qué].
+  (function () {
+    var RELACIONES = [
+      ['01_fundamento_gradiente.html', '04_fundamento_regla_cadena.html', 'El gradiente de una neurona se extiende a varias capas con la regla de la cadena.'],
+      ['01_fundamento_derivada_sigmoid.html', '06_fundamento_sigmoid_saturacion.html', 'La misma derivada explica por qué sigmoid se satura.'],
+      ['01_fundamento_objetivo_neurona.html', '14_fundamento_regresion_logistica.html', 'La neurona del perceptrón vuelve como clasificador de texto.'],
+      ['03_fundamento_xor.html', '19_fundamento_xor_autograd.html', 'La red XOR se reescribe sin programar el backward.'],
+      ['03_fundamento_inicializacion.html', '05_fundamento_normalizar.html', 'Escalar entradas y pesos iniciales para que la red pueda aprender.'],
+      ['04_fundamento_grafo_computacional.html', '19_fundamento_valor.html', 'Autograd guarda la cadena de operaciones que en 1.3 se recorría a mano.'],
+      ['04_fundamento_gradient_check.html', '19_fundamento_comprobar.html', 'La misma comprobación numérica, ahora para cada operación.'],
+      ['04_fundamento_por_que_hacia_atras.html', '17_fundamento_bptt.html', 'Backpropagation desplegada a lo largo del tiempo.'],
+      ['04_fundamento_propagar_delta.html', '18_fundamento_backprop_atencion.html', 'Propagar el error ahora también a través de la atención.'],
+      ['05_fundamento_train_test.html', '07_fundamento_validacion.html', 'A train y test se suma un conjunto de validación.'],
+      ['05_fundamento_one_hot.html', '16_fundamento_vectores.html', 'De vectores one-hot a vectores densos (embeddings).'],
+      ['05_fundamento_softmax.html', '18_fundamento_diccionario_blando.html', 'La atención usa softmax para repartir el peso entre posiciones.'],
+      ['05_fundamento_softmax.html', '23_fundamento_probabilidades.html', 'La salida del modelo de lenguaje es un softmax sobre el vocabulario.'],
+      ['05_fundamento_cross_entropy.html', '15_fundamento_perplejidad.html', 'La perplejidad es la cross-entropy expresada de otra forma.'],
+      ['05_fundamento_mini_batches.html', '21_fundamento_entrenar_gpt.html', 'El mini-GPT también se entrena por lotes.'],
+      ['06_fundamento_gradientes_desaparecen.html', '17_fundamento_gradiente_tiempo.html', 'El mismo problema, a lo largo del tiempo en una RNN.'],
+      ['06_fundamento_gradientes_desaparecen.html', '20_fundamento_residual.html', 'Las conexiones residuales dejan pasar el gradiente en redes profundas.'],
+      ['07_fundamento_overfitting.html', '14_fundamento_pocos_datos.html', 'Con pocos textos, el clasificador memoriza en lugar de aprender.'],
+      ['02_fundamento_ciclo_agente.html', '12_fundamento_ciclo_tool_use.html', 'Percibir, decidir, actuar: el mismo ciclo con un LLM y herramientas.'],
+      ['02_fundamento_estado_interno.html', '08_fundamento_espacio_estados.html', 'El estado del agente se vuelve el espacio donde se busca.'],
+      ['02_fundamento_semillas.html', '23_fundamento_muestreo_real.html', 'Las semillas vuelven a controlar el azar al generar texto.'],
+      ['08_fundamento_espacio_estados.html', '10_fundamento_hechos.html', 'Planificar es buscar en un espacio de estados hechos de hechos.'],
+      ['08_fundamento_cola_fifo.html', '09_fundamento_cola_prioridad.html', 'De la cola FIFO a la cola de prioridad.'],
+      ['08_fundamento_bfs_capas.html', '09_fundamento_costo_uniforme.html', 'BFS generalizado a acciones con costos distintos.'],
+      ['09_fundamento_heuristica.html', '10_fundamento_heuristica_plan.html', 'Una heurística, ahora para guiar la búsqueda de planes.'],
+      ['09_fundamento_comparacion.html', '12_fundamento_llm_vs_algoritmo.html', 'Cuándo conviene un algoritmo clásico y cuándo un LLM.'],
+      ['11_fundamento_tabla_a_red.html', '03_fundamento_capa_oculta.html', 'Cuando la tabla Q no alcanza, una red neuronal la reemplaza.'],
+      ['11_fundamento_exploracion.html', '23_fundamento_temperatura.html', 'Explorar o explotar: la temperatura regula el mismo dilema.'],
+      ['12_fundamento_api_mensajes.html', '24_fundamento_contexto.html', 'La API no tiene memoria: todo va en la ventana de contexto.'],
+      ['12_fundamento_llm_como_decision.html', '24_fundamento_pedido_respuesta.html', 'Por qué un modelo preentrenado puede seguir pedidos.'],
+      ['13_fundamento_tokenizar.html', '22_fundamento_dos_extremos.html', 'De partir por palabras a partir en pedazos (BPE).'],
+      ['13_fundamento_desconocidas.html', '22_fundamento_sin_desconocidas.html', 'BPE resuelve el problema de las palabras desconocidas.'],
+      ['13_fundamento_que_es_token.html', '22_fundamento_tokens_reales.html', 'Los tokens que usan los modelos reales.'],
+      ['13_fundamento_vocabulario.html', '14_fundamento_vocab_train.html', 'El vocabulario define las columnas de la bolsa de palabras.'],
+      ['14_fundamento_orden.html', '17_fundamento_memoria.html', 'La RNN lee el texto en orden, lo que la bolsa de palabras ignora.'],
+      ['15_fundamento_ngramas_a_redes.html', '17_fundamento_memoria.html', 'Una red con memoria en lugar de contar n-gramas.'],
+      ['15_fundamento_generar.html', '23_fundamento_probabilidades.html', 'Generar es elegir la siguiente palabra según sus probabilidades.'],
+      ['16_fundamento_coseno.html', '18_fundamento_diccionario_blando.html', 'El producto punto mide parecido, también entre consultas y claves.'],
+      ['16_fundamento_vectores.html', '20_fundamento_posiciones.html', 'Cada token entra al transformer como vector, más su posición.'],
+      ['17_fundamento_generar_rnn.html', '21_fundamento_comparar_rnn.html', 'La misma tarea de generar, RNN contra mini-GPT.'],
+      ['17_fundamento_adagrad.html', '21_fundamento_entrenar_gpt.html', 'Optimizar y recortar el gradiente al entrenar modelos de texto.'],
+      ['18_fundamento_hacia_transformer.html', '20_fundamento_auto_atencion.html', 'La atención de la 3.6 se convierte en auto-atención.'],
+      ['18_fundamento_qkv.html', '20_fundamento_cabezas.html', 'Varias consultas, claves y valores en paralelo: cabezas.'],
+      ['18_fundamento_ver_atencion.html', '21_fundamento_atencion_gpt.html', 'Mirar a dónde atiende, ahora dentro del mini-GPT.'],
+      ['19_fundamento_tensor.html', '20_fundamento_verificar_bloque.html', 'El bloque se arma y se verifica con el autograd de arrays.'],
+      ['20_fundamento_residual.html', '21_fundamento_modelo_gpt.html', 'Un GPT es una pila de bloques transformer.'],
+      ['21_fundamento_generar_gpt.html', '23_fundamento_greedy.html', 'Generar con el mini-GPT: elegir siempre el más probable o muestrear.'],
+      ['21_fundamento_modelo_gpt.html', '24_fundamento_preentrenar.html', 'El mini-GPT, a escala, es el preentrenamiento de los modelos grandes.'],
+      ['11_fundamento_recompensas.html', '24_fundamento_ajuste_fino.html', 'Aprender de una señal de calidad reaparece al ajustar modelos.']
+    ];
+
+    var URL_LIB = 'https://cdn.jsdelivr.net/npm/3d-force-graph@1.80.0/dist/3d-force-graph.min.js';
+    var NOMBRES_NIVEL = ['', 'Módulo', 'Lección', 'Fundamento'];
+    var iniciado = false;
+
+    document.addEventListener('pestana', function (e) {
+      if (e.detail !== 'mapa') return;
+      if (!iniciado) { iniciado = true; cargarLibreria(); }
+      else if (window.__mapaAjustar) window.__mapaAjustar();
+    });
+
+    function $(id) { return document.getElementById(id); }
+    function css(nombre) { return getComputedStyle(document.documentElement).getPropertyValue(nombre).trim(); }
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    function rgba(hex, a) {
+      var m = hex.replace('#', '');
+      if (m.length === 3) m = m.replace(/./g, '$&$&');
+      var n = parseInt(m, 16);
+      return 'rgba(' + (n >> 16 & 255) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')';
+    }
+    function estado(msg) { var el = $('mapa-estado'); el.textContent = msg || ''; el.hidden = !msg; }
+
+    function cargarLibreria() {
+      var s = document.createElement('script');
+      s.src = URL_LIB;
+      s.onload = iniciar;
+      s.onerror = function () { estado('No se pudo cargar la librería del mapa 3D. Revisa la conexión y recarga la página.'); };
+      document.head.appendChild(s);
+    }
+
+    // Recorre las tarjetas de la página y arma el árbol
+    function leerMaterial() {
+      var nodos = [], arbol = [], porId = {};
+      function agregar(n) { nodos.push(n); porId[n.id] = n; return n; }
+      agregar({ id: 'raiz', nivel: 0, nombre: 'IA desde cero', var: '--text', hijos: [],
+        desc: document.querySelector('header .topics').textContent });
+      document.querySelectorAll('section.module.tab-panel').forEach(function (sec) {
+        if (sec.id === 'mapa') return;
+        var mod = agregar({ id: 'm-' + sec.id, nivel: 1, var: '--accent-' + sec.id, hijos: [],
+          nombre: sec.querySelector('.module-header h2').textContent.replace(/^Módulo\s+\d+\s+—\s+/, ''),
+          titulo: sec.querySelector('.module-header h2').textContent,
+          desc: (sec.querySelector('.module-desc') || {}).textContent || '' });
+        porId.raiz.hijos.push(mod.id);
+        arbol.push([porId.raiz.id, mod.id]);
+        sec.querySelectorAll('.lesson-card').forEach(function (card) {
+          var num = card.querySelector('.lesson-number').textContent.replace(/LECCIÓN/i, '').trim();
+          var codigo = card.querySelector('.lesson-link');
+          var lec = agregar({ id: 'l-' + num, nivel: 2, num: num, var: mod.var, modulo: mod.id, hijos: [],
+            nombre: card.querySelector('.lesson-title').textContent,
+            desc: (card.querySelector('.lesson-desc') || {}).textContent || '',
+            codigo: codigo ? codigo.href : '', codigoTexto: codigo ? codigo.textContent : '' });
+          mod.hijos.push(lec.id);
+          arbol.push([mod.id, lec.id]);
+          card.querySelectorAll('.fund-group').forEach(function (g) {
+            var bloque = (g.querySelector('.fund-label') || {}).textContent || '';
+            g.querySelectorAll('a[href]').forEach(function (a) {
+              var archivo = a.getAttribute('href');
+              if (porId[archivo]) return;
+              var f = agregar({ id: archivo, nivel: 3, var: mod.var, modulo: mod.id, leccion: lec.id, bloque: bloque,
+                nombre: a.textContent.replace(/^\d+\.\s*/, '').replace(/\s*\(complemento\)\s*$/, ''),
+                complemento: /\(complemento\)/.test(a.textContent) });
+              lec.hijos.push(f.id);
+              arbol.push([lec.id, f.id]);
+            });
+          });
+        });
+      });
+      var cruces = RELACIONES.filter(function (r) {
+        var ok = porId[r[0]] && porId[r[1]];
+        if (!ok) console.warn('Mapa: relación con un fundamento que no está en la página', r);
+        return ok;
+      });
+      return { nodos: nodos, arbol: arbol, cruces: cruces, porId: porId };
+    }
+
+    function iniciar() {
+      var M = leerMaterial();
+      var cont = $('mapa-3d'), capaEtq = $('mapa-etiquetas'), info = $('mapa-info'), panel = $('mapa');
+      var chkFund = $('mapa-ver-fund'), chkRel = $('mapa-ver-rel');
+      var reducirMov = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var color = {}, resaltados = null, seleccionado = null, vecinos = {}, ajustado = false;
+
+      function leerColores() {
+        M.nodos.forEach(function (n) { color[n.id] = css(n.var) || '#888888'; });
+        color.fondo = css('--bg-panel');
+        color.arbol = css('--text-dim');
+        color.relacion = css('--mapa-relacion');
+      }
+      leerColores();
+
+      // Lecciones de una relación: sin fundamentos visibles, la relación sube a sus lecciones
+      function extremo(id) { var n = M.porId[id]; return (!chkFund.checked && n.nivel === 3) ? n.leccion : id; }
+
+      function datos() {
+        var verFund = chkFund.checked;
+        var nodos = M.nodos.filter(function (n) { return verFund || n.nivel < 3; });
+        var links = M.arbol.filter(function (p) { return verFund || M.porId[p[1]].nivel < 3; })
+          .map(function (p) { return { source: p[0], target: p[1], tipo: 'arbol', nivel: M.porId[p[1]].nivel }; });
+        if (chkRel.checked) {
+          var agrup = {};
+          M.cruces.forEach(function (r) {
+            var a = extremo(r[0]), b = extremo(r[1]);
+            if (a === b) return;
+            var k = a + '|' + b;
+            (agrup[k] = agrup[k] || { source: a, target: b, tipo: 'cruce', textos: [] }).textos.push(r[2]);
+          });
+          Object.keys(agrup).forEach(function (k) { links.push(agrup[k]); });
+        }
+        vecinos = {};
+        links.forEach(function (l) {
+          var a = l.source, b = l.target;
+          (vecinos[a] = vecinos[a] || {})[b] = true;
+          (vecinos[b] = vecinos[b] || {})[a] = true;
+        });
+        return { nodes: nodos, links: links };
+      }
+
+      function idDe(x) { return typeof x === 'object' ? x.id : x; }
+      function tenue(id) { return resaltados && !resaltados[id]; }
+
+      var Graph;
+      try {
+        Graph = new ForceGraph3D(cont, { controlType: 'orbit' })
+          .backgroundColor(color.fondo)
+          .showNavInfo(false)
+          .nodeId('id')
+          .nodeVal(function (n) { return [36, 14, 5, 1.4][n.nivel]; })
+          .nodeRelSize(4)
+          .nodeResolution(16)
+          .nodeOpacity(0.95)
+          .nodeColor(function (n) {
+            var c = color[n.id];
+            if (tenue(n.id)) return rgba(c, 0.12);
+            return n.nivel === 3 ? rgba(c, n.complemento ? 0.55 : 0.85) : c;
+          })
+          .nodeLabel(function (n) {
+            var donde = n.nivel === 3 ? M.porId[n.leccion].num + ' · ' + M.porId[n.leccion].nombre
+              : n.nivel === 2 ? 'Lección ' + n.num : n.nivel === 1 ? 'Módulo' : '';
+            return '<div style="font:13px/1.35 system-ui,sans-serif;max-width:260px"><b>' + esc(n.nombre) + '</b>' +
+              (donde ? '<br><span style="opacity:.75">' + esc(donde) + '</span>' : '') + '</div>';
+          })
+          .linkColor(function (l) {
+            var a = idDe(l.source), b = idDe(l.target);
+            var apagado = resaltados && !(resaltados[a] && resaltados[b]);
+            if (l.tipo === 'cruce') return rgba(color.relacion, apagado ? 0.08 : 0.85);
+            return rgba(color.arbol, apagado ? 0.05 : 0.3);
+          })
+          .linkWidth(function (l) { return l.tipo === 'cruce' ? 1.4 : 0; })
+          .linkDirectionalParticles(function (l) { return l.tipo === 'cruce' && !reducirMov ? 2 : 0; })
+          .linkDirectionalParticleWidth(1.6)
+          .linkDirectionalParticleSpeed(0.004)
+          .linkDirectionalParticleColor(function () { return color.relacion; })
+          .onNodeClick(function (n) { seleccionar(n, true); })
+          .onBackgroundClick(function () { seleccionar(null); })
+          .cooldownTime(6000)
+          .onEngineStop(function () { if (!ajustado) { ajustado = true; Graph.zoomToFit(reducirMov ? 0 : 700, 30); } });
+      } catch (err) {
+        console.error(err);
+        estado('Este navegador no pudo dibujar el mapa 3D (hace falta WebGL).');
+        return;
+      }
+
+      Graph.d3Force('charge').strength(function (n) { return [-900, -500, -90, -14][n.nivel]; });
+      Graph.d3Force('link')
+        .distance(function (l) { return l.tipo === 'cruce' ? 140 : [0, 130, 55, 16][l.nivel]; })
+        .strength(function (l) { return l.tipo === 'cruce' ? 0.015 : 0.9; });
+      Graph.graphData(datos());
+      estado('');
+
+      // Nombres de raíz, módulos y lecciones, siempre visibles y siguiendo la cámara
+      var etiquetas = M.nodos.filter(function (n) { return n.nivel < 3; }).map(function (n) {
+        var el = document.createElement('div');
+        el.className = 'mapa-etq n' + n.nivel;
+        el.style.setProperty('--c', color[n.id]);
+        el.textContent = n.nivel === 2 ? n.num : n.nombre;
+        capaEtq.appendChild(el);
+        return { nodo: n, el: el, dy: [-22, -16, -10][n.nivel] };
+      });
+      // Lección: solo su número, salvo que esté seleccionada ella, su módulo o algo vecino
+      function textoEtiqueta(e) {
+        var n = e.nodo;
+        if (n.nivel !== 2) return n.nombre;
+        var largo = resaltados && resaltados[n.id];
+        return largo ? n.num + ' ' + n.nombre : n.num;
+      }
+      var vec = null;
+      function pintarEtiquetas() {
+        requestAnimationFrame(pintarEtiquetas);
+        if (panel.hidden) return;
+        var cam = Graph.camera(), w = cont.clientWidth, h = cont.clientHeight;
+        if (!vec) vec = new cam.position.constructor();
+        etiquetas.forEach(function (e) {
+          var n = e.nodo;
+          if (n.x === undefined) { e.el.style.display = 'none'; return; }
+          vec.set(n.x, n.y, n.z).project(cam);
+          if (vec.z > 1 || Math.abs(vec.x) > 1.05 || Math.abs(vec.y) > 1.05) { e.el.style.display = 'none'; return; }
+          e.el.style.display = '';
+          e.el.style.transform = 'translate(' + ((vec.x + 1) / 2 * w).toFixed(1) + 'px,' +
+            ((1 - vec.y) / 2 * h + e.dy).toFixed(1) + 'px) translate(-50%,-100%)';
+          e.el.classList.toggle('tenue', tenue(n.id));
+        });
+      }
+      requestAnimationFrame(pintarEtiquetas);
+
+      function refrescar() {
+        Graph.nodeColor(Graph.nodeColor()).linkColor(Graph.linkColor());
+        etiquetas.forEach(function (e) { e.el.textContent = textoEtiqueta(e); });
+      }
+
+      function enfocar(n) {
+        ajustado = true;
+        var lejos = [0, 420, 260, 150][n.nivel];
+        var d = Math.hypot(n.x, n.y, n.z) || 1;
+        var r = 1 + lejos / d;
+        Graph.cameraPosition(n.nivel === 0 ? { z: 420 } : { x: n.x * r, y: n.y * r, z: n.z * r }, n, reducirMov ? 0 : 900);
+      }
+
+      function seleccionar(n, mover) {
+        seleccionado = n;
+        if (!n) { resaltados = null; info.hidden = true; refrescar(); return; }
+        resaltados = {};
+        resaltados[n.id] = true;
+        Object.keys(vecinos[n.id] || {}).forEach(function (k) { resaltados[k] = true; });
+        (n.hijos || []).forEach(function (k) { resaltados[k] = true; });
+        refrescar();
+        mostrarInfo(n);
+        if (mover) enfocar(n);
+      }
+
+      function boton(id, texto) {
+        return '<button type="button" class="ir" data-ir="' + esc(id) + '">' + esc(texto) + '</button>';
+      }
+
+      // Relaciones de un nodo: las suyas y, si es lección o módulo, las de sus fundamentos
+      function relacionesDe(n) {
+        var propios = {};
+        (function marcar(x) { propios[x.id] = true; (x.hijos || []).forEach(function (h) { marcar(M.porId[h]); }); })(n);
+        var vienen = [], van = [];
+        M.cruces.forEach(function (r) {
+          if (propios[r[1]] && !propios[r[0]]) vienen.push({ otro: M.porId[r[0]], texto: r[2] });
+          if (propios[r[0]] && !propios[r[1]]) van.push({ otro: M.porId[r[1]], texto: r[2] });
+        });
+        function lista(arr) {
+          return '<ul>' + arr.map(function (x) {
+            var o = x.otro, lec = M.porId[o.leccion];
+            return '<li>' + boton(o.id, o.nombre) + ' <span>(' + esc(lec.num) + ')</span><br>' + esc(x.texto) + '</li>';
+          }).join('') + '</ul>';
+        }
+        return (vienen.length ? '<h4>Se apoya en</h4>' + lista(vienen) : '') +
+               (van.length ? '<h4>Se retoma en</h4>' + lista(van) : '');
+      }
+
+      function mostrarInfo(n) {
+        var html = '<button type="button" class="cerrar" aria-label="Cerrar">×</button>';
+        info.style.setProperty('--c', color[n.id]);
+        if (n.nivel === 0) {
+          html += '<div class="kicker">Mapa completo</div><h3>' + esc(n.nombre) + '</h3><p>' + esc(n.desc) + '</p><h4>Módulos</h4><ul>' +
+            n.hijos.map(function (h) { return '<li>' + boton(h, M.porId[h].titulo) + '</li>'; }).join('') + '</ul>';
+        } else if (n.nivel === 1) {
+          html += '<div class="kicker">Módulo</div><h3>' + esc(n.titulo) + '</h3><p>' + esc(n.desc) + '</p><h4>Lecciones</h4><ul>' +
+            n.hijos.map(function (h) { var l = M.porId[h]; return '<li>' + boton(h, l.num + ' ' + l.nombre) + '</li>'; }).join('') + '</ul>' +
+            relacionesDe(n);
+        } else if (n.nivel === 2) {
+          var porBloque = {};
+          n.hijos.forEach(function (h) { var f = M.porId[h]; (porBloque[f.bloque] = porBloque[f.bloque] || []).push(f); });
+          html += '<div class="kicker">' + esc(M.porId[n.modulo].nombre) + ' · Lección ' + esc(n.num) + '</div><h3>' + esc(n.nombre) + '</h3><p>' + esc(n.desc) + '</p>' +
+            (n.codigo ? '<p><a href="' + esc(n.codigo) + '">' + esc(n.codigoTexto) + '</a></p>' : '') +
+            Object.keys(porBloque).map(function (b) {
+              return '<h4>' + esc(b) + '</h4><ul>' + porBloque[b].map(function (f) { return '<li>' + boton(f.id, f.nombre) + '</li>'; }).join('') + '</ul>';
+            }).join('') + relacionesDe(n);
+        } else {
+          var lec = M.porId[n.leccion];
+          html += '<div class="kicker">Lección ' + esc(lec.num) + ' · ' + esc(n.bloque) + '</div><h3>' + esc(n.nombre) + '</h3>' +
+            '<p>Fundamento de ' + boton(lec.id, lec.nombre) + (n.complemento ? ' (complemento)' : '') + '.</p>' +
+            '<p><a href="' + esc(n.id) + '">Abrir el fundamento →</a></p>' + relacionesDe(n);
+        }
+        info.innerHTML = html;
+        info.hidden = false;
+      }
+
+      info.addEventListener('click', function (e) {
+        if (e.target.closest('.cerrar')) { seleccionar(null); return; }
+        var b = e.target.closest('[data-ir]');
+        if (!b) return;
+        var n = M.porId[b.getAttribute('data-ir')];
+        if (n.nivel === 3 && !chkFund.checked) { chkFund.checked = true; actualizar(); }
+        seleccionar(n, true);
+      });
+
+      function actualizar() {
+        Graph.graphData(datos());
+        if (seleccionado) seleccionar(seleccionado.nivel === 3 && !chkFund.checked ? null : seleccionado);
+      }
+      chkFund.addEventListener('change', actualizar);
+      chkRel.addEventListener('change', actualizar);
+      $('mapa-reiniciar').addEventListener('click', function () { seleccionar(null); Graph.zoomToFit(reducirMov ? 0 : 700, 30); });
+
+      function ajustarTamano() { Graph.width(cont.clientWidth).height(cont.clientHeight); }
+      window.__mapaAjustar = ajustarTamano;
+      // Para revisar el mapa desde la consola: __mapa.ir('05_fundamento_softmax.html')
+      window.__mapa = { grafo: Graph, ir: function (id) { seleccionar(M.porId[id], true); } };
+      window.addEventListener('resize', ajustarTamano);
+      ajustarTamano();
+
+      window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function () {
+        leerColores();
+        Graph.backgroundColor(color.fondo);
+        etiquetas.forEach(function (e) { e.el.style.setProperty('--c', color[e.nodo.id]); });
+        refrescar();
+      });
+    }
+  })();
+
   // Pestañas por tema: muestra solo el panel elegido y lo recuerda en la URL
-  // (#redes, #pln, #agentes, #modelos) para poder compartir o recargar.
+  // (#mapa, #redes, #agentes, #pln, #modelos) para poder compartir o recargar.
   (function () {
     var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
     var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
@@ -1343,6 +1880,8 @@
         panels[i].hidden = !activa;
         if (activa && foco) t.focus();
       });
+      // Avisa qué pestaña quedó visible (el mapa 3D se carga recién la primera vez)
+      document.dispatchEvent(new CustomEvent('pestana', { detail: id }));
     }
 
     tabs.forEach(function (t, i) {
