@@ -254,7 +254,7 @@
     padding: 14px 16px;
     font-size: 0.84rem;
   }
-  .mapa-info[hidden] { display: none; }
+  .mapa-info[hidden], .mapa-estado[hidden] { display: none; }
   .mapa-info .kicker {
     font-size: 0.7rem;
     font-weight: 700;
@@ -569,7 +569,7 @@
       <h2>Mapa de conceptos</h2>
       <span class="module-tag tag-mapa">3D</span>
     </div>
-    <p class="module-desc">Todo el material como un árbol: del centro salen los 4 módulos, de cada módulo sus lecciones y de cada lección sus fundamentos. Las líneas doradas unen conceptos de lecciones distintas: la partícula viaja desde el concepto que se usa hacia el que lo retoma. Arrastra para girar, usa la rueda para acercar y haz clic en una esfera para ver de qué trata.</p>
+    <p class="module-desc">Todo el material como un árbol: del centro salen los 4 módulos, de cada módulo sus lecciones y de cada lección sus fundamentos. Las líneas doradas unen conceptos de lecciones distintas. Al pasar el mouse o hacer clic sobre un concepto se ilumina la ruta de todo lo que depende de él, con partículas que avanzan en el sentido del aprendizaje. Arrastra para girar y usa la rueda para acercar.</p>
 
     <div class="mapa-controles">
       <label><input type="checkbox" id="mapa-ver-fund" checked> Fundamentos</label>
@@ -594,7 +594,7 @@
       <span><i style="--c: var(--accent-agentes)"></i>Agentes</span>
       <span><i style="--c: var(--accent-pln)"></i>PLN</span>
       <span><i style="--c: var(--accent-modelos)"></i>Modelos IA</span>
-      <span><i class="linea" style="--c: var(--mapa-relacion)"></i>Un concepto que se retoma en otra lección</span>
+      <span><i class="linea" style="--c: var(--mapa-relacion)"></i>Un concepto que se retoma en otra lección (se anima al elegir un concepto)</span>
     </div>
   </section>
 
@@ -1652,7 +1652,8 @@
       var cont = $('mapa-3d'), capaEtq = $('mapa-etiquetas'), info = $('mapa-info'), panel = $('mapa');
       var chkFund = $('mapa-ver-fund'), chkRel = $('mapa-ver-rel');
       var reducirMov = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var color = {}, resaltados = null, seleccionado = null, vecinos = {}, ajustado = false;
+      var color = {}, resaltados = null, seleccionado = null, ajustado = false;
+      var visibles = {}, salidas = {}, ruta = {}, alcance = { conceptos: 0, lecciones: 0 };
 
       function leerColores() {
         M.nodos.forEach(function (n) { color[n.id] = css(n.var) || '#888888'; });
@@ -1680,17 +1681,52 @@
           });
           Object.keys(agrup).forEach(function (k) { links.push(agrup[k]); });
         }
-        vecinos = {};
+        visibles = {};
+        nodos.forEach(function (n) { visibles[n.id] = true; });
+        salidas = {};
         links.forEach(function (l) {
-          var a = l.source, b = l.target;
-          (vecinos[a] = vecinos[a] || {})[b] = true;
-          (vecinos[b] = vecinos[b] || {})[a] = true;
+          if (l.tipo === 'cruce') (salidas[l.source] = salidas[l.source] || []).push(l.target);
         });
         return { nodes: nodos, links: links };
       }
 
       function idDe(x) { return typeof x === 'object' ? x.id : x; }
       function tenue(id) { return resaltados && !resaltados[id]; }
+
+      // Ruta de dependientes: desde el concepto (o todos los fundamentos de la lección/módulo)
+      // se siguen las relaciones hacia adelante, sin límite de pasos. Deja en `resaltados`
+      // los conceptos alcanzados y en `ruta` los enlaces que forman el camino.
+      function calcularRuta(n) {
+        resaltados = null; ruta = {}; alcance = { conceptos: 0, lecciones: 0 };
+        if (!n) return;
+        resaltados = {};
+        var inicio = [];
+        (function marcar(x) {
+          if (!visibles[x.id]) return;
+          inicio.push(x.id);
+          (x.hijos || []).forEach(function (h) { marcar(M.porId[h]); });
+        })(n);
+        var visto = {}, cola = inicio.slice();
+        inicio.forEach(function (id) { visto[id] = true; resaltados[id] = true; });
+        var lecciones = {};
+        while (cola.length) {
+          var a = cola.shift();
+          (salidas[a] || []).forEach(function (b) {
+            ruta[a + '|' + b] = true;
+            if (visto[b]) return;
+            visto[b] = true;
+            resaltados[b] = true;
+            alcance.conceptos++;
+            var nb = M.porId[b];
+            var lec = nb.nivel === 3 ? nb.leccion : nb.id;
+            resaltados[lec] = true;
+            lecciones[lec] = true;
+            cola.push(b);
+          });
+        }
+        alcance.lecciones = Object.keys(lecciones).length;
+      }
+      function enRuta(l) { return l.tipo === 'cruce' && ruta[idDe(l.source) + '|' + idDe(l.target)]; }
 
       var Graph;
       try {
@@ -1714,17 +1750,18 @@
               (donde ? '<br><span style="opacity:.75">' + esc(donde) + '</span>' : '') + '</div>';
           })
           .linkColor(function (l) {
-            var a = idDe(l.source), b = idDe(l.target);
-            var apagado = resaltados && !(resaltados[a] && resaltados[b]);
-            if (l.tipo === 'cruce') return rgba(color.relacion, apagado ? 0.08 : 0.85);
+            if (l.tipo === 'cruce') return rgba(color.relacion, enRuta(l) ? 1 : resaltados ? 0.06 : 0.4);
+            var apagado = resaltados && !(resaltados[idDe(l.source)] && resaltados[idDe(l.target)]);
             return rgba(color.arbol, apagado ? 0.05 : 0.3);
           })
-          .linkWidth(function (l) { return l.tipo === 'cruce' ? 1.4 : 0; })
-          .linkDirectionalParticles(function (l) { return l.tipo === 'cruce' && !reducirMov ? 2 : 0; })
-          .linkDirectionalParticleWidth(1.6)
-          .linkDirectionalParticleSpeed(0.004)
+          .linkWidth(function (l) { return l.tipo !== 'cruce' ? 0 : enRuta(l) ? 2.4 : 1; })
+          // La única animación: partículas sobre la ruta de dependientes del concepto elegido
+          .linkDirectionalParticles(function (l) { return enRuta(l) ? 3 : 0; })
+          .linkDirectionalParticleWidth(3)
+          .linkDirectionalParticleSpeed(0.006)
           .linkDirectionalParticleColor(function () { return color.relacion; })
           .onNodeClick(function (n) { seleccionar(n, true); })
+          .onNodeHover(function (n) { previsualizar(n); })
           .onBackgroundClick(function () { seleccionar(null); })
           .cooldownTime(6000)
           .onEngineStop(function () { if (!ajustado) { ajustado = true; Graph.zoomToFit(reducirMov ? 0 : 700, 30); } });
@@ -1747,6 +1784,8 @@
         el.className = 'mapa-etq n' + n.nivel;
         el.title = n.nivel === 2 ? 'Lección ' + n.num + ': ' + n.nombre : n.nombre;
         el.addEventListener('click', function () { seleccionar(n, true); });
+        el.addEventListener('mouseenter', function () { previsualizar(n); });
+        el.addEventListener('mouseleave', function () { previsualizar(null); });
         el.style.setProperty('--c', color[n.id]);
         el.textContent = n.nivel === 2 ? n.num : n.nombre;
         capaEtq.appendChild(el);
@@ -1779,8 +1818,19 @@
       requestAnimationFrame(pintarEtiquetas);
 
       function refrescar() {
-        Graph.nodeColor(Graph.nodeColor()).linkColor(Graph.linkColor());
+        Graph.nodeColor(Graph.nodeColor()).linkColor(Graph.linkColor())
+          .linkWidth(Graph.linkWidth()).linkDirectionalParticles(Graph.linkDirectionalParticles());
         etiquetas.forEach(function (e) { e.el.textContent = textoEtiqueta(e); });
+      }
+
+      // Al pasar el mouse se ve la ruta de ese concepto; al salir vuelve la del seleccionado
+      var enHover = null;
+      function previsualizar(n) {
+        if (n === enHover) return;
+        enHover = n;
+        cont.style.cursor = n ? 'pointer' : '';
+        calcularRuta(n || seleccionado);
+        refrescar();
       }
 
       function enfocar(n) {
@@ -1793,12 +1843,9 @@
 
       function seleccionar(n, mover) {
         seleccionado = n;
-        if (!n) { resaltados = null; info.hidden = true; refrescar(); return; }
-        resaltados = {};
-        resaltados[n.id] = true;
-        Object.keys(vecinos[n.id] || {}).forEach(function (k) { resaltados[k] = true; });
-        (n.hijos || []).forEach(function (k) { resaltados[k] = true; });
+        calcularRuta(n);
         refrescar();
+        if (!n) { info.hidden = true; return; }
         mostrarInfo(n);
         if (mover) enfocar(n);
       }
@@ -1849,6 +1896,12 @@
           html += '<div class="kicker">Lección ' + esc(lec.num) + ' · ' + esc(n.bloque) + '</div><h3>' + esc(n.nombre) + '</h3>' +
             '<p>Fundamento de ' + boton(lec.id, lec.nombre) + (n.complemento ? ' (complemento)' : '') + '.</p>' +
             '<p><a href="' + esc(n.id) + '">Abrir el fundamento →</a></p>' + relacionesDe(n);
+        }
+        if (n.nivel > 0) {
+          html += '<h4>Ruta de dependientes</h4><p>' + (alcance.conceptos
+            ? 'Iluminados en dorado: ' + alcance.conceptos + (alcance.conceptos === 1 ? ' concepto' : ' conceptos') +
+              ' en ' + alcance.lecciones + (alcance.lecciones === 1 ? ' lección' : ' lecciones') + ' que dependen de este, directa o indirectamente.'
+            : 'Ningún concepto de otra lección depende de este.') + '</p>';
         }
         info.innerHTML = html;
         info.hidden = false;
