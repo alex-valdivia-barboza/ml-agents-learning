@@ -163,6 +163,49 @@
   .tab-agentes { --tab-accent: var(--accent-agentes); }
   .tab-modelos { --tab-accent: var(--accent-modelos); }
   .tab-mapa { --tab-accent: var(--accent-docs); }
+  .tab-cadena { --tab-accent: var(--accent-docs); }
+
+  /* Cadena de requisitos 2D */
+  .tag-cadena { background: var(--accent-docs-bg); color: var(--accent-docs); }
+  .cad-controles { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0 8px; }
+  .cad-campo { display: flex; flex-direction: column; gap: 4px; font-size: 0.78rem; color: var(--text-dim); font-weight: 600; }
+  .cad-campo select {
+    font: inherit; font-size: 0.9rem; font-weight: 400; color: var(--text);
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; max-width: 100%;
+  }
+  #cad-concepto { width: min(420px, calc(100vw - 32px)); }
+  .cad-resumen { font-size: 0.85rem; color: var(--text-dim); margin: 0 0 10px; }
+  .cad-lienzo {
+    position: relative; overflow-x: auto; overflow-y: hidden;
+    border: 1px solid var(--border); border-radius: 12px; background: var(--bg-panel);
+    scrollbar-color: var(--border) transparent;
+  }
+  .cad-plano { position: relative; }
+  .cad-plano svg { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  .cad-banda {
+    position: absolute; top: 8px; bottom: 8px; border-radius: 10px;
+    background: color-mix(in srgb, var(--c) 7%, transparent);
+  }
+  .cad-banda h3 {
+    margin: 0; padding: 10px 12px 0; font-size: 0.78rem; color: var(--c);
+    text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap;
+  }
+  .cad-nodo {
+    position: absolute; display: flex; flex-direction: column; justify-content: center;
+    padding: 6px 26px 6px 10px; border: 1px solid var(--border); border-left: 3px solid var(--c);
+    border-radius: 8px; background: var(--bg-card); color: var(--text);
+    font: inherit; font-size: 0.8rem; line-height: 1.25; text-align: left; cursor: pointer;
+  }
+  .cad-nodo:hover, .cad-nodo:focus-visible { background: var(--bg-card-hover); outline: none; border-color: var(--c); }
+  .cad-nodo .lec { font-size: 0.68rem; color: var(--text-dim); margin-bottom: 2px; }
+  .cad-nodo .tit { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .cad-nodo.sel { border: 2px solid var(--c); background: color-mix(in srgb, var(--c) 14%, var(--bg-card)); font-weight: 700; }
+  .cad-nodo .ir { position: absolute; top: 4px; right: 7px; color: var(--text-dim); text-decoration: none; font-size: 0.85rem; }
+  .cad-nodo .ir:hover { color: var(--c); }
+  .cad-nodo.tenue { opacity: 0.35; }
+  .cad-flecha { fill: none; stroke: var(--text-faint); stroke-width: 1.5; }
+  .cad-flecha.luz { stroke: var(--accent-docs); stroke-width: 2.2; }
+  .cad-flecha.tenue { opacity: 0.12; }
 
   /* Mapa 3D de conceptos */
   .tag-mapa { background: var(--accent-docs-bg); color: var(--accent-docs); }
@@ -565,7 +608,39 @@
     <button class="tab tab-agentes" role="tab" id="tab-agentes" aria-controls="agentes" aria-selected="false">Agentes <span class="tab-count">6/6</span></button>
     <button class="tab tab-pln" role="tab" id="tab-pln" aria-controls="pln" aria-selected="false">PLN <span class="tab-count">6/6</span></button>
     <button class="tab tab-modelos" role="tab" id="tab-modelos" aria-controls="modelos" aria-selected="false">Modelos IA <span class="tab-count">6/6</span></button>
+    <button class="tab tab-cadena" role="tab" id="tab-cadena" aria-controls="cadena" aria-selected="false">Requisitos <span class="tab-count">2D</span></button>
   </nav>
+
+  <section class="module cadena tab-panel" id="cadena" role="tabpanel" aria-labelledby="tab-cadena" hidden>
+    <div class="module-header">
+      <h2>Cadena de requisitos</h2>
+      <span class="module-tag tag-cadena">2D</span>
+    </div>
+    <p class="module-desc">Elige un concepto y verás, de izquierda a derecha, lo que conviene saber antes, el concepto elegido y lo que se apoya en él. Cada columna es un módulo y solo aparecen los conceptos de esa cadena. Haz clic en una tarjeta para ver su propia cadena, o en ↗ para abrir el fundamento.</p>
+
+    <div class="cad-controles">
+      <label class="cad-campo">Concepto
+        <select id="cad-concepto"></select>
+      </label>
+      <label class="cad-campo">Mostrar
+        <select id="cad-sentido">
+          <option value="ambos">Lo que necesita y lo que habilita</option>
+          <option value="antes">Solo lo que necesita antes</option>
+          <option value="despues">Solo lo que se apoya en él</option>
+        </select>
+      </label>
+      <label class="cad-campo">Pasos
+        <select id="cad-niveles">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="99">Todos</option>
+        </select>
+      </label>
+    </div>
+    <p class="cad-resumen" id="cad-resumen" aria-live="polite"></p>
+    <div class="cad-lienzo" id="cad-lienzo"></div>
+  </section>
 
   <section class="module mapa tab-panel" id="mapa" role="tabpanel" aria-labelledby="tab-mapa" hidden>
     <div class="module-header">
@@ -1518,6 +1593,7 @@
   </footer>
 
 </div>
+<script src="requisitos.js"></script>
 <script>
   // Mapa 3D de conceptos. Los nodos se arman leyendo las tarjetas de esta misma
   // página (módulos → lecciones → fundamentos), así que el mapa crece solo al
@@ -1960,6 +2036,189 @@
         refrescar();
       });
     }
+  })();
+
+  // Cadena de requisitos 2D. Usa los datos de requisitos.js (window.REQUISITOS),
+  // generados por generar_requisitos.py a partir de los enlaces de cada fundamento.
+  // Los requisitos siempre van hacia atrás en el orden de estudio, así que la cadena
+  // se dibuja de izquierda a derecha: columnas por módulo y, dentro de cada módulo,
+  // una subcolumna por paso.
+  (function () {
+    var D = window.REQUISITOS;
+    var lienzo = document.getElementById('cad-lienzo');
+    if (!D || !lienzo) return;
+    var selConcepto = document.getElementById('cad-concepto');
+    var selSentido = document.getElementById('cad-sentido');
+    var selNiveles = document.getElementById('cad-niveles');
+    var resumen = document.getElementById('cad-resumen');
+    var MODULOS = { '1': ['Redes Neuronales', '--accent-redes'], '2': ['Agentes', '--accent-agentes'], '3': ['PLN', '--accent-pln'], '4': ['Modelos IA', '--accent-modelos'] };
+    var ANCHO = 200, ALTO = 66, VGAP = 10, HGAP = 46, MGAP = 22, PAD = 12, CABECERA = 40;
+    var F = D.fundamentos, orden = D.orden, pos = {}, dependientes = {};
+    orden.forEach(function (a, i) { pos[a] = i; dependientes[a] = []; });
+    orden.forEach(function (b) { F[b].r.forEach(function (a) { if (dependientes[a]) dependientes[a].push(b); }); });
+    function modulo(a) { return F[a].l.split('.')[0]; }
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+    // Lista de conceptos agrupada por lección
+    var html = '', lec = null;
+    orden.forEach(function (a) {
+      if (F[a].l !== lec) {
+        if (lec !== null) html += '</optgroup>';
+        lec = F[a].l;
+        html += '<optgroup label="' + esc('Lección ' + lec + ' · ' + D.lecciones[lec]) + '">';
+      }
+      html += '<option value="' + esc(a) + '">' + esc(F[a].t) + '</option>';
+    });
+    selConcepto.innerHTML = html + '</optgroup>';
+
+    // Recorre hasta "pasos" niveles; devuelve {archivo: nivel}
+    function alcance(inicio, vecinos, pasos) {
+      var nivel = {}, frente = [inicio];
+      for (var k = 1; k <= pasos && frente.length; k++) {
+        var sig = [];
+        frente.forEach(function (x) {
+          vecinos(x).forEach(function (y) { if (y !== inicio && !(y in nivel)) { nivel[y] = k; sig.push(y); } });
+        });
+        frente = sig;
+      }
+      return nivel;
+    }
+    function contar(o) { return Object.keys(o).length; }
+
+    function dibujar() {
+      var sel = selConcepto.value, sentido = selSentido.value, pasos = +selNiveles.value;
+      var antes = sentido === 'despues' ? {} : alcance(sel, function (x) { return F[x].r; }, pasos);
+      var despues = sentido === 'antes' ? {} : alcance(sel, function (x) { return dependientes[x]; }, pasos);
+      var totalAntes = sentido === 'despues' ? 0 : contar(alcance(sel, function (x) { return F[x].r; }, 999));
+      var totalDespues = sentido === 'antes' ? 0 : contar(alcance(sel, function (x) { return dependientes[x]; }, 999));
+
+      // Nodos en orden de estudio y flechas solo dentro de cada lado de la cadena
+      var lado = {}; lado[sel] = 'sel';
+      Object.keys(antes).forEach(function (a) { lado[a] = 'antes'; });
+      Object.keys(despues).forEach(function (a) { lado[a] = 'despues'; });
+      var nodos = Object.keys(lado).sort(function (a, b) { return pos[a] - pos[b]; });
+      var flechas = [], entran = {};
+      nodos.forEach(function (b) {
+        entran[b] = [];
+        F[b].r.forEach(function (a) {
+          if (!(a in lado)) return;
+          var ok = (lado[a] !== 'despues' && lado[b] !== 'despues') || (lado[a] !== 'antes' && lado[b] !== 'antes');
+          if (ok && !(lado[a] === 'antes' && lado[b] === 'despues')) { flechas.push([a, b]); entran[b].push(a); }
+        });
+      });
+
+      // Paso = camino más largo desde el inicio de la cadena (las flechas siempre van hacia adelante)
+      var paso = {};
+      nodos.forEach(function (b) { paso[b] = entran[b].reduce(function (m, a) { return Math.max(m, paso[a] + 1); }, 0); });
+
+      // Columnas: módulo y, dentro, subcolumna por paso
+      var columnas = [], porClave = {};
+      nodos.forEach(function (a) {
+        var clave = modulo(a) + ':' + ('00' + paso[a]).slice(-3);
+        if (!porClave[clave]) { porClave[clave] = { clave: clave, mod: modulo(a), nodos: [] }; columnas.push(porClave[clave]); }
+        porClave[clave].nodos.push(a);
+      });
+      columnas.sort(function (x, y) { return x.clave < y.clave ? -1 : 1; });
+
+      // Posición horizontal y bandas de módulo
+      var x = PAD * 2, bandas = [], modActual = null, xy = {};
+      columnas.forEach(function (c) {
+        if (c.mod !== modActual) {
+          if (modActual !== null) { bandas[bandas.length - 1].fin = x + PAD; x += PAD + MGAP + PAD; }
+          bandas.push({ mod: c.mod, inicio: x - PAD });
+          modActual = c.mod;
+        } else {
+          x += HGAP;
+        }
+        c.x = x;
+        x += ANCHO;
+      });
+      if (bandas.length) bandas[bandas.length - 1].fin = x + PAD;
+      var anchoTotal = x + PAD * 2;
+
+      // Orden vertical: cada columna sigue la altura media de sus antecesores (menos cruces)
+      var altoMax = 0;
+      columnas.forEach(function (c) { altoMax = Math.max(altoMax, c.nodos.length * (ALTO + VGAP) - VGAP); });
+      columnas.forEach(function (c) {
+        c.nodos.forEach(function (a) {
+          var ys = entran[a].filter(function (p) { return xy[p]; }).map(function (p) { return xy[p].y; });
+          c.peso = c.peso || {};
+          c.peso[a] = ys.length ? ys.reduce(function (s, v) { return s + v; }, 0) / ys.length : pos[a];
+        });
+        c.nodos.sort(function (a, b) { return (c.peso[a] - c.peso[b]) || (pos[a] - pos[b]); });
+        var alto = c.nodos.length * (ALTO + VGAP) - VGAP;
+        var y0 = CABECERA + (altoMax - alto) / 2;
+        c.nodos.forEach(function (a, i) { xy[a] = { x: c.x, y: y0 + i * (ALTO + VGAP) }; });
+      });
+      var altoTotal = CABECERA + altoMax + PAD * 2;
+
+      var h = '<div class="cad-plano" style="width:' + anchoTotal + 'px;height:' + altoTotal + 'px">';
+      bandas.forEach(function (b) {
+        var m = MODULOS[b.mod];
+        h += '<div class="cad-banda" style="--c:var(' + m[1] + ');left:' + b.inicio + 'px;width:' + (b.fin - b.inicio) + 'px"><h3>' + esc(m[0]) + '</h3></div>';
+      });
+      h += '<svg width="' + anchoTotal + '" height="' + altoTotal + '" aria-hidden="true"><defs><marker id="cad-punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--text-faint)"/></marker><marker id="cad-punta-luz" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent-docs)"/></marker></defs>';
+      flechas.forEach(function (f, i) {
+        var a = xy[f[0]], b = xy[f[1]];
+        var x1 = a.x + ANCHO, y1 = a.y + ALTO / 2, x2 = b.x - 2, y2 = b.y + ALTO / 2, dx = Math.max(30, (x2 - x1) / 2);
+        h += '<path class="cad-flecha" data-i="' + i + '" marker-end="url(#cad-punta)" d="M' + x1 + ',' + y1 + ' C' + (x1 + dx) + ',' + y1 + ' ' + (x2 - dx) + ',' + y2 + ' ' + x2 + ',' + y2 + '"/>';
+      });
+      h += '</svg>';
+      nodos.forEach(function (a) {
+        var m = MODULOS[modulo(a)];
+        h += '<div class="cad-nodo' + (a === sel ? ' sel' : '') + '" role="button" tabindex="0" data-a="' + esc(a) + '" title="' + esc(F[a].t) + '" style="--c:var(' + m[1] + ');left:' + xy[a].x + 'px;top:' + xy[a].y + 'px;width:' + ANCHO + 'px;height:' + ALTO + 'px">' +
+          '<span class="lec">Lección ' + esc(F[a].l) + '</span><span class="tit">' + esc(F[a].t) + '</span>' +
+          '<a class="ir" href="' + esc(a) + '" title="Abrir el fundamento" aria-label="Abrir ' + esc(F[a].t) + '">↗</a></div>';
+      });
+      lienzo.innerHTML = h + '</div>';
+
+      // Resumen
+      var partes = [];
+      if (sentido !== 'despues') partes.push('Necesita antes: ' + (totalAntes ? contar(antes) + ' de ' + totalAntes : 'ninguno, puedes empezar por aquí'));
+      if (sentido !== 'antes') partes.push('Se apoyan en él: ' + (totalDespues ? contar(despues) + ' de ' + totalDespues : 'todavía ninguno'));
+      var faltan = (totalAntes - contar(antes)) + (totalDespues - contar(despues));
+      resumen.textContent = partes.join(' · ') + '.' + (faltan ? ' Sube los pasos para ver los ' + faltan + ' que faltan.' : '');
+
+      // Al pasar el mouse sobre una tarjeta se iluminan sus flechas directas
+      var paths = lienzo.querySelectorAll('.cad-flecha'), tarjetas = lienzo.querySelectorAll('.cad-nodo');
+      function resaltar(a) {
+        var vecinos = {}; vecinos[a] = true;
+        flechas.forEach(function (f, i) {
+          var toca = a && (f[0] === a || f[1] === a);
+          if (toca) { vecinos[f[0]] = vecinos[f[1]] = true; }
+          paths[i].classList.toggle('luz', !!toca);
+          paths[i].classList.toggle('tenue', !!a && !toca);
+          paths[i].setAttribute('marker-end', toca ? 'url(#cad-punta-luz)' : 'url(#cad-punta)');
+        });
+        tarjetas.forEach(function (t) { t.classList.toggle('tenue', !!a && !vecinos[t.getAttribute('data-a')]); });
+      }
+      tarjetas.forEach(function (t) {
+        var a = t.getAttribute('data-a');
+        t.addEventListener('mouseenter', function () { resaltar(a); });
+        t.addEventListener('mouseleave', function () { resaltar(null); });
+        t.addEventListener('focus', function () { resaltar(a); });
+        t.addEventListener('blur', function () { resaltar(null); });
+        function elegir(e) { if (e.target.closest('.ir')) return; if (a !== sel) { selConcepto.value = a; cambio(); } }
+        t.addEventListener('click', elegir);
+        t.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); elegir(e); } });
+      });
+      // Deja a la vista el concepto elegido
+      var x0 = xy[sel].x - (lienzo.clientWidth - ANCHO) / 2;
+      lienzo.scrollLeft = Math.max(0, x0);
+    }
+
+    function cambio() {
+      try { localStorage.setItem('cadena-concepto', selConcepto.value); } catch (e) {}
+      dibujar();
+    }
+    var guardado = null;
+    try { guardado = localStorage.getItem('cadena-concepto'); } catch (e) {}
+    selConcepto.value = guardado && F[guardado] ? guardado : orden[0];
+    selConcepto.addEventListener('change', cambio);
+    selSentido.addEventListener('change', dibujar);
+    selNiveles.addEventListener('change', dibujar);
+    // Se dibuja al abrir la pestaña (con el panel oculto no hay ancho para centrar)
+    document.addEventListener('pestana', function (e) { if (e.detail === 'cadena') dibujar(); });
   })();
 
   // Pestañas por tema: muestra solo el panel elegido y lo recuerda en la URL

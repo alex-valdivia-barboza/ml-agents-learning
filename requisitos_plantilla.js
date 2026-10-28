@@ -4,6 +4,8 @@
 (function () {
   var DATOS = /*DATOS*/null;
   if (!DATOS) return;
+  // La vista "Requisitos 2D" de index.html usa los mismos datos
+  window.REQUISITOS = DATOS;
 
   var actual = decodeURIComponent(location.pathname.split('/').pop());
   var yo = DATOS.fundamentos[actual];
