@@ -209,8 +209,24 @@
     color: var(--text-dim);
     text-shadow: 0 0 3px var(--bg-panel), 0 0 6px var(--bg-panel);
     transition: opacity 0.2s;
+    pointer-events: auto;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
   }
+  .mapa-etq:hover { color: var(--text); background: color-mix(in srgb, var(--bg-card) 80%, transparent); }
   .mapa-etq.n0 { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .mapa-buscar {
+    font: inherit;
+    font-size: 0.82rem;
+    padding: 4px 12px;
+    min-width: 220px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+  }
+  .mapa-ayuda { font-size: 0.8rem; color: var(--text-dim); margin: -4px 0 10px; }
   .mapa-etq.n1 { font-size: 0.9rem; font-weight: 700; color: var(--c); }
   .mapa-etq.tenue { opacity: 0.2; }
   .mapa-estado {
@@ -559,7 +575,10 @@
       <label><input type="checkbox" id="mapa-ver-fund" checked> Fundamentos</label>
       <label><input type="checkbox" id="mapa-ver-rel" checked> Relaciones entre lecciones</label>
       <button type="button" id="mapa-reiniciar">Ver todo</button>
+      <input type="search" class="mapa-buscar" id="mapa-buscar" list="mapa-conceptos" placeholder="Buscar un concepto…" aria-label="Buscar un concepto en el mapa">
+      <datalist id="mapa-conceptos"></datalist>
     </div>
+    <p class="mapa-ayuda">Haz clic en el nombre de un módulo o lección, o en cualquier esfera, para ver su detalle y sus enlaces.</p>
 
     <div class="mapa-cuerpo">
       <div class="mapa-wrap">
@@ -1680,7 +1699,7 @@
           .showNavInfo(false)
           .nodeId('id')
           .nodeVal(function (n) { return [36, 14, 5, 1.4][n.nivel]; })
-          .nodeRelSize(4)
+          .nodeRelSize(7)
           .nodeResolution(16)
           .nodeOpacity(0.95)
           .nodeColor(function (n) {
@@ -1726,6 +1745,8 @@
       var etiquetas = M.nodos.filter(function (n) { return n.nivel < 3; }).map(function (n) {
         var el = document.createElement('div');
         el.className = 'mapa-etq n' + n.nivel;
+        el.title = n.nivel === 2 ? 'Lección ' + n.num + ': ' + n.nombre : n.nombre;
+        el.addEventListener('click', function () { seleccionar(n, true); });
         el.style.setProperty('--c', color[n.id]);
         el.textContent = n.nivel === 2 ? n.num : n.nombre;
         capaEtq.appendChild(el);
@@ -1848,6 +1869,25 @@
       }
       chkFund.addEventListener('change', actualizar);
       chkRel.addEventListener('change', actualizar);
+
+      // Buscador: elige un concepto de la lista y el mapa va hasta él
+      var buscar = $('mapa-buscar'), lista = $('mapa-conceptos'), porTexto = {};
+      M.nodos.forEach(function (n) {
+        var t = n.nivel === 3 ? n.nombre + ' (' + M.porId[n.leccion].num + ')'
+          : n.nivel === 2 ? n.num + ' ' + n.nombre : n.nombre;
+        porTexto[t.toLowerCase()] = n;
+        var o = document.createElement('option');
+        o.value = t;
+        lista.appendChild(o);
+      });
+      function irBuscado() {
+        var n = porTexto[buscar.value.trim().toLowerCase()];
+        if (!n) return;
+        if (n.nivel === 3 && !chkFund.checked) { chkFund.checked = true; actualizar(); }
+        seleccionar(n, true);
+      }
+      buscar.addEventListener('change', irBuscado);
+      buscar.addEventListener('keydown', function (e) { if (e.key === 'Enter') irBuscado(); });
       $('mapa-reiniciar').addEventListener('click', function () { seleccionar(null); Graph.zoomToFit(reducirMov ? 0 : 700, 30); });
 
       function ajustarTamano() { Graph.width(cont.clientWidth).height(cont.clientHeight); }
